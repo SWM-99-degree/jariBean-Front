@@ -82,6 +82,7 @@ Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
 }
 
 void main() async {
+  print('flutter hello');
   await dotenv.load(fileName: "lib/config/.env");
   print(dotenv.env['KAKAO_NATIVE_APP_KEY']);
   WidgetsFlutterBinding.ensureInitialized();
@@ -210,8 +211,6 @@ class _ScreenState extends State<Screen>{
                             ]);
                       });
                 })),
-        Image.network(
-            viewModel.user?.kakaoAccount?.profile?.thumbnailImageUrl ?? 'null'),
         Text('${viewModel.isLogined}',
             style: Theme.of(context).textTheme.headline4),
         Text('현재 로그인한 유저 : ${viewModel.user == null ? '없음' : viewModel.user!.id}',

@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.jari_bean</string>
+	<string>com.99degree.jari_bean</string>
 	<key>PROJECT_ID</key>
 	<string>jaribean-3af6f</string>
 	<key>STORAGE_BUCKET</key>
