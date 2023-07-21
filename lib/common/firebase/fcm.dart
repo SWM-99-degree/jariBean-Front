@@ -27,20 +27,21 @@ class FcmTokenStateNotifier extends StateNotifier<String>{
   }
 }
 
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future fcmBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message ${message.messageId}');
   print(
       'And the MESSAGE was : ${message.notification!.title} + ${message.notification!.body}');
 }
 
-Future fbMsgForegroundHandler(
+Future fcmForegroundHandler(
     RemoteMessage message,
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
     AndroidNotificationChannel? channel) async {
   print('[FCM - Foreground] MESSAGE : ${message.data}');
 
   if (message.notification != null) {
-    print('Message also contained a notification: ${message.notification}');
+    print('Message also contained a notification: ${message.notification!.title} + ${message.notification!.body}');
+    /*
     flutterLocalNotificationsPlugin.show(
         message.hashCode,
         message.notification?.title,
@@ -57,6 +58,7 @@ Future fbMsgForegroundHandler(
               subtitle: 'the subtitle',
               sound: 'slow_spring_board.aiff',
             )));
+            */
   }
 }
 

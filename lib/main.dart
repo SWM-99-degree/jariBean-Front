@@ -13,45 +13,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 var logger = log.Logger();
 
-class dialogString {
-  String? title;
-  String? content;
-  dialogString(this.title, this.content);
-}
-
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print('Handling a background message ${message.messageId}');
-  print(
-      'And the MESSAGE was : ${message.notification!.title} + ${message.notification!.body}');
-}
-
-Future fbMsgForegroundHandler(
-    RemoteMessage message,
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
-    AndroidNotificationChannel? channel) async {
-  print('[FCM - Foreground] MESSAGE : ${message.data}');
-
-  if (message.notification != null) {
-    print('Message also contained a notification: ${message.notification}');
-    flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        message.notification?.title,
-        message.notification?.body,
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel!.id,
-              channel.name,
-              channelDescription: channel.description,
-              icon: '@mipmap/ic_launcher',
-            ),
-            iOS: const DarwinNotificationDetails(
-              badgeNumber: 1,
-              subtitle: 'the subtitle',
-              sound: 'slow_spring_board.aiff',
-            )));
-  }
-}
-
 Future<void> setupInteractedMessage(FirebaseMessaging fbMsg) async {
   RemoteMessage? initialMessage = await fbMsg.getInitialMessage();
   // 종료상태에서 클릭한 푸시 알림 메세지 핸들링
@@ -81,21 +42,17 @@ void main() async {
   print('flutter hello');
   await dotenv.load(fileName: "lib/common/config/.env");
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // KakaoSdk.init(nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY']);
   FirebaseMessaging fbMsg = FirebaseMessaging.instance;
 
-  var fcmToken = await FirebaseMessaging.instance.getToken();
   fbMsg.onTokenRefresh.listen((event) {
     print('onTokenRefresh : $event');
   });
 
-//  runApp(MaterialApp(home: Scaffold(body: Screen())));
   runApp(
-    ProviderScope(
+    const ProviderScope(
       child: MaterialApp(
         home: Scaffold(
           body: SplashScreen(),
@@ -125,127 +82,12 @@ void main() async {
         ?.createNotificationChannel(androidNotificationChannel);
   }
   //Background Handling 백그라운드 메세지 핸들링
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
   //Foreground Handling 포어그라운드 메세지 핸들링
   FirebaseMessaging.onMessage.listen((message) {
-    fbMsgForegroundHandler(
+    fcmForegroundHandler(
         message, flutterLocalNotificationsPlugin, androidNotificationChannel);
   });
 
   await setupInteractedMessage(fbMsg);
 }
-/*
-class Screen extends StatefulWidget {
-  const Screen({Key? key}) : super(key: key);
-
-  @override
-  State<Screen> createState() => _ScreenState();
-}
-class _ScreenState extends State<Screen> {
-  final myControllerEmail = TextEditingController();
-  final myControllerPW = TextEditingController();
-  final viewModel = MainViewModel(KakaoLogin());
-  late Future<dialogString> resultString;
-  Future<void> setupInteractedMessage() async {
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-
-    FirebaseMessaging.onMessageOpenedApp.listen(clickMessageEvent);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-            margin: const EdgeInsets.all(8),
-            child: TextField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'Email'),
-              controller: myControllerEmail,
-            )),
-        Container(
-            margin: const EdgeInsets.all(8),
-            child: TextField(
-              obscureText: true,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'Password'),
-              controller: myControllerPW,
-            )),
-        FloatingActionButton(
-            child: Icon(Icons.app_registration_rounded),
-            onPressed: () => showDialog(
-                context: context,
-                builder: (context) {
-                  resultString = AuthManage()
-                      .createUser(myControllerEmail.text, myControllerPW.text);
-                  return FutureBuilder(
-                      future: resultString,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dialogString> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.red,
-                          ));
-                        }
-                        return AlertDialog(
-                            title: DefaultTextStyle(
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  color: Colors.black),
-                              child: Text(snapshot.data?.title ?? 'null'),
-                            ),
-                            content: DefaultTextStyle(
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                              child: Text(snapshot.data?.content ?? 'null'),
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ]);
-                      });
-                })),
-        Text('${viewModel.isLogined}',
-            style: Theme.of(context).textTheme.headline4),
-        Text(
-            '현재 로그인한 유저 : ${viewModel.user == null ? '없음' : viewModel.user!.id}',
-            style: Theme.of(context).textTheme.headline4),
-        Text(
-            '현재 로그인한 유저 : ${viewModel.token == null ? '없음' : viewModel.token!}',
-            style: Theme.of(context).textTheme.headline4),
-        FloatingActionButton(
-          child: Icon(Icons.login_rounded),
-          onPressed: () async {
-            await viewModel.login();
-            setState(() {});
-          },
-        ),
-        FloatingActionButton(
-          child: Icon(Icons.logout_rounded),
-          onPressed: () async {
-            await viewModel.logout();
-            setState(() {});
-          },
-        ),
-        FloatingActionButton(
-          child: Text('FCM토큰'),
-          onPressed: () async {
-            await viewModel.getFcmToken();
-            setState(() {});
-          },
-        ),
-      ],
-    );
-  }
-}*/
