@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_text_form_field.dart';
 import 'package:jari_bean/common/component/oauth_login_button.dart';
-import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/screens/default_layout.dart';
 import 'package:jari_bean/user/provider/login_provider.dart';
 
@@ -13,7 +11,6 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(loginStateNotifierProvider);
     return DefaultLayout(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -51,20 +48,8 @@ class LoginScreen extends ConsumerWidget {
           ),
           OauthLoginButton(
             imagePath: 'assets/images/kakao_login_large_wide.png',
-            onTap: () async {
-              try {
-                var result = await FlutterWebAuth.authenticate(
-                    // url: 'https:$ip/redirect_test',
-                    url:
-                        'https://kauth.kakao.com/oauth/authorize?client_id=1dc8739f9827f96eccc7cd66a524c434&redirect_uri=https://$ip/oauth&response_type=code',
-                    callbackUrlScheme: 'jaribean');
-                print(result.split('token=')[1]);
-              } catch (e) {
-                print(e);
-              }
-            },
+            onTap: () async => ref.read(loginStateNotifierProvider.notifier).login(type: 'kakao'),
           ),
-          
         ],
       ),
     );
