@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_text_form_field.dart';
 import 'package:jari_bean/common/component/oauth_login_button.dart';
+import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/screens/default_layout.dart';
 import 'package:jari_bean/user/provider/login_provider.dart';
 
@@ -50,6 +51,18 @@ class LoginScreen extends ConsumerWidget {
             imagePath: 'assets/images/kakao_login_large_wide.png',
             onTap: () async => ref.read(loginStateNotifierProvider.notifier).login(type: 'kakao'),
           ),
+
+            Text(
+              ref.watch(fcmTokenProvider)
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await ref.read(fcmProvider).deleteToken();
+                await ref.read(fcmTokenProvider.notifier).getToken();
+                print(ref.read(fcmTokenProvider));
+              },
+              child: Text('삭제!'),
+            )
         ],
       ),
     );

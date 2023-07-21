@@ -79,17 +79,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            Text(
-              ref.watch(fcmTokenProvider)
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await ref.read(fcmProvider).deleteToken();
-                await ref.read(fcmTokenProvider.notifier).getToken();
-                print('hi');
-              },
-              child: Text('삭제!'),
-            )
           ],
         ),
       ),
