@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
@@ -58,11 +59,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment(0.86, -0.52),
           end: Alignment(-0.86, 0.52),
-          colors: [Color(0xFFF8963E), Color(0xFFF86B1C)],
+          colors: [PRIMARY_YELLOW, PRIMARY_ORANGE] ,
         ),
       ),
       child: Center(

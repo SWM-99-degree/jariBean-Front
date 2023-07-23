@@ -75,59 +75,6 @@ void main() async {
     print('onTokenRefresh : $event');
   });
 
-  const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'high_importansssce_channel', // id
-    'High Importansssce Notifications', // title
-    description:
-        'This channel is used for important notifications.', // description
-    importance: Importance.max,
-  );
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  AndroidInitializationSettings initSettingsAndroid =
-      const AndroidInitializationSettings('@mipmap/ic_launcher');
-  DarwinInitializationSettings initSettingsIOS =
-      const DarwinInitializationSettings(
-    requestSoundPermission: true, 
-    requestBadgePermission: true, 
-    requestAlertPermission: true, 
-  );
-  InitializationSettings initSettings = InitializationSettings(
-    android: initSettingsAndroid,
-    iOS: initSettingsIOS,
-  );
-  await flutterLocalNotificationsPlugin.initialize(
-    initSettings,
-  );
-
-  Timer(const Duration(seconds: 10), () {
-    flutterLocalNotificationsPlugin.show(
-      0,
-      '자리빈 Test',
-      '230723',
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          channel.id,
-          channel.name,
-          channelDescription: channel.description,
-          icon: '@mipmap/ic_launcher',
-        ),
-        iOS: const DarwinNotificationDetails(
-          badgeNumber: 1,
-          subtitle: '자리:빈',
-          sound: 'slow_spring_board.aiff',
-        ),
-      ),
-    );
-   });
-
   runApp(
     const ProviderScope(
       child: MaterialApp(

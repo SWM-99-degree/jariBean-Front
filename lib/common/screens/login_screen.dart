@@ -4,6 +4,7 @@ import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_text_form_field.dart';
 import 'package:jari_bean/common/component/oauth_login_button.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
+import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/screens/default_layout.dart';
 import 'package:jari_bean/user/provider/login_provider.dart';
 
@@ -61,6 +62,9 @@ class LoginScreen extends ConsumerWidget {
                 await ref.read(fcmTokenProvider.notifier).getToken();
                 print(ref.read(fcmTokenProvider));
               },
+              child: Text('삭제!'),
+            ),ElevatedButton(
+              onPressed: () => {ref.read(notificationStateNotifierProvider.notifier).show(title: '230723', body: 'this is a test')},
               child: Text('삭제!'),
             )
         ],
