@@ -41,24 +41,6 @@ Future fcmForegroundHandler(
 
   if (message.notification != null) {
     print('Message also contained a notification: ${message.notification!.title} + ${message.notification!.body}');
-    /*
-    flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        message.notification?.title,
-        message.notification?.body,
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel!.id,
-              channel.name,
-              channelDescription: channel.description,
-              icon: '@mipmap/ic_launcher',
-            ),
-            iOS: const DarwinNotificationDetails(
-              badgeNumber: 1,
-              subtitle: 'the subtitle',
-              sound: 'slow_spring_board.aiff',
-            )));
-            */
   }
 }
 
