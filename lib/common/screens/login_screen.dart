@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_text_form_field.dart';
 import 'package:jari_bean/common/component/oauth_login_button.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/screens/default_layout.dart';
 import 'package:jari_bean/user/provider/login_provider.dart';
+import 'package:jari_bean/user/provider/social_login_provider.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -49,24 +52,29 @@ class LoginScreen extends ConsumerWidget {
             height: 10,
           ),
           OauthLoginButton(
-            imagePath: 'assets/images/kakao_login_large_wide.png',
-            onTap: () async => ref.read(loginStateNotifierProvider.notifier).login(type: 'kakao'),
+              imagePath: 'assets/images/kakao_login_large_wide.png',
+              onTap: () async {
+                await ref
+                    .read(socialLoginStateNotifierProvider.notifier)
+                    .login(type: 'kakao');
+                await ref.read(loginStateNotifierProvider.notifier).login();
+              }),
+          Text(ref.watch(fcmTokenProvider)),
+          ElevatedButton(
+            onPressed: () => {
+              ref
+                  .read(notificationStateNotifierProvider.notifier)
+                  .show(title: '230723', body: 'this is a test')
+            },
+            child: Text('알림 보내기!'),
           ),
-
-            Text(
-              ref.watch(fcmTokenProvider)
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await ref.read(fcmProvider).deleteToken();
-                await ref.read(fcmTokenProvider.notifier).getToken();
-                print(ref.read(fcmTokenProvider));
-              },
-              child: Text('삭제!'),
-            ),ElevatedButton(
-              onPressed: () => {ref.read(notificationStateNotifierProvider.notifier).show(title: '230723', body: 'this is a test')},
-              child: Text('삭제!'),
-            )
+          ElevatedButton(
+            onPressed: () async {
+              await ref.read(fcmTokenProvider.notifier).getToken();
+              print(ref.read(fcmTokenProvider));
+            },
+            child: Text('토큰읽기!'),
+          )
         ],
       ),
     );
