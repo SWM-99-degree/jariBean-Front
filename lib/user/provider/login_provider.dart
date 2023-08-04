@@ -3,46 +3,43 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/user/models/login_response_model.dart';
+import 'package:jari_bean/user/models/social_login_response_model.dart';
+import 'package:jari_bean/user/provider/social_login_provider.dart';
 import 'package:jari_bean/user/repository/login_repository.dart';
 
 final loginStateNotifierProvider =
     StateNotifierProvider<LoginStateNotifier, LoginResponseModelBase>((ref) {
-  final loginRepository = ref.watch(loginRepositoryProvider);
+  final userRepository = ref.watch(userRepositoryProvider);
+  final socialLoginResponse = ref.watch(socialLoginStateNotifierProvider);
   final storage = ref.watch(secureStorageProvider);
-  return LoginStateNotifier(loginRepository: loginRepository, storage: storage);
+  return LoginStateNotifier(
+      userRepository: userRepository,
+      storage: storage,
+      socialLoginResponse: socialLoginResponse);
 });
 
 class LoginStateNotifier extends StateNotifier<LoginResponseModelBase> {
-  final LoginRepository loginRepository;
+  final UserRepository userRepository;
   final FlutterSecureStorage storage;
-  LoginStateNotifier({required this.loginRepository, required this.storage})
+  final SocialLoginResponseModelBase socialLoginResponse;
+  LoginStateNotifier(
+      {required this.userRepository,
+      required this.storage,
+      required this.socialLoginResponse})
       : super(LoginResponseModelLoading());
 
-  Future<LoginResponseModelBase> login({required String type}) async {
-    switch (type) {
-      case 'kakao':
-        state = await loginRepository.kakaoLogin();
-        break;
-      case 'google':
-        state = await loginRepository.googleLogin();
-        break;
-      case 'apple':
-        state = await loginRepository.appleLogin();
-        break;
+  login() async {
+    try {
+      state = await userRepository.login(
+        type: (socialLoginResponse as SocialLoginResponseModel).type,
+          body: socialLoginResponse as SocialLoginResponseModel);
+      // fetch token with user info of social login from SocialLoginResponse
+      final pState = state as LoginResponseModel;
+      await storage.write(key: REFRESH_TOKEN_KEY, value: pState.refreshToken);
+      await storage.write(key: ACCESS_TOKEN_KEY, value: pState.accessToken);
+    } catch (e) {
+      print(e);
+      state = LoginResponseModelError(e, '로그인 중 오류가 발생했습니다.');
     }
-    if (state is LoginResponseModelError) {
-      print((state as LoginResponseModelError).errorDescription);
-      return state;
-    }
-
-    final pState = state as LoginResponseModel;
-
-    final accessToken = pState.accessToken;
-    final refreshToken = pState.refreshToken;
-
-    await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
-    await storage.write(key: REFRESH_TOKEN_KEY, value: refreshToken);
-
-    return state;
   }
 }
