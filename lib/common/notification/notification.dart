@@ -1,5 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 
 AndroidNotificationChannel channel = const AndroidNotificationChannel(
   'jari_bean_alert', // id
@@ -16,6 +18,19 @@ DarwinInitializationSettings initSettingsIOS =
   requestSoundPermission: true,
   requestBadgePermission: true,
   requestAlertPermission: true,
+  // notificationCategories: [
+  //   DarwinNotificationCategory(
+  //     'jariBean Alert',
+  //     actions: <DarwinNotificationAction>[
+  //       DarwinNotificationAction.text(
+  //         'text_1',
+  //         'Action 1',
+  //         buttonTitle: 'Send',
+  //         placeholder: 'Placeholder',
+  //       ),
+  //     ],
+  //   )
+  // ],
 );
 
 InitializationSettings initSettings = InitializationSettings(
@@ -45,7 +60,9 @@ final notificationStateNotifierProvider = StateNotifierProvider<
 class NotificationStateNotifier
     extends StateNotifier<FlutterLocalNotificationsPlugin> {
   int id = 0;
-  NotificationStateNotifier() : super(FlutterLocalNotificationsPlugin()) {
+  NotificationAppLaunchDetails? notificationAppLaunchDetails;
+  NotificationStateNotifier()
+      : super(FlutterLocalNotificationsPlugin()) {
     init();
   }
 
@@ -55,16 +72,31 @@ class NotificationStateNotifier
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    await state.initialize(
-      initSettings,
-    );
+    notificationAppLaunchDetails =
+        await state.getNotificationAppLaunchDetails();
+
+    await state.initialize(initSettings,
+        onDidReceiveBackgroundNotificationResponse: 
+            onDidReceiveBackgroundNotification,
+        onDidReceiveNotificationResponse: (details) {
+          if (details.payload == 'test') {
+            print('test success');
+            // router.go('/');
+          }
+        });
   }
 
   Future<void> show({
     required String title,
     required String body,
   }) async {
-    await state.show(id, title, body, notificationDetails);
+    await state.show(id, title, body, notificationDetails, payload: 'test');
     id++;
   }
+}
+
+@pragma('vm:entry-point')
+onDidReceiveBackgroundNotification(NotificationResponse resp) {
+  print('background : ${resp.payload}');
+  // router.go('/');
 }

@@ -1,9 +1,10 @@
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/user/models/login_response_model.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
+import 'package:jari_bean/user/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'login_repository.g.dart';
@@ -22,6 +23,12 @@ abstract class UserRepository {
     @Path('type') required String type,
     @Body() required SocialLoginResponseModel body,
   });
+
+  @GET('/me')
+  @Headers({
+    'accessToken': 'true'
+  })
+  Future<UserModel> me();
 }
 
 final socialLoginRepositoryProvider = Provider<SocialLoginRepository>((ref) {
