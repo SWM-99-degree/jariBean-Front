@@ -1,31 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/screens/splash_screen.dart';
 import 'package:logger/logger.dart' as log;
-import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 var logger = log.Logger();
-
-// Future<void> setupInteractedMessage(FirebaseMessaging fbMsg) async {
-//   RemoteMessage? initialMessage = await fbMsg.getInitialMessage();
-//   // 종료상태에서 클릭한 푸시 알림 메세지 핸들링
-//   if (initialMessage != null) clickMessageEvent(initialMessage);
-//   // 앱이 백그라운드 상태에서 푸시 알림 클릭 하여 열릴 경우 메세지 스트림을 통해 처리
-//   FirebaseMessaging.onMessageOpenedApp.listen(clickMessageEvent);
-// }
-
-// void clickMessageEvent(RemoteMessage message) {
-//   print('message : ${message.notification!.title}');
-//   Get.toNamed('/');
-// }
 
 Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
   NotificationSettings settings = await fbMsg.requestPermission(
@@ -62,26 +46,17 @@ void main() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
+  // FirebaseMessaging.onMessage.listen(fcmForegroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
 
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-    }
-  });
+  FirebaseMessaging.onMessage.listen(fcmMessageHandler);
+  FirebaseMessaging.onBackgroundMessage(fcmMessageHandler);
 
-  FirebaseMessaging.instance.onTokenRefresh.listen((event) {
-    print('onTokenRefresh : $event');
-  });
+  FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
 
   runApp(
     const ProviderScope(
-      child: MaterialApp(
-        home: Scaffold(
-          body: SplashScreen(),
-        ),
-      ),
+      child: _App(),
     ),
   );
 
@@ -114,4 +89,15 @@ void main() async {
   // });
 
   // await setupInteractedMessage(fbMsg);
+}
+
+class _App extends ConsumerWidget {
+  const _App({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
+    return MaterialApp.router(
+      routerConfig: router,
+    );
+  }
 }
