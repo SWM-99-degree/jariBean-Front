@@ -46,7 +46,7 @@ class _UserRepository implements UserRepository {
   }
 
   @override
-  Future<UserModel> me() async {
+  Future<UserModel> getMe() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'accessToken': 'true'};

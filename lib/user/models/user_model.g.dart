@@ -11,12 +11,14 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       socialLoginType:
           $enumDecode(_$SocialLoginTypeEnumMap, json['socialLoginType']),
       imgUrl: json['imgUrl'] as String,
+      isRegistered: json['isRegistered'] as bool?,
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'nickname': instance.nickname,
       'socialLoginType': _$SocialLoginTypeEnumMap[instance.socialLoginType]!,
       'imgUrl': instance.imgUrl,
+      'isRegistered': instance.isRegistered,
     };
 
 const _$SocialLoginTypeEnumMap = {

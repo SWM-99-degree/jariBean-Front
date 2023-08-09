@@ -28,7 +28,7 @@ abstract class UserRepository {
   @Headers({
     'accessToken': 'true'
   })
-  Future<UserModel> me();
+  Future<UserModel> getMe();
 }
 
 final socialLoginRepositoryProvider = Provider<SocialLoginRepository>((ref) {

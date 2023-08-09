@@ -9,11 +9,11 @@ class SocialLoginResponseModelLoading extends SocialLoginResponseModelBase {}
 @JsonSerializable()
 class SocialLoginResponseModel extends SocialLoginResponseModelBase {
   final String code;
-  final String type;
+  // final String type;
 
   SocialLoginResponseModel({
     required this.code,
-    required this.type,
+    // required this.type,
   });
 
   factory SocialLoginResponseModel.fromJson(Map<String, dynamic> json) =>
