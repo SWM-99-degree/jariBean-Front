@@ -10,12 +10,10 @@ SocialLoginResponseModel _$SocialLoginResponseModelFromJson(
         Map<String, dynamic> json) =>
     SocialLoginResponseModel(
       code: json['code'] as String,
-      type: json['type'] as String,
     );
 
 Map<String, dynamic> _$SocialLoginResponseModelToJson(
         SocialLoginResponseModel instance) =>
     <String, dynamic>{
       'code': instance.code,
-      'type': instance.type,
     };
