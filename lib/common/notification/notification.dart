@@ -54,15 +54,18 @@ NotificationDetails notificationDetails = NotificationDetails(
 
 final notificationStateNotifierProvider = StateNotifierProvider<
     NotificationStateNotifier, FlutterLocalNotificationsPlugin>((ref) {
-  return NotificationStateNotifier();
+  final goRouter = ref.read(goRouterProvider);
+  return NotificationStateNotifier(goRouter: goRouter);
 });
 
 class NotificationStateNotifier
     extends StateNotifier<FlutterLocalNotificationsPlugin> {
   int id = 0;
   NotificationAppLaunchDetails? notificationAppLaunchDetails;
-  NotificationStateNotifier()
-      : super(FlutterLocalNotificationsPlugin()) {
+  final GoRouter goRouter;
+  NotificationStateNotifier({
+    required this.goRouter,
+  }) : super(FlutterLocalNotificationsPlugin()) {
     init();
   }
 
@@ -76,14 +79,16 @@ class NotificationStateNotifier
         await state.getNotificationAppLaunchDetails();
 
     await state.initialize(initSettings,
-        onDidReceiveBackgroundNotificationResponse: 
-            onDidReceiveBackgroundNotification,
         onDidReceiveNotificationResponse: (details) {
-          if (details.payload == 'test') {
-            print('test success');
-            // router.go('/');
-          }
-        });
+          // foreground에서 앱이 열려있을 때 누르면 실행되는 로직.
+      if (details.payload == 'test') {
+        goRouter.push('/alert/${details.payload}');
+      }
+    });
+  }
+
+  Future<NotificationAppLaunchDetails?> getAlert() {
+    return state.getNotificationAppLaunchDetails();
   }
 
   Future<void> show({
@@ -95,8 +100,17 @@ class NotificationStateNotifier
   }
 }
 
-@pragma('vm:entry-point')
-onDidReceiveBackgroundNotification(NotificationResponse resp) {
-  print('background : ${resp.payload}');
-  // router.go('/');
-}
+final openedWithNotiProvider =
+    StateProvider<Future<NotificationAppLaunchDetails?>>((ref) async {
+  final notificationProviderLocal =
+      ref.read(notificationStateNotifierProvider.notifier);
+  await notificationProviderLocal.init();
+
+  return notificationProviderLocal.getAlert();
+});
+
+// @pragma('vm:entry-point')
+// onDidReceiveBackgroundNotification(NotificationResponse resp) {
+//   // print('background : ${resp.payload}');
+//   // router.go('/');
+// }
