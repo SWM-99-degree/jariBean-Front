@@ -5,35 +5,31 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final String text;
   final bool isDisabled;
-  final Function() onTap;
+  final Function() onPressed;
   const CustomButton(
       {this.width,
       required this.text,
-      required this.onTap,
+      required this.onPressed,
       this.isDisabled = false,
       Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isDisabled ? null : onTap,
-      child: Container(
-        width: width ?? double.infinity,
-        height: 52,
-        decoration: ShapeDecoration(
-          color: isDisabled == true ? GRAY_2 : PRIMARY_YELLOW,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: TEXTFIELD_INNER,
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+    return ElevatedButton(
+      onPressed: isDisabled ? null : onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isDisabled == true ? GRAY_2 : PRIMARY_YELLOW,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        fixedSize: const Size(335, 52),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: TEXTFIELD_INNER,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );

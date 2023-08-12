@@ -129,6 +129,10 @@ flutter:
           - asset: assets/fonts/Pretendard-Black.otf
             weight: 900
 
+      - family: JariBeanIconPack
+        fonts:
+          - asset: assets/fonts/JariBeanIconPack.ttf
+
 
   # fonts:
   #   - family: Schyler

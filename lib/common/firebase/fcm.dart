@@ -74,7 +74,6 @@
 // //       title: message.notification!.title!, body: message.notification!.body!);
 // //   print('message : ${message.notification!.title}');
 // // }
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/notification/notification.dart';

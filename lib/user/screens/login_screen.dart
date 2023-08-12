@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
-import 'package:jari_bean/common/component/custom_button.dart';
-import 'package:jari_bean/common/component/custom_text_form_field.dart';
 import 'package:jari_bean/common/component/oauth_login_button.dart';
 import 'package:jari_bean/common/const/color.dart';
-import 'package:jari_bean/common/const/data.dart';
-import 'package:jari_bean/common/firebase/fcm.dart';
-import 'package:jari_bean/common/notification/notification.dart';
-import 'package:jari_bean/common/screens/default_layout.dart';
-import 'package:jari_bean/user/provider/login_provider.dart';
-import 'package:jari_bean/user/provider/social_login_provider.dart';
+import 'package:jari_bean/common/layout/default_screen_layout.dart';
+import 'package:jari_bean/user/provider/auth_provider.dart';
 
 class LoginScreen extends ConsumerWidget {
   static String get routerName => '/login';
@@ -23,7 +16,7 @@ class LoginScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
+          const Center(
             child: Text(
               '자리:Bean',
               textAlign: TextAlign.center,
@@ -41,49 +34,20 @@ class LoginScreen extends ConsumerWidget {
               OauthLoginButton(
                 imagePath: 'assets/images/kakao_login_large_wide.png',
                 onPressed: () async {
-                  await ref
-                      .read(socialLoginStateNotifierProvider.notifier)
-                      .login(type: 'kakao');
-                  await ref.read(loginStateNotifierProvider.notifier).login();
+                  ref.read(authProvider).login(type: 'kakao');
                 },
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               OauthLoginButton(
                 imagePath: 'assets/images/apple_login_large_wide.png',
-                onPressed: () async {
-                  await ref
-                      .read(socialLoginStateNotifierProvider.notifier)
-                      .login(type: 'kakao');
-                  await ref.read(loginStateNotifierProvider.notifier).login();
-                },
+                onPressed: () async {},
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               OauthLoginButton(
                 imagePath: 'assets/images/google_login_large_wide.png',
-                onPressed: () async {
-                  await ref
-                      .read(socialLoginStateNotifierProvider.notifier)
-                      .login(type: 'kakao');
-                  await ref.read(loginStateNotifierProvider.notifier).login();
-                },
+                onPressed: () async {},
               ),
-              SizedBox(height: 12),
-              // Text(ref.watch(fcmTokenProvider)),
-              // ElevatedButton(
-              //   onPressed: () => {
-              //     ref
-              //         .read(notificationStateNotifierProvider.notifier)
-              //         .show(title: '230723', body: 'this is a test')
-              //   },
-              //   child: Text('알림 보내기!'),
-              // ),
-              // ElevatedButton(
-              //   onPressed: () async {
-              //     await ref.read(fcmTokenProvider.notifier).getToken();
-              //     print(ref.read(fcmTokenProvider));
-              //   },
-              //   child: Text('토큰읽기!'),
-              // )
+              const SizedBox(height: 12),
             ],
           ),
         ],

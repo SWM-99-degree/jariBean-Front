@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
+import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
-import 'package:jari_bean/common/screens/splash_screen.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,7 +12,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 var logger = log.Logger();
 
 Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
-  NotificationSettings settings = await fbMsg.requestPermission(
+  // NotificationSettings settings =
+  await fbMsg.requestPermission(
     alert: true,
     announcement: false,
     badge: true,
@@ -46,13 +47,14 @@ void main() async {
     sound: true,
   );
 
-  // FirebaseMessaging.onMessage.listen(fcmForegroundHandler);
-  // FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
-
   FirebaseMessaging.onMessage.listen(fcmMessageHandler);
   FirebaseMessaging.onBackgroundMessage(fcmMessageHandler);
 
   FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
+
+  await ProviderContainer().read(openedWithNotiProvider);
+  
+  print('main Completed');
 
   runApp(
     const ProviderScope(
@@ -92,7 +94,7 @@ void main() async {
 }
 
 class _App extends ConsumerWidget {
-  const _App({super.key});
+  const _App();
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
