@@ -21,13 +21,16 @@ class OauthLoginButton extends StatelessWidget {
         shadowColor: Colors.transparent,
       ),
       onPressed: onPressed,
-      child: Container(
-        height: 52,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: isLocal!
-                ? AssetImage(imagePath)
-                : NetworkImage(imagePath) as ImageProvider,
+      child: AspectRatio(
+        aspectRatio: 324 / 49,
+        child: Container(
+          height: 52,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: isLocal!
+                  ? AssetImage(imagePath)
+                  : NetworkImage(imagePath) as ImageProvider,
+            ),
           ),
         ),
       ),

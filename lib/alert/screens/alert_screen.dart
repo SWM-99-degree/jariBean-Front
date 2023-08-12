@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:jari_bean/common/screens/default_layout.dart';
+import 'package:jari_bean/common/layout/default_screen_layout.dart';
 
 class AlertScreen extends StatelessWidget {
   static String get routerName => '/alert';
@@ -11,7 +10,7 @@ class AlertScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultLayout(
       child: Center(
-        child: Text(title+'12312323'),
+        child: Text(title),
       ),
     );
   }

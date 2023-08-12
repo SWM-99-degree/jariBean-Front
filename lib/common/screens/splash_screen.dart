@@ -6,8 +6,6 @@ import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/common/notification/notification.dart';
-import 'package:jari_bean/user/screens/login_screen.dart';
-import 'package:jari_bean/common/screens/root_screen.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -34,7 +32,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    checkToken();
+    // checkToken();
   }
 
   void checkToken() async {
@@ -99,9 +97,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 fontWeight: FontWeight.w700,
               ),
             ),
-            Text(
-              _notification.toString(),
-            ),
+            // Text(
+            //   _notification.toString(),
+            // ),
           ],
         ),
       ),
