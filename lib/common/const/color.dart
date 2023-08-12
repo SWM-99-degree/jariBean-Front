@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-const PRIMARY_BROWN = Color(0xFF9F038);
+const PRIMARY_BROWN = Color(0xFF9F5038);
 
 const PRIMARY_ORANGE = Color(0xFFF86B1C);
 

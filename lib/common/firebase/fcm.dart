@@ -113,7 +113,7 @@ Future<void> fcmForegroundHandler(RemoteMessage message) async {
 }
 
 Future<void> fcmTokenRefreshHandler(String token) async {
-  print('Handling a token refresh ${token}');
+  print('Handling a token refresh $token');
 }
 
 Future<void> fcmMessageHandler(RemoteMessage message) async {
