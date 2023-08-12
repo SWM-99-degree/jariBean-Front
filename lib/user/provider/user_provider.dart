@@ -7,27 +7,24 @@ import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/social_login_provider.dart';
-import 'package:jari_bean/user/repository/login_repository.dart';
+import 'package:jari_bean/user/repository/user_repository.dart';
 
 final userProvider =
-    StateNotifierProvider<LoginStateNotifier, UserModelBase?>((ref) {
+    StateNotifierProvider<UserStateNotifier, UserModelBase?>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
   final socialLoginResponse = ref.watch(socialLoginProvider);
   final storage = ref.watch(secureStorageProvider);
-  return LoginStateNotifier(
+  return UserStateNotifier(
       userRepository: userRepository,
       storage: storage,
       socialLoginResponse: socialLoginResponse);
 });
 
-class LoginStateNotifier extends StateNotifier<UserModelBase?> {
+class UserStateNotifier extends StateNotifier<UserModelBase?> {
   final UserRepository userRepository;
   final FlutterSecureStorage storage;
   final SocialLoginResponseModelBase socialLoginResponse;
-  static bool isRegistered = false;
-  bool get checkRegistered => isRegistered;
-  set setRegistered(bool value) => isRegistered = value;
-  LoginStateNotifier(
+  UserStateNotifier(
       {required this.userRepository,
       required this.storage,
       required this.socialLoginResponse})
@@ -50,6 +47,7 @@ class LoginStateNotifier extends StateNotifier<UserModelBase?> {
         nickname: 'test',
         imgUrl: 'https://picsum.photos/200/300',
         socialLoginType: SocialLoginType.kakao,
+        isRegistered: true,
       ));
       // final resp = await userRepository.getMe();
       state = resp;
@@ -82,7 +80,13 @@ class LoginStateNotifier extends StateNotifier<UserModelBase?> {
         nickname: 'test',
         imgUrl: 'https://picsum.photos/200/300',
         socialLoginType: SocialLoginType.kakao,
+        isRegistered: false,
       ));
+
+      final pState = state as UserModel;
+      if (pState.isRegistered == false) {
+        return;
+      }
     } catch (e) {
       print(e);
       state = UserModelError(e, '로그인 중 오류가 발생했습니다.');
@@ -98,5 +102,34 @@ class LoginStateNotifier extends StateNotifier<UserModelBase?> {
         storage.delete(key: REFRESH_TOKEN_KEY),
       ],
     );
+  }
+
+  register() async {
+    try {
+      state = UserModelLoading();
+
+      // final resp = await userRepository.register();
+
+      /* TestCode #13 */
+      final resp = await Future.value(UserModel(
+        nickname: 'test',
+        imgUrl: 'https://picsum.photos/200/300',
+        socialLoginType: SocialLoginType.kakao,
+        isRegistered: true,
+      ));
+
+      state = resp;
+    } catch (e) {
+      print(e);
+      state = UserModelError(e, '회원가입 중 오류가 발생했습니다.');
+    }
+  }
+
+  bool checkRegistered() {
+    if(state == null || state is UserModelLoading) {
+      return false;
+    }
+    final pState = state as UserModel;
+    return pState.isRegistered ?? false;
   }
 }

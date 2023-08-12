@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
-import 'package:jari_bean/user/repository/login_repository.dart';
+import 'package:jari_bean/user/repository/user_repository.dart';
 
 final socialLoginProvider =
     StateNotifierProvider<SocialLoginStateNotifier, SocialLoginResponseModelBase>((ref) {

@@ -34,7 +34,8 @@ class LoginScreen extends ConsumerWidget {
               OauthLoginButton(
                 imagePath: 'assets/images/kakao_login_large_wide.png',
                 onPressed: () async {
-                  ref.read(authProvider).login(type: 'kakao');
+                  await ref.read(authProvider).login(type: 'kakao');
+                  // if (!((ref.read(userProvider) as UserModel).isRegistered ?? true)) {
                 },
               ),
               const SizedBox(height: 12),
