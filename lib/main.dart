@@ -54,8 +54,6 @@ void main() async {
 
   await ProviderContainer().read(openedWithNotiProvider);
   
-  print('main Completed');
-
   runApp(
     const ProviderScope(
       child: _App(),

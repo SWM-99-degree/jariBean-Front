@@ -28,9 +28,15 @@ class TestScreen extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
+            context.go('/alert/123');
+          },
+          child: const Text('go'),
+        ),
+        ElevatedButton(
+          onPressed: () {
             context.push('/');
           },
-          child: const Text('GOGO'),
+          child: const Text('push'),
         ),
         Text(ref.watch(fcmTokenProvider)),
       ],

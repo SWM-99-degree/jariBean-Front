@@ -3,14 +3,14 @@ import 'package:jari_bean/common/layout/default_screen_layout.dart';
 
 class AlertScreen extends StatelessWidget {
   static String get routerName => '/alert';
-  final String title;
-  const AlertScreen({required this.title, super.key});
+  const AlertScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return DefaultLayout(
+      title: '알림',
       child: Center(
-        child: Text(title),
+        child: Text('Test'),
       ),
     );
   }

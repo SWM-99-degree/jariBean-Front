@@ -80,9 +80,10 @@ class NotificationStateNotifier
 
     await state.initialize(initSettings,
         onDidReceiveNotificationResponse: (details) {
-          // foreground에서 앱이 열려있을 때 누르면 실행되는 로직.
-      if (details.payload == 'test') {
-        goRouter.push('/alert/${details.payload}');
+          //foreground notification handler
+      if (details.payload == 'test-id') {
+        //payload should have notification id
+        goRouter.go('/alert/${details.payload}');
       }
     });
   }
@@ -95,7 +96,8 @@ class NotificationStateNotifier
     required String title,
     required String body,
   }) async {
-    await state.show(id, title, body, notificationDetails, payload: 'test');
+    //payload should have notification id. notification model is initalized at fcm handler.
+    await state.show(id, title, body, notificationDetails, payload: 'test-id');
     id++;
   }
 }

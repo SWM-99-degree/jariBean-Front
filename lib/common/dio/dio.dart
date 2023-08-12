@@ -27,7 +27,6 @@ class CustomInterceptor extends Interceptor{
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // TODO: implement onRequest
     print('[REQ] [${options.method}] ${options.uri}');
 
     if(options.headers['accessToken'] == 'true'){
