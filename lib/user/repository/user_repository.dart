@@ -7,7 +7,7 @@ import 'package:jari_bean/user/models/social_login_response_model.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
 
-part 'login_repository.g.dart';
+part 'user_repository.g.dart';
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   final dio = Dio(); // 딱 한번만 Singleton으로 사용하지 않음
@@ -25,17 +25,17 @@ abstract class UserRepository {
   });
 
   @GET('/me')
-  @Headers({
-    'accessToken': 'true'
-  })
+  @Headers({'accessToken': 'true'})
   Future<UserModel> getMe();
+
+  @POST('/register')
+  @Headers({'accessToken': 'true'})
+  Future<UserModel> register();
 }
 
 final socialLoginRepositoryProvider = Provider<SocialLoginRepository>((ref) {
   return SocialLoginRepository();
 });
-
-
 
 class SocialLoginRepository {
   SocialLoginRepository();
@@ -57,7 +57,6 @@ class SocialLoginRepository {
 }
 
 abstract class SocialLogin {
-
   static Future<SocialLoginResponseModelBase> socialLogin(
       {required String loginUrl, required String callbackUrlScheme}) async {
     try {
@@ -69,5 +68,4 @@ abstract class SocialLogin {
       return SocialLoginResponseModelError(e, '로그인 실패!');
     }
   }
-
 }

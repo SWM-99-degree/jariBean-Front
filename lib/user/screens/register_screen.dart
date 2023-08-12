@@ -11,23 +11,31 @@ class RegisterScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultLayout(
-      title: '회원가입',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: CustomButton(
-              text: '회원가입',
-              onPressed: () {
-                ref.read(userProvider.notifier).setRegistered = true;
-                context.go('/');
-              },
-            ),
-          )
-        ],
+    return WillPopScope(
+      child: DefaultLayout(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Column(
+                children: [
+                  CustomButton(
+                    text: '회원가입',
+                    onPressed: () {
+                      ref.read(userProvider.notifier).register();
+                      context.go('/alert');
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
+      onWillPop: () async {
+        return false;
+      },
     );
   }
 }
