@@ -7,7 +7,7 @@ class MatchingHomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Column(
-      children: [
+      children: const [
         Center(
           child: Text('MatchingHomeScreen'),
         )

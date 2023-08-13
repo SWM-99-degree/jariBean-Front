@@ -16,7 +16,7 @@ class HomeScreen extends ConsumerWidget {
         gradient: LinearGradient(
           begin: Alignment(0.86, -0.52),
           end: Alignment(-0.86, 0.52),
-          colors: [PRIMARY_YELLOW, PRIMARY_ORANGE],
+          colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
         ),
       ),
       child: Column(
