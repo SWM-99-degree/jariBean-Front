@@ -18,7 +18,7 @@ class SplashScreen extends StatelessWidget {
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Text(
               '자리:Bean',
               textAlign: TextAlign.center,

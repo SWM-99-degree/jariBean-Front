@@ -5,6 +5,7 @@ import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/screens/test_screen.dart';
 import 'package:jari_bean/history/screens/history_screen.dart';
+import 'package:jari_bean/common/screens/home_screen.dart';
 import 'package:jari_bean/user/screens/profile_screen.dart';
 
 class RootScreen extends ConsumerStatefulWidget {
@@ -71,11 +72,24 @@ class _RootScreenState extends ConsumerState<RootScreen>
           controller: controller,
           physics: const NeverScrollableScrollPhysics(),
           children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0.86, -0.52),
+                  end: Alignment(-0.86, 0.52),
+                  colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
+                ),
+              ),
+              child: SafeArea(
+                child: Center(
+                  child: HomeScreen(),
+                ),
+              ),
+            ),
             Center(child: TestScreen()),
             Center(
               child: HistoryScreen(),
             ),
-            Center(child: Container(child: Text('주문'))),
             ProfileScreen()
           ]),
     );
