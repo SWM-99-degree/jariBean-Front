@@ -10,8 +10,12 @@ const PRIMARY_YELLOW = Color(0xFFF8963E);
 
 const TEXTFIELD_INNER = Color(0xFFFFFFFF);
 
+const GRAY_1 = Color(0xFFF2F2F2);
+
 const GRAY_2 = Color(0xFFCCCCCC);
 
 const GRAY_3 = Color(0xFF999999);
 
 const TEXT_COLOR = Color(0xFF000000);
+
+const TEXT_SUBTITLE_COLOR = Color(0xFF666666);
