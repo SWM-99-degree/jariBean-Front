@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/screens/alert_details_screen.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
@@ -89,7 +88,7 @@ final goRouterProvider = Provider<GoRouter>(
             GoRoute(
               path: 'alert',
               name: AlertScreen.routerName,
-              builder: (_, state) => AlertScreen(),
+              builder: (_, state) => const AlertScreen(),
               routes: [
                 GoRoute(
                   path: ":id",
