@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
@@ -53,7 +54,7 @@ void main() async {
   FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
 
   await ProviderContainer().read(openedWithNotiProvider);
-  
+
   runApp(
     const ProviderScope(
       child: _App(),
@@ -96,8 +97,11 @@ class _App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
-    return MaterialApp.router(
-      routerConfig: router,
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      builder: (context, child) => MaterialApp.router(
+        routerConfig: router,
+      ),
     );
   }
 }
