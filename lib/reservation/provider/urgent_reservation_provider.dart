@@ -37,7 +37,6 @@ class UrgentReservationStateNotifier
       title: resp.cafeDescriptionModel.title,
       imgUrl: resp.cafeDescriptionModel.imgUrl,
       cafeAddress: resp.cafeDescriptionModel.cafeAddress,
-      timeLeft: initTimeLeft,
     );
   }
 }
