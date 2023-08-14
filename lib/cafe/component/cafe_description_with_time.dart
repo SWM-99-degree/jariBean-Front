@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
 
-class CafeDescriptionWithTimeLeft extends StatelessWidget {
+class CafeDescriptionWithTimeLeft extends ConsumerWidget {
   final String id;
   final String title;
   final String cafeAddress;
-  final int timeLeft;
   const CafeDescriptionWithTimeLeft({
     required this.id,
     required this.title,
     required this.cafeAddress,
-    required this.timeLeft,
     super.key,
   });
 
   factory CafeDescriptionWithTimeLeft.fromModel({
     required CafeDescriptionWithTimeLeftModel model,
-  }){
+  }) {
     return CafeDescriptionWithTimeLeft(
       id: model.id,
       title: model.title,
       cafeAddress: model.cafeAddress,
-      timeLeft: model.timeLeft,
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final timeLeft = ref.watch(reservationTimerProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

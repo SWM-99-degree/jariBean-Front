@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,6 +11,7 @@ import 'package:jari_bean/reservation/component/search_box.dart';
 import 'package:jari_bean/reservation/component/sqaured_cafe_card.dart';
 import 'package:jari_bean/reservation/model/cafe_description_with_rating_model.dart';
 import 'package:jari_bean/reservation/model/service_area_model.dart';
+import 'package:jari_bean/reservation/provider/urgent_reservation_provider.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
 
@@ -38,13 +37,14 @@ class ReservationHomeScreen extends ConsumerWidget {
       ServiceAreaModel(
           id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=7'),
     ];
-    final urgentReservation = CafeDescriptionWithTimeLeftModel(
-      id: '123123',
-      title: '스타벅스 고대점',
-      cafeAddress: '서울특별시 성북구 고려대로 24길 51',
-      timeLeft: Random().nextInt(86400),
-      imgUrl: 'https://picsum.photos/250',
-    );
+    // final urgentReservation = CafeDescriptionWithTimeLeftModel(
+    //   id: '123123',
+    //   title: '스타벅스 고대점',
+    //   cafeAddress: '서울특별시 성북구 고려대로 24길 51',
+    //   timeLeft: Random().nextInt(86400),
+    //   imgUrl: 'https://picsum.photos/250',
+    // );
+    final urgentReservation = ref.watch(urgentReservationProvider);
     final hotplaceCafes = [
       CafeDescriptionWithRatingModel(
         id: '234234',
@@ -85,7 +85,6 @@ class ReservationHomeScreen extends ConsumerWidget {
         title: '자리 예약 하기',
         description: '장소를 기준으로 카페를 찾을 수 있어요',
       ),
-      // build horizontal scroll view and display CircleLocationButton
       Padding(
         padding: EdgeInsets.only(top: 12.h),
         child: SizedBox(
@@ -123,9 +122,10 @@ class ReservationHomeScreen extends ConsumerWidget {
       SizedBox(
         height: 8.h,
       ),
-      DefaultCardLayout.fromModel(
-        model: urgentReservation,
-      ),
+      if (urgentReservation is CafeDescriptionWithTimeLeftModel)
+        DefaultCardLayout.fromModel(
+          model: urgentReservation,
+        ),
       SizedBox(
         height: 32.h,
       ),
