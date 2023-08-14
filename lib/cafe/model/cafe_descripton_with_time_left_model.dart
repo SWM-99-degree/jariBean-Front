@@ -10,4 +10,15 @@ class CafeDescriptionWithTimeLeftModel extends CafeDescriptionModel {
     required super.cafeAddress,
     required this.timeLeft,
   });
+
+  CafeDescriptionWithTimeLeftModel updateTimeLeft({
+    required int nextTimeLeft,
+  }) {
+    return CafeDescriptionWithTimeLeftModel(
+        id: id,
+        title: title,
+        imgUrl: imgUrl,
+        cafeAddress: cafeAddress,
+        timeLeft: nextTimeLeft);
+  }
 }

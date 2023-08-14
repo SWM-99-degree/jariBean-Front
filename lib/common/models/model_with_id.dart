@@ -1,4 +1,4 @@
 abstract class IModelWithId {
-  String id;
+  final String id;
   IModelWithId({required this.id});
 }
