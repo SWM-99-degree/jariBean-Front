@@ -2,7 +2,7 @@ import 'package:jari_bean/common/models/model_with_id.dart';
 
 class BasicCardModel implements IModelWithId {
   @override
-  String id;
+  final String id;
   final String title;
   final String imgUrl;
 
