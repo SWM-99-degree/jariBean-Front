@@ -2,23 +2,20 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/models/default_transfer_model.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
 
-  final storage = ref.watch<FlutterSecureStorage>(secureStorageProvider); 
+  final storage = ref.watch<FlutterSecureStorage>(secureStorageProvider);
 
-  dio.interceptors.add(
-    CustomInterceptor(storage: storage)
-  );
+  dio.interceptors.add(CustomInterceptor(storage: storage));
 
   return dio;
-
 });
 
-class CustomInterceptor extends Interceptor{
-
+class CustomInterceptor extends Interceptor {
   final FlutterSecureStorage storage;
 
   CustomInterceptor({
@@ -26,10 +23,11 @@ class CustomInterceptor extends Interceptor{
   });
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     print('[REQ] [${options.method}] ${options.uri}');
 
-    if(options.headers['accessToken'] == 'true'){
+    if (options.headers['accessToken'] == 'true') {
       options.headers.remove('accessToken');
 
       final token = await storage.read(key: ACCESS_TOKEN_KEY);
@@ -37,9 +35,8 @@ class CustomInterceptor extends Interceptor{
       options.headers.addAll({
         'authorization': 'Bearer $token',
       });
-     
     }
-    if(options.headers['refreshToken'] == 'true'){
+    if (options.headers['refreshToken'] == 'true') {
       options.headers.remove('refreshToken');
 
       final token = await storage.read(key: REFRESH_TOKEN_KEY);
@@ -47,20 +44,22 @@ class CustomInterceptor extends Interceptor{
       options.headers.addAll({
         'authorization': 'Bearer $token',
       });
-     
     }
     super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('[RES] [${response.requestOptions.method}] ${response.requestOptions.uri}');
+    final pResponse = DefualtTransferModel.fromJson(response.data);
 
-    return super.onResponse(response, handler);
+    print(
+        '[RES] [${response.requestOptions.method}] ${response.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}');
+
+    return super.onResponse(pResponse.data, handler);
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) async{
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     /* 401 Error occurred
     -> 토큰을 재발급 받는 시도
     -> 토큰이 재발급 되면
@@ -73,45 +72,44 @@ class CustomInterceptor extends Interceptor{
     handler.resolve -> 에러 '해결' 시키기 */
 
     //refreshToken이 없다.
-    if(refreshToken == null){
+    if (refreshToken == null) {
       handler.reject(err);
     }
 
     final isStatus401 = err.response?.statusCode == 401;
-    final isPathRefresh = err.requestOptions.path == '/auth/token'; //token 리프레시 하다가 발생한 에러인가?
+    final isPathRefresh =
+        err.requestOptions.path == '/auth/token'; //token 리프레시 하다가 발생한 에러인가?
 
-    if(isStatus401 && !isPathRefresh){
+    if (isStatus401 && !isPathRefresh) {
       final dio = Dio();
 
       try {
-      final resp = await dio.post(
-        '$ip/auth/token',
-        options: Options(
-          headers: {
-          'authorization': 'Bearer $refreshToken',
-          },
-        ),
-      );
-      final accessToken = resp.data['accessToken'];
+        final resp = await dio.post(
+          '$ip/auth/token',
+          options: Options(
+            headers: {
+              'authorization': 'Bearer $refreshToken',
+            },
+          ),
+        );
+        final accessToken = resp.data['accessToken'];
 
-      final options = err.requestOptions;
+        final options = err.requestOptions;
 
-      options.headers.addAll({
-        'authorization': 'Bearer $accessToken',
-      });
+        options.headers.addAll({
+          'authorization': 'Bearer $accessToken',
+        });
 
-      await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
+        await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
 
-      final response = await dio.fetch(err.requestOptions);
+        final response = await dio.fetch(err.requestOptions);
 
-      return handler.resolve(response);
-      }
-      on DioException catch(e){
+        return handler.resolve(response);
+      } on DioException catch (e) {
         return handler.reject(e);
       }
     }
 
     return handler.reject(err);
   }
-  
 }
