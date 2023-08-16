@@ -119,6 +119,31 @@ class MatchingHomeScreen extends ConsumerWidget {
         SizedBox(
           height: 20.h,
         ),
+        CustomButton(
+          text: '매칭하기',
+          onPressed: showCustomDialog(
+            context: context,
+            // model: CustomDialogModel(
+            //   title: '매칭 신청 완료',
+            //   description: '매칭 신청이 완료되었습니다.\n매칭이 성사되면 알림을 통해 알려드릴게요.',
+            //   customButtonModel: CustomButtonModel(
+            //     title: '확인',
+            //   ),
+            // ),
+            model: CustomDialogWithTwoButtonsModel(
+              title: '매칭에 실패했어요',
+              description: '같은 조건으로 매칭을 다시 시도해볼까요?',
+              customButtonModel: CustomButtonModel(
+                title: '취소',
+                isDismiss: true,
+              ),
+              customButtonModelSecond: CustomButtonModel(
+                title: '다시하기',
+                onPressed: () => context.go('/alert/test-id'),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
