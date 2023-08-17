@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
+import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/reservation/model/service_area_model.dart';
 
 class CircledLocationButton extends StatelessWidget {
@@ -25,29 +26,29 @@ class CircledLocationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // elvated button with photo inside, make it circle
-
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        width: 60.w,
-        height: 60.w,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: NetworkImage(imgUrl),
-            fit: BoxFit.cover,
+    return Material(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(100),
+        onTap: () {},
+        child: Ink(
+          width: 60.w,
+          height: 60.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              image: NetworkImage(imgUrl),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          serivceAreaName,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12.sp,
-            fontFamily: 'Pretendard',
-            fontWeight: FontWeight.w800,
-            height: 1.5,
+          child: Center(
+            child: Text(
+              serivceAreaName,
+              style: defaultFontStyleWhite.copyWith(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w800,
+                height: 1.5,
+              ),
+            ),
           ),
         ),
       ),
