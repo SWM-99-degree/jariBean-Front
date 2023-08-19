@@ -44,6 +44,14 @@ class ReservationHomeScreen extends ConsumerWidget {
     //   timeLeft: Random().nextInt(86400),
     //   imgUrl: 'https://picsum.photos/250',
     // );
+    final user = ref.watch(userProvider);
+    if (user is! UserModel) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    final userModel = user;
+
     final urgentReservation = ref.watch(urgentReservationProvider);
     final hotplaceCafes = [
       CafeDescriptionWithRatingModel(
@@ -116,7 +124,7 @@ class ReservationHomeScreen extends ConsumerWidget {
       ),
       _buildTextDisplay(
         title: '예약 내역',
-        description: '${user.nickname}님의 예약 내역을 볼 수 있어요',
+        description: '${userModel.nickname}님의 예약 내역을 볼 수 있어요',
         infoTitle: '전체보기',
       ),
       SizedBox(

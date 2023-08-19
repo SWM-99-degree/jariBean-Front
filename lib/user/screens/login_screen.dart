@@ -11,47 +11,51 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultLayout(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Center(
-            child: Text(
-              '자리:Bean',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: PRIMARY_YELLOW,
-                fontSize: 40,
-                fontFamily: 'Gmarket Sans TTF',
-                fontWeight: FontWeight.w700,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: DefaultLayout(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Center(
+              child: Text(
+                '자리:Bean',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: PRIMARY_YELLOW,
+                  fontSize: 40,
+                  fontFamily: 'Gmarket Sans TTF',
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              OauthLoginButton(
-                imagePath: 'assets/images/kakao_login_large_wide.png',
-                onPressed: () async {
-                  await ref.read(authProvider).login(type: 'kakao');
-                  // if (!((ref.read(userProvider) as UserModel).isRegistered ?? true)) {
-                },
-              ),
-              const SizedBox(height: 12),
-              OauthLoginButton(
-                imagePath: 'assets/images/apple_login_large_wide.png',
-                onPressed: () async {},
-              ),
-              const SizedBox(height: 12),
-              OauthLoginButton(
-                imagePath: 'assets/images/google_login_large_wide.png',
-                onPressed: () async {},
-              ),
-              const SizedBox(height: 12),
-            ],
-          ),
-        ],
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                OauthLoginButton(
+                  imagePath: 'assets/images/kakao_login_large_wide.png',
+                  onPressed: () async {
+                    await ref.read(authProvider).login(type: 'kakao');
+                    // if (!((ref.read(userProvider) as UserModel).isRegistered ?? true)) {
+                  },
+                ),
+                const SizedBox(height: 12),
+                OauthLoginButton(
+                  imagePath: 'assets/images/apple_login_large_wide.png',
+                  onPressed: () async {
+                  },
+                ),
+                const SizedBox(height: 12),
+                OauthLoginButton(
+                  imagePath: 'assets/images/google_login_large_wide.png',
+                  onPressed: () async {},
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
