@@ -34,9 +34,16 @@ class SquaredCafeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 120.w,
+    // button using InkResponse
+    return MaterialButton(
+      padding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+      onPressed: () {
+      },
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
@@ -56,31 +63,36 @@ class SquaredCafeCard extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          Row(
-            children: [
-              const Icon(
-                Icons.star,
-                color: Colors.yellow,
-              ),
-              Text(
-                rating.toString(),
-                style: defaultFontStyleBlack.copyWith(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 36.h,
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
                 ),
-              ),
-              SizedBox(
-                width: 4.w,
-              ),
-              Text(
-                cafeAddress,
-                style: defaultFontStyleBlack.copyWith(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w400,
-                  color: TEXT_SUBTITLE_COLOR,
+                Text(
+                  rating.toString(),
+                  style: defaultFontStyleBlack.copyWith(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              )
-            ],
+                SizedBox(
+                  width: 4.w,
+                ),
+                Text(
+                  cafeAddress,
+                  style: defaultFontStyleBlack.copyWith(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w400,
+                    color: TEXT_SUBTITLE_COLOR,
+                  ),
+                ),
+              ],
+            ),
           )
         ],
       ),

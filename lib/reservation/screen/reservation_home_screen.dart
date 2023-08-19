@@ -84,7 +84,7 @@ class ReservationHomeScreen extends ConsumerWidget {
       Padding(
         padding: EdgeInsets.only(top: 12.h),
         child: SizedBox(
-          height: 60.h,
+          height: 60.w,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.only(left: 20.w),
@@ -133,7 +133,7 @@ class ReservationHomeScreen extends ConsumerWidget {
       Padding(
         padding: EdgeInsets.only(top: 12.h),
         child: SizedBox(
-          height: 200.h,
+          height: 250.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.only(left: 20.w),

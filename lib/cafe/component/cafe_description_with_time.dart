@@ -35,7 +35,7 @@ class CafeDescriptionWithTimeLeft extends ConsumerWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: defaultFontStyleBlack.copyWith(
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
             height: 1.5,
@@ -43,22 +43,26 @@ class CafeDescriptionWithTimeLeft extends ConsumerWidget {
         ),
         Text(
           cafeAddress,
-          style: TextStyle(
+          style: defaultFontStyleBlack.copyWith(
             fontSize: 12.sp,
             fontWeight: FontWeight.w500,
+            color: TEXT_SUBTITLE_COLOR,
           ),
         ),
         SizedBox(
           height: 8.h,
         ),
-        SizedBox(
-          height: 30.h,
-          child: FilledButton(
-            onPressed: () {},
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                PRIMARY_ORANGE,
-              ),
+        FilledButton(
+          onPressed: () {},
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+              PRIMARY_YELLOW,
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 6.h,
             ),
             child: _buildTimeLeft(timeLeft),
           ),
