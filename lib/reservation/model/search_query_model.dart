@@ -9,6 +9,13 @@ enum TableType {
   BACKREST,
 }
 
+final tableTypeButtonName = {
+  TableType.HIGH: '높은의자',
+  TableType.RECTANGLE: '직사각형',
+  TableType.PLUG: '콘센트',
+  TableType.BACKREST: '등받이',
+};
+
 class SearchQueryModel {
   final String searchText;
   final String? serviceAreaId;
