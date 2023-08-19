@@ -116,6 +116,12 @@ class _App extends ConsumerWidget {
       designSize: const Size(375, 812),
       builder: (context, child) => MaterialApp.router(
         routerConfig: router,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaleFactor: 1.0,
+          ),
+          child: child!,
+        ),
       ),
     );
   }
