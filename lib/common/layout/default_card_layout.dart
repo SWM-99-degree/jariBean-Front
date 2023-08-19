@@ -32,10 +32,11 @@ class DefaultCardLayout extends StatelessWidget {
       );
     }
     return DefaultCardLayout(
-        id: model.id,
-        name: model.title,
-        imgUrl: model.imgUrl,
-        child: Text('미구현'));
+      id: model.id,
+      name: model.title,
+      imgUrl: model.imgUrl,
+      child: Text('미구현'),
+    );
   }
 
   @override
@@ -44,14 +45,8 @@ class DefaultCardLayout extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(top: 8.h),
         child: Container(
-          padding: EdgeInsets.only(
-            left: 20.w,
-            right: 20.w,
-            top: 16.h,
-            bottom: 16.h,
-          ),
+          padding: EdgeInsets.all(16.w),
           width: 335.w,
-          height: 116.h,
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               side: BorderSide(width: 1.w, color: PRIMARY_ORANGE),
