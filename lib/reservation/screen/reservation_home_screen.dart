@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
@@ -10,7 +11,7 @@ import 'package:jari_bean/reservation/component/circled_location_button.dart';
 import 'package:jari_bean/reservation/component/search_box_button.dart';
 import 'package:jari_bean/reservation/component/sqaured_cafe_card.dart';
 import 'package:jari_bean/reservation/model/cafe_description_with_rating_model.dart';
-import 'package:jari_bean/reservation/model/service_area_model.dart';
+import 'package:jari_bean/reservation/provider/service_area_provider.dart';
 import 'package:jari_bean/reservation/provider/urgent_reservation_provider.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
@@ -20,30 +21,6 @@ class ReservationHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider) as UserModel;
-    final serviceAreas = [
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=1'),
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=2'),
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=3'),
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=4'),
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=5'),
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=6'),
-      ServiceAreaModel(
-          id: '234234', name: '고려대', imgUrl: 'https://picsum.photos/250?id=7'),
-    ];
-    // final urgentReservation = CafeDescriptionWithTimeLeftModel(
-    //   id: '123123',
-    //   title: '스타벅스 고대점',
-    //   cafeAddress: '서울특별시 성북구 고려대로 24길 51',
-    //   timeLeft: Random().nextInt(86400),
-    //   imgUrl: 'https://picsum.photos/250',
-    // );
     final user = ref.watch(userProvider);
     if (user is! UserModel) {
       return Center(
@@ -52,6 +29,7 @@ class ReservationHomeScreen extends ConsumerWidget {
     }
     final userModel = user;
 
+    final serviceAreas = ref.watch(serviceAreaProvider);
     final urgentReservation = ref.watch(urgentReservationProvider);
     final hotplaceCafes = [
       CafeDescriptionWithRatingModel(
@@ -91,6 +69,7 @@ class ReservationHomeScreen extends ConsumerWidget {
           child: SearchBoxButton(
             hintText: '지역, 카페명 검색',
             onPressed: () {
+              context.push('/search');
             },
           ),
         ),
