@@ -15,4 +15,10 @@ class Utils {
     );
   }
 
+  static getButtonNameFromEnum<T>({
+    required T enumValue,
+    required Map<T, String> map,
+  }) {
+    return map[enumValue] ?? '';
+  }
 }
