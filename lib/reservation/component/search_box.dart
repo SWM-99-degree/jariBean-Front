@@ -2,56 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/reservation/layout/default_search_box_layout.dart';
+import 'package:jari_bean/reservation/provider/search_text_provider.dart';
 
-class SearchBox extends ConsumerStatefulWidget {
+class SearchBox extends ConsumerWidget {
   final String hintText;
-  final Function(String)? onChanged;
-  final bool readOnly;
+  final String? searchArea;
 
-  const SearchBox(
-      {required this.hintText,
-      this.onChanged,
-      this.readOnly = false,
-      super.key});
+  const SearchBox({
+    required this.hintText,
+    this.searchArea,
+    super.key,
+  });
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SearchBoxState();
-}
-
-class _SearchBoxState extends ConsumerState<SearchBox> {
-  @override
-  Widget build(BuildContext context) {
-    final baseBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      borderSide: BorderSide(
-        color: Colors.transparent,
-      ),
-    );
-
-    return Center(
-      child: SizedBox(
-        width: 335.w,
-        child: TextFormField(
-          cursorColor: GRAY_3,
-          onChanged: widget.onChanged,
-          readOnly: widget.readOnly,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.all(20),
-            hintText: widget.hintText,
-            hintStyle: TextStyle(color: GRAY_3, fontSize: 14.sp),
-            fillColor: GRAY_1,
-            filled: true,
-            // 배경색을 넣으려면 filled: true를 넣어줘야함
-            border: baseBorder,
-            enabledBorder: baseBorder,
-            focusedBorder: baseBorder.copyWith(
-              borderSide: baseBorder.borderSide.copyWith(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DefaultSearchBoxLayout(
+      onPressed: null,
+      children: [
+        Text(
+          searchArea != null ? '${searchArea!}｜' : '',
+          style: defaultFontStyleBlack.copyWith(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Expanded(
+          child: TextFormField(
+            textAlignVertical: TextAlignVertical.center,
+            cursorColor: GRAY_3,
+            style: defaultFontStyleBlack.copyWith(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+            ),
+            onChanged: (value) {
+              ref.read(searchTextProvider.notifier).searchText = value;
+            },
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: defaultFontStyleBlack.copyWith(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
                 color: GRAY_3,
               ),
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              focusColor: Colors.transparent,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/reservation/component/circled_location_button.dart';
-import 'package:jari_bean/reservation/component/search_box.dart';
+import 'package:jari_bean/reservation/component/search_box_button.dart';
 import 'package:jari_bean/reservation/component/sqaured_cafe_card.dart';
 import 'package:jari_bean/reservation/model/cafe_description_with_rating_model.dart';
 import 'package:jari_bean/reservation/model/service_area_model.dart';
@@ -81,10 +81,19 @@ class ReservationHomeScreen extends ConsumerWidget {
       SizedBox(
         height: 20.h,
       ),
-      SearchBox(
-        hintText: '지역, 카페명 검색',
-        onChanged: (value) {},
-        readOnly: true,
+      Padding(
+        padding: EdgeInsets.only(
+          left: 20.w,
+          right: 20.w,
+        ),
+        child: Hero(
+          tag: 'searchBox',
+          child: SearchBoxButton(
+            hintText: '지역, 카페명 검색',
+            onPressed: () {
+            },
+          ),
+        ),
       ),
       SizedBox(
         height: 24.h,
