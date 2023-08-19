@@ -9,6 +9,7 @@ import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 var logger = log.Logger();
 
@@ -53,11 +54,13 @@ void main() async {
 
   FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
 
-  await ProviderContainer().read(openedWithNotiProvider);
 
-  runApp(
-    const ProviderScope(
-      child: _App(),
+  await ProviderContainer().read(openedWithNotiProvider);
+  initializeDateFormatting().then(
+    (_) => runApp(
+      const ProviderScope(
+        child: _App(),
+      ),
     ),
   );
 
