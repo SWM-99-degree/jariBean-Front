@@ -118,6 +118,13 @@ enum TableUsage {
   date,
 }
 
+final tableUsageButtonName = {
+  TableUsage.study: '스터디',
+  TableUsage.conference: '회의',
+  TableUsage.chat: '수다',
+  TableUsage.date: '데이트',
+};
+
 final tableUsageProvider =
     StateNotifierProvider.autoDispose<TableUsageStateNotifier, TableUsage?>(
   (ref) {
