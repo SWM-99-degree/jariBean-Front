@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
@@ -54,6 +55,17 @@ void main() async {
 
   FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
 
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.grey[50],
+    ),
+  );
 
   await ProviderContainer().read(openedWithNotiProvider);
   initializeDateFormatting().then(
