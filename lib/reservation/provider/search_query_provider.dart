@@ -110,3 +110,60 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
     return state.tableOptionList.contains(tableType);
   }
 }
+
+enum TableUsage {
+  study,
+  conference,
+  chat,
+  date,
+}
+
+final tableUsageProvider =
+    StateNotifierProvider.autoDispose<TableUsageStateNotifier, TableUsage?>(
+  (ref) {
+    final searchQuery = ref.watch(searchQueryProvider.notifier);
+    return TableUsageStateNotifier(
+      searchQueryModel: searchQuery,
+    );
+  },
+);
+
+class TableUsageStateNotifier extends StateNotifier<TableUsage?> {
+  final SearchQueryStateNotifier searchQueryModel;
+  TableUsageStateNotifier({
+    required this.searchQueryModel,
+  }) : super(null);
+
+  set tableUsage(TableUsage usage) {
+    updateQueryOptions(usage);
+    state = usage;
+  }
+
+  void updateQueryOptions(TableUsage usage) {
+    switch (usage) {
+      case TableUsage.study:
+        searchQueryModel.tableOptionList = [
+          TableType.HIGH,
+          TableType.BACKREST,
+          TableType.PLUG,
+          TableType.RECTANGLE,
+        ];
+        break;
+      case TableUsage.conference:
+        searchQueryModel.tableOptionList = [
+          TableType.HIGH,
+          TableType.BACKREST,
+        ];
+        break;
+      case TableUsage.chat:
+        searchQueryModel.tableOptionList = [];
+        break;
+      case TableUsage.date:
+        searchQueryModel.tableOptionList = [];
+        break;
+      default:
+        searchQueryModel.tableOptionList = [];
+        break;
+    }
+  }
+}
