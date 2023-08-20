@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/user/models/login_response_model.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
 import 'package:jari_bean/user/models/user_model.dart';
@@ -10,27 +11,40 @@ import 'package:retrofit/retrofit.dart';
 part 'user_repository.g.dart';
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
-  final dio = Dio(); // 딱 한번만 Singleton으로 사용하지 않음
   return UserRepository(dio, baseUrl: '$ip/user');
+  final dio = ref.watch(dioProvider);
 });
 
 @RestApi()
 abstract class UserRepository {
   factory UserRepository(Dio dio, {String baseUrl}) = _UserRepository;
 
-  @POST('/login/{type}')
-  Future<LoginResponseModel> login({
-    @Path('type') required String type,
-    @Body() required SocialLoginResponseModel body,
-  });
-
   @GET('/me')
   @Headers({'accessToken': 'true'})
   Future<UserModel> getMe();
 
-  @POST('/register')
+  @PUT('/register')
   @Headers({'accessToken': 'true'})
   Future<UserModel> register();
+}
+
+final loginRepositoryProvider = Provider<LoginRepository>((ref) {
+  final dio = ref.watch(dioProvider);
+  return LoginRepository(
+    dio,
+    baseUrl: '$ip/login',
+  );
+});
+
+@RestApi()
+abstract class LoginRepository {
+  factory LoginRepository(Dio dio, {String baseUrl}) = _LoginRepository;
+
+  @POST('/{type}')
+  Future<LoginResponseModel> login({
+    @Path('type') required String type,
+    @Body() required SocialLoginResponseModel body,
+  });
 }
 
 final socialLoginRepositoryProvider = Provider<SocialLoginRepository>((ref) {
