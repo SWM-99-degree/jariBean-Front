@@ -33,7 +33,7 @@ class CustomInterceptor extends Interceptor {
       final token = await storage.read(key: ACCESS_TOKEN_KEY);
 
       options.headers.addAll({
-        'authorization': 'Bearer $token',
+        'ACCESS_AUTHORIZATION': token,
       });
     }
     if (options.headers['refreshToken'] == 'true') {
@@ -42,7 +42,7 @@ class CustomInterceptor extends Interceptor {
       final token = await storage.read(key: REFRESH_TOKEN_KEY);
 
       options.headers.addAll({
-        'authorization': 'Bearer $token',
+        'ACCESS_AUTHORIZATION': token,
       });
     }
     super.onRequest(options, handler);
@@ -54,8 +54,8 @@ class CustomInterceptor extends Interceptor {
 
     print(
         '[RES] [${response.requestOptions.method}] ${response.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}');
-
-    return super.onResponse(pResponse.data, handler);
+    response.data = pResponse.data;
+    return super.onResponse(response, handler);
   }
 
   @override
@@ -64,14 +64,20 @@ class CustomInterceptor extends Interceptor {
     -> 토큰을 재발급 받는 시도
     -> 토큰이 재발급 되면
     -> 새로운 토큰으로 요청 */
-    print('[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri}');
+    late final DefualtTransferModel pResponse;
+    try {
+      print(err.response?.data);
+      pResponse = DefualtTransferModel.fromJson(err.response?.data);
+      print(
+          '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}');
+    } catch (e) {
+      print(
+          '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : 500 Internal Server Error');
+    }
 
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
 
-    /* handler.reject -> 에러 '발생'시키기
-    handler.resolve -> 에러 '해결' 시키기 */
 
-    //refreshToken이 없다.
     if (refreshToken == null) {
       handler.reject(err);
     }
@@ -88,7 +94,7 @@ class CustomInterceptor extends Interceptor {
           '$ip/auth/token',
           options: Options(
             headers: {
-              'authorization': 'Bearer $refreshToken',
+              'ACCESS_AUTHORIZATION': refreshToken,
             },
           ),
         );
@@ -97,7 +103,7 @@ class CustomInterceptor extends Interceptor {
         final options = err.requestOptions;
 
         options.headers.addAll({
-          'authorization': 'Bearer $accessToken',
+          'ACCESS_AUTHORIZATION': accessToken,
         });
 
         await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
