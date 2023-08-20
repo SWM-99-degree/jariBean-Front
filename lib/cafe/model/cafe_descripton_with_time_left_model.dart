@@ -1,7 +1,6 @@
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 
 class CafeDescriptionWithTimeLeftModel extends CafeDescriptionModel {
-
   CafeDescriptionWithTimeLeftModel({
     required super.id,
     required super.title,

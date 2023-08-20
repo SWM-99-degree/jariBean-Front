@@ -4,12 +4,12 @@ class OauthLoginButton extends StatelessWidget {
   final String imagePath;
   final bool? isLocal;
   final Function() onPressed;
-  const OauthLoginButton(
-      {required this.imagePath,
-      required this.onPressed,
-      this.isLocal = true,
-      Key? key})
-      : super(key: key);
+  const OauthLoginButton({
+    required this.imagePath,
+    required this.onPressed,
+    this.isLocal = true,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

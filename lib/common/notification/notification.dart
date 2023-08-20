@@ -78,14 +78,16 @@ class NotificationStateNotifier
     notificationAppLaunchDetails =
         await state.getNotificationAppLaunchDetails();
 
-    await state.initialize(initSettings,
-        onDidReceiveNotificationResponse: (details) {
-          //foreground notification handler
-      if (details.payload == 'test-id') {
-        //payload should have notification id
-        goRouter.go('/alert/${details.payload}');
-      }
-    });
+    await state.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (details) {
+        //foreground notification handler
+        if (details.payload == 'test-id') {
+          //payload should have notification id
+          goRouter.go('/alert/${details.payload}');
+        }
+      },
+    );
   }
 
   Future<NotificationAppLaunchDetails?> getAlert() {

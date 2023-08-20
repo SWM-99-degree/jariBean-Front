@@ -4,13 +4,13 @@ import 'package:jari_bean/alert/screens/alert_details_screen.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_screen.dart';
+import 'package:jari_bean/reservation/screen/result_screen.dart';
 import 'package:jari_bean/reservation/screen/search_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/screens/login_screen.dart';
 import 'package:jari_bean/common/screens/root_screen.dart';
 import 'package:jari_bean/common/screens/splash_screen.dart';
 import 'package:jari_bean/user/screens/register_screen.dart';
-
 
 final goRouterProvider = Provider<GoRouter>(
   (ref) {
@@ -75,6 +75,11 @@ final goRouterProvider = Provider<GoRouter>(
                 serviceAreaId: state.queryParameters['serviceAreaId'],
               ),
             ),
+            GoRoute(
+              path: 'result',
+              name: ResultScreen.routerName,
+              builder: (_, __) => const ResultScreen(),
+            )
           ],
         )
       ],

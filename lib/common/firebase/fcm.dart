@@ -105,7 +105,6 @@ class FcmTokenStateNotifier extends StateNotifier<String> {
 
 Future<void> fcmBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message ${message.messageId}, ${message.data}');
-
 }
 
 Future<void> fcmForegroundHandler(RemoteMessage message) async {
@@ -117,12 +116,15 @@ Future<void> fcmTokenRefreshHandler(String token) async {
 }
 
 Future<void> fcmMessageHandler(RemoteMessage message) async {
-  final notification = ProviderContainer().read(notificationStateNotifierProvider.notifier);
+  final notification =
+      ProviderContainer().read(notificationStateNotifierProvider.notifier);
   print('Handling a message ${message.messageId}, ${message.data['title']}');
   print(message.data);
   // await notification.init();
   await notification.show(
-      title: message.data['title'], body: message.data['description']);
+    title: message.data['title'],
+    body: message.data['description'],
+  );
 }
 
 // Future fcmForegroundHandler(

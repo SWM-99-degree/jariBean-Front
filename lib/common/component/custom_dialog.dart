@@ -24,11 +24,17 @@ class CustomDialog extends ConsumerWidget {
         description: model.description,
         child: Row(
           children: [
-            Expanded(child: CustomButton.fromModel(model: model.customButtonModel)),
+            Expanded(
+              child: CustomButton.fromModel(model: model.customButtonModel),
+            ),
             SizedBox(
               width: 10.w,
             ),
-            Expanded(child: CustomButton.fromModel(model: model.customButtonModelSecond)),
+            Expanded(
+              child: CustomButton.fromModel(
+                model: model.customButtonModelSecond,
+              ),
+            ),
           ],
         ),
       );

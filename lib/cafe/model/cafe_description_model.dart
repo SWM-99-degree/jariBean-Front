@@ -8,7 +8,8 @@ abstract class CafeDescriptionModelBase {}
 class CafeDescriptionModelLoading extends CafeDescriptionModelBase {}
 
 @JsonSerializable()
-class CafeDescriptionModel extends CafeDescriptionModelBase implements BasicCardModel {
+class CafeDescriptionModel extends CafeDescriptionModelBase
+    implements BasicCardModel {
   @override
   @JsonKey(name: 'cafeId')
   final String id;

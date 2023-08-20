@@ -14,10 +14,11 @@ class CustomTextFormField extends StatelessWidget {
     this.hintText,
     this.errorText,
     required this.onChanged,
-    Key? key}) : super(key: key);
+    Key? key,
+  }) : super(key: key);
 
-    @override
-  Widget build(BuildContext context){
+  @override
+  Widget build(BuildContext context) {
     const baseBorder = OutlineInputBorder(
       borderSide: BorderSide(
         color: GRAY_3,

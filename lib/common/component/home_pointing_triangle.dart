@@ -11,7 +11,6 @@ class HomePointingTriangle extends ConsumerStatefulWidget {
 }
 
 class _HomePointingTriangleState extends ConsumerState<HomePointingTriangle> {
-
   @override
   Widget build(BuildContext context) {
     return AnimatedPositioned(

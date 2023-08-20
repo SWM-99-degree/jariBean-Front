@@ -8,7 +8,10 @@ import 'package:jari_bean/common/style/default_font_style.dart';
 class CafeDetailScreen extends StatefulWidget {
   final String cafeId;
 
-  const CafeDetailScreen({required this.cafeId, super.key});
+  const CafeDetailScreen({
+    required this.cafeId,
+    super.key,
+  });
 
   @override
   State<CafeDetailScreen> createState() => _CafeDetailScreenState();

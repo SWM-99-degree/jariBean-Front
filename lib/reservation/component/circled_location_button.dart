@@ -9,11 +9,12 @@ class CircledLocationButton extends StatelessWidget {
   final String serivceAreaId;
   final String serivceAreaName;
   final String imgUrl;
-  const CircledLocationButton(
-      {required this.serivceAreaId,
-      required this.serivceAreaName,
-      required this.imgUrl,
-      super.key});
+  const CircledLocationButton({
+    required this.serivceAreaId,
+    required this.serivceAreaName,
+    required this.imgUrl,
+    super.key,
+  });
 
   factory CircledLocationButton.fromModel({
     required ServiceAreaModel model,
@@ -28,6 +29,7 @@ class CircledLocationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
         onTap: () {
@@ -66,17 +68,19 @@ class CircledLocationButtonWithIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     // elvated button with photo inside, make it circle
 
-    return GestureDetector(
-      onTap: () {},
+    return Material(
+      color: Colors.transparent,
       child: Stack(
         children: [
-          Container(
-            width: 60.w,
-            height: 60.w,
-            decoration: ShapeDecoration(
-              color: Color(0xFFFF9D46),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100),
+          InkWell(
+            borderRadius: BorderRadius.circular(100),
+            onTap: () {},
+            child: Ink(
+              width: 60.w,
+              height: 60.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFFFF9D46),
               ),
             ),
           ),

@@ -24,7 +24,9 @@ class CustomInterceptor extends Interceptor {
 
   @override
   void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     print('[REQ] [${options.method}] ${options.uri}');
 
     if (options.headers['accessToken'] == 'true') {
@@ -53,7 +55,8 @@ class CustomInterceptor extends Interceptor {
     final pResponse = DefualtTransferModel.fromJson(response.data);
 
     print(
-        '[RES] [${response.requestOptions.method}] ${response.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}');
+      '[RES] [${response.requestOptions.method}] ${response.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}',
+    );
     response.data = pResponse.data;
     return super.onResponse(response, handler);
   }
@@ -69,14 +72,15 @@ class CustomInterceptor extends Interceptor {
       print(err.response?.data);
       pResponse = DefualtTransferModel.fromJson(err.response?.data);
       print(
-          '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}');
+        '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}',
+      );
     } catch (e) {
       print(
-          '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : 500 Internal Server Error');
+        '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : 500 Internal Server Error',
+      );
     }
 
     final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
-
 
     if (refreshToken == null) {
       handler.reject(err);

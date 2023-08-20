@@ -48,50 +48,60 @@ class _RootScreenState extends ConsumerState<RootScreen>
   Widget build(BuildContext context) {
     return DefaultLayout(
       bottomNavigationBar: BottomNavigationBar(
-          selectedItemColor: PRIMARY_ORANGE,
-          unselectedItemColor: TEXT_COLOR,
-          selectedFontSize: 10,
-          unselectedFontSize: 10,
-          // type: BottomNavigationBarType.shifting,
-          type: BottomNavigationBarType.fixed,
-          onTap: (int index) {
-            controller.animateTo(index);
-          },
-          currentIndex: index,
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(JariBeanIconPack.home), label: '홈'),
-            BottomNavigationBarItem(
-                icon: Icon(JariBeanIconPack.calendar), label: '나의 예약'),
-            BottomNavigationBarItem(
-                icon: Icon(JariBeanIconPack.notice), label: '알림'),
-            BottomNavigationBarItem(
-                icon: Icon(JariBeanIconPack.profile), label: '내 정보'),
-          ]),
+        selectedItemColor: PRIMARY_ORANGE,
+        unselectedItemColor: TEXT_COLOR,
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
+        // type: BottomNavigationBarType.shifting,
+        type: BottomNavigationBarType.fixed,
+        onTap: (int index) {
+          controller.animateTo(index);
+        },
+        currentIndex: index,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(JariBeanIconPack.home),
+            label: '홈',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(JariBeanIconPack.calendar),
+            label: '나의 예약',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(JariBeanIconPack.notice),
+            label: '알림',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(JariBeanIconPack.profile),
+            label: '내 정보',
+          ),
+        ],
+      ),
       child: TabBarView(
-          controller: controller,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(0.86, -0.52),
-                  end: Alignment(-0.86, 0.52),
-                  colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
-                ),
-              ),
-              child: SafeArea(
-                child: Center(
-                  child: HomeScreen(),
-                ),
+        controller: controller,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(0.86, -0.52),
+                end: Alignment(-0.86, 0.52),
+                colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
               ),
             ),
-            Center(child: TestScreen()),
-            Center(
-              child: HistoryScreen(),
+            child: SafeArea(
+              child: Center(
+                child: HomeScreen(),
+              ),
             ),
-            ProfileScreen()
-          ]),
+          ),
+          Center(child: TestScreen()),
+          Center(
+            child: HistoryScreen(),
+          ),
+          ProfileScreen()
+        ],
+      ),
     );
   }
 }

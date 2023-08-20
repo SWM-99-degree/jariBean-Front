@@ -264,7 +264,10 @@ class SearchScreen extends ConsumerWidget {
   }
 
   TableCalendar<dynamic> _buildCalendar(
-      DateTime startTime, WidgetRef ref, TextStyle calendarTextStyle) {
+    DateTime startTime,
+    WidgetRef ref,
+    TextStyle calendarTextStyle,
+  ) {
     return TableCalendar(
       focusedDay: startTime,
       firstDay: DateTime.now(),

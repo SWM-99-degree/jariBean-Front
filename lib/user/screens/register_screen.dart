@@ -104,7 +104,8 @@ class RegisterScreen extends ConsumerWidget {
                       height: 36.h,
                     ),
                     CustomButton(
-                      text: ref.watch(totalAgreementProvider.notifier).buttonText,
+                      text:
+                          ref.watch(totalAgreementProvider.notifier).buttonText,
                       onPressed: () async {
                         if (!ref
                             .read(totalAgreementProvider.notifier)
