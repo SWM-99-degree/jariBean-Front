@@ -31,5 +31,4 @@ class ReservationDetailModel {
 
   factory ReservationDetailModel.fromJson(Map<String, dynamic> json) =>
       _$ReservationDetailModelFromJson(json);
-  
 }

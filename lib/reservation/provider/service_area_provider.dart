@@ -49,7 +49,7 @@ class ServiceAreaStateNotifier extends StateNotifier<List<ServiceAreaModel>> {
   }
 
   ServiceAreaModel? getServiceAreaById(String? id) {
-    if(id == null) return null;
+    if (id == null) return null;
     return state.firstWhere((element) => element.id == id);
   }
 }

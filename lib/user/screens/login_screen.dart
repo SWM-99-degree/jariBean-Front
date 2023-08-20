@@ -43,8 +43,7 @@ class LoginScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 OauthLoginButton(
                   imagePath: 'assets/images/apple_login_large_wide.png',
-                  onPressed: () async {
-                  },
+                  onPressed: () async {},
                 ),
                 const SizedBox(height: 12),
                 OauthLoginButton(

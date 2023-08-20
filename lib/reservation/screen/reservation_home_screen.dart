@@ -55,106 +55,111 @@ class ReservationHomeScreen extends ConsumerWidget {
       ),
     ];
 
-    return ListView(children: [
-      SizedBox(
-        height: 20.h,
-      ),
-      Padding(
-        padding: EdgeInsets.only(
-          left: 20.w,
-          right: 20.w,
+    return ListView(
+      children: [
+        SizedBox(
+          height: 20.h,
         ),
-        child: Hero(
-          tag: 'searchBox',
-          child: SearchBoxButton(
-            hintText: '지역, 카페명 검색',
-            onPressed: () {
-              context.push('/search');
-            },
+        Padding(
+          padding: EdgeInsets.only(
+            left: 20.w,
+            right: 20.w,
+          ),
+          child: Hero(
+            tag: 'searchBox',
+            child: SearchBoxButton(
+              hintText: '지역, 카페명 검색',
+              onPressed: () {
+                context.push('/search');
+              },
+            ),
           ),
         ),
-      ),
-      SizedBox(
-        height: 24.h,
-      ),
-      _buildTextDisplay(
-        title: '자리 예약 하기',
-        description: '장소를 기준으로 카페를 찾을 수 있어요',
-      ),
-      Padding(
-        padding: EdgeInsets.only(top: 12.h),
-        child: SizedBox(
-          height: 60.w,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(left: 20.w),
-            shrinkWrap: true,
-            itemCount: serviceAreas.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
+        SizedBox(
+          height: 24.h,
+        ),
+        _buildTextDisplay(
+          title: '자리 예약 하기',
+          description: '장소를 기준으로 카페를 찾을 수 있어요',
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 12.h),
+          child: SizedBox(
+            height: 60.w,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.only(left: 20.w),
+              shrinkWrap: true,
+              itemCount: serviceAreas.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 16.w),
+                    child: CircledLocationButtonWithIcon(),
+                  );
+                }
                 return Padding(
                   padding: EdgeInsets.only(right: 16.w),
-                  child: CircledLocationButtonWithIcon(),
+                  child: CircledLocationButton.fromModel(
+                    model: serviceAreas[index - 1],
+                  ),
                 );
-              }
-              return Padding(
-                padding: EdgeInsets.only(right: 16.w),
-                child: CircledLocationButton.fromModel(
-                  model: serviceAreas[index - 1],
-                ),
-              );
-            },
+              },
+            ),
           ),
         ),
-      ),
-      SizedBox(
-        height: 32.h,
-      ),
-      _buildTextDisplay(
-        title: '예약 내역',
-        description: '${userModel.nickname}님의 예약 내역을 볼 수 있어요',
-        infoTitle: '전체보기',
-      ),
-      SizedBox(
-        height: 8.h,
-      ),
-      if (urgentReservation is CafeDescriptionWithTimeLeftModel)
-        DefaultCardLayout.fromModel(
-          model: urgentReservation,
+        SizedBox(
+          height: 32.h,
         ),
-      SizedBox(
-        height: 32.h,
-      ),
-      _buildTextDisplay(
-        title: '예약 핫플레이스 BEST',
-        description: '지금 핫한 카페를 볼 수 있어요',
-        infoTitle: '전체보기',
-      ),
-      Padding(
-        padding: EdgeInsets.only(top: 12.h),
-        child: SizedBox(
-          height: 250.h,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(left: 20.w),
-            shrinkWrap: true,
-            itemCount: hotplaceCafes.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(right: 12.w),
-                child: SquaredCafeCard.fromModel(
-                  model: hotplaceCafes[index],
-                ),
-              );
-            },
+        _buildTextDisplay(
+          title: '예약 내역',
+          description: '${userModel.nickname}님의 예약 내역을 볼 수 있어요',
+          infoTitle: '전체보기',
+        ),
+        SizedBox(
+          height: 8.h,
+        ),
+        if (urgentReservation is CafeDescriptionWithTimeLeftModel)
+          DefaultCardLayout.fromModel(
+            model: urgentReservation,
+          ),
+        SizedBox(
+          height: 32.h,
+        ),
+        _buildTextDisplay(
+          title: '예약 핫플레이스 BEST',
+          description: '지금 핫한 카페를 볼 수 있어요',
+          infoTitle: '전체보기',
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 12.h),
+          child: SizedBox(
+            height: 250.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.only(left: 20.w),
+              shrinkWrap: true,
+              itemCount: hotplaceCafes.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 12.w),
+                  child: SquaredCafeCard.fromModel(
+                    model: hotplaceCafes[index],
+                  ),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
-  Widget _buildTextDisplay(
-      {required String title, required String description, String? infoTitle}) {
+  Widget _buildTextDisplay({
+    required String title,
+    required String description,
+    String? infoTitle,
+  }) {
     return Padding(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       child: Row(

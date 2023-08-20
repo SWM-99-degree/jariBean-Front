@@ -45,9 +45,7 @@ class MatchingHomeScreen extends ConsumerWidget {
             children: [
               _buildCircularButton(
                 onpressed: () {
-                  ref
-                      .read(matchingHeadcountProvider.notifier)
-                      .decrement();
+                  ref.read(matchingHeadcountProvider.notifier).decrement();
                 },
                 icon: Icon(
                   Icons.remove,
@@ -65,9 +63,7 @@ class MatchingHomeScreen extends ConsumerWidget {
               ),
               _buildCircularButton(
                 onpressed: () {
-                  ref
-                      .read(matchingHeadcountProvider.notifier)
-                      .increment();
+                  ref.read(matchingHeadcountProvider.notifier).increment();
                 },
                 icon: Icon(
                   Icons.add,

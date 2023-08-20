@@ -10,11 +10,12 @@ class AlertProvider extends StateNotifier<List<AlertModel>> {
       : super(
           [
             AlertModel(
-                id: 'test-id',
-                title: 'test',
-                description: 'this is a test',
-                buttonTitle: '테스트입니다',
-                image: 'https://picsum.photos/200/300'),
+              id: 'test-id',
+              title: 'test',
+              description: 'this is a test',
+              buttonTitle: '테스트입니다',
+              image: 'https://picsum.photos/200/300',
+            ),
           ],
         );
 

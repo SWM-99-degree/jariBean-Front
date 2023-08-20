@@ -86,10 +86,11 @@ class CafeDescriptionWithTimeLeft extends ConsumerWidget {
       TextSpan(
         children: [
           TextSpan(
-              text: '방문까지 ',
-              style: defaultFontStyleWhite.copyWith(
-                fontSize: 12.sp,
-              )),
+            text: '방문까지 ',
+            style: defaultFontStyleWhite.copyWith(
+              fontSize: 12.sp,
+            ),
+          ),
           TextSpan(
             text: _displayTimeLeft(timeLeftInSeconds),
             style: defaultFontStyleWhite.copyWith(

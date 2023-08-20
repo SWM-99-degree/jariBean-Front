@@ -2,7 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final matchingHeadcountProvider =
     StateNotifierProvider<MatchingStateNotifier, int>(
-        (ref) => MatchingStateNotifier());
+  (ref) => MatchingStateNotifier(),
+);
 
 class MatchingStateNotifier extends StateNotifier<int> {
   static const maxHeadcount = 6;

@@ -43,11 +43,12 @@ class CafeDetailInfoScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 24.w),
             child: Text(
-              '지번 | 행당동 267-23',
+              cafeAddress,
               style: defaultFontStyleBlack.copyWith(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: TEXT_SUBTITLE_COLOR),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: TEXT_SUBTITLE_COLOR,
+              ),
             ),
           ),
           SizedBox(
@@ -107,8 +108,10 @@ class CafeDetailInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIconAndText(
-      {required IconData icon, required TextSpan textSpan}) {
+  Widget _buildIconAndText({
+    required IconData icon,
+    required TextSpan textSpan,
+  }) {
     return Text.rich(
       TextSpan(
         children: [

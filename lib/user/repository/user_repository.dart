@@ -56,26 +56,36 @@ class SocialLoginRepository {
 
   Future<SocialLoginResponseModelBase> kakaoLogin() async {
     return await SocialLogin.socialLogin(
-        loginUrl: kakaoLoginUrl, callbackUrlScheme: callbackUrlScheme);
+      loginUrl: kakaoLoginUrl,
+      callbackUrlScheme: callbackUrlScheme,
+    );
   }
 
   Future<SocialLoginResponseModelBase> googleLogin() async {
     return await SocialLogin.socialLogin(
-        loginUrl: googleLoginUrl, callbackUrlScheme: callbackUrlScheme);
+      loginUrl: googleLoginUrl,
+      callbackUrlScheme: callbackUrlScheme,
+    );
   }
 
   Future<SocialLoginResponseModelBase> appleLogin() async {
     return await SocialLogin.socialLogin(
-        loginUrl: appleLoginUrl, callbackUrlScheme: callbackUrlScheme);
+      loginUrl: appleLoginUrl,
+      callbackUrlScheme: callbackUrlScheme,
+    );
   }
 }
 
 abstract class SocialLogin {
-  static Future<SocialLoginResponseModelBase> socialLogin(
-      {required String loginUrl, required String callbackUrlScheme}) async {
+  static Future<SocialLoginResponseModelBase> socialLogin({
+    required String loginUrl,
+    required String callbackUrlScheme,
+  }) async {
     try {
       final response = await FlutterWebAuth.authenticate(
-          url: loginUrl, callbackUrlScheme: callbackUrlScheme);
+        url: loginUrl,
+        callbackUrlScheme: callbackUrlScheme,
+      );
       var queryString = Uri.splitQueryString(response.split('?')[1]);
       return SocialLoginResponseModel.fromJson(queryString);
     } catch (e) {

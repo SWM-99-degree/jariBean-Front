@@ -16,10 +16,11 @@ final userProvider =
   final socialLoginResponse = ref.watch(socialLoginProvider);
   final storage = ref.watch(secureStorageProvider);
   return UserStateNotifier(
-      loginRepository: loginRepository,
-      userRepository: userRepository,
-      storage: storage,
-      socialLoginResponse: socialLoginResponse);
+    loginRepository: loginRepository,
+    userRepository: userRepository,
+    storage: storage,
+    socialLoginResponse: socialLoginResponse,
+  );
 });
 
 class UserStateNotifier extends StateNotifier<UserModelBase?> {
@@ -103,7 +104,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
     }
     /* ISSUE 64 */
     return true;
-    
+
     // final pState = state as UserModel;
     // return pState.role != Role.UNREGISTERED;
   }

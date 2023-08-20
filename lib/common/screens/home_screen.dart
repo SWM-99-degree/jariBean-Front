@@ -27,50 +27,55 @@ class HomeScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 buildMenuBarItem(
-                    title: '자리 예약하기',
-                    updateFunction: () {
-                      ref
-                          .read(homeSelectionProvider.notifier)
-                          .update(HomeSelection.reservation);
-                    },
-                    homeSelectionState: ref.watch(homeSelectionProvider),
-                    homeSelectionValue: HomeSelection.reservation),
+                  title: '자리 예약하기',
+                  updateFunction: () {
+                    ref
+                        .read(homeSelectionProvider.notifier)
+                        .update(HomeSelection.reservation);
+                  },
+                  homeSelectionState: ref.watch(homeSelectionProvider),
+                  homeSelectionValue: HomeSelection.reservation,
+                ),
                 buildMenuBarItem(
-                    title: '실시간 매칭하기',
-                    updateFunction: () {
-                      ref
-                          .read(homeSelectionProvider.notifier)
-                          .update(HomeSelection.matching);
-                    },
-                    homeSelectionState: ref.watch(homeSelectionProvider),
-                    homeSelectionValue: HomeSelection.matching),
+                  title: '실시간 매칭하기',
+                  updateFunction: () {
+                    ref
+                        .read(homeSelectionProvider.notifier)
+                        .update(HomeSelection.matching);
+                  },
+                  homeSelectionState: ref.watch(homeSelectionProvider),
+                  homeSelectionValue: HomeSelection.matching,
+                ),
               ],
             ),
           ),
           Flexible(
-              flex: 9,
-              child: Container(
-                decoration:const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30)),
-                  color: Colors.white,
+            flex: 9,
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 ),
-                child: ref.watch(homeSelectionProvider) ==
-                        HomeSelection.reservation
-                    ? ReservationHomeScreen()
-                    : MatchingHomeScreen(),
-              )),
+                color: Colors.white,
+              ),
+              child:
+                  ref.watch(homeSelectionProvider) == HomeSelection.reservation
+                      ? ReservationHomeScreen()
+                      : MatchingHomeScreen(),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget buildMenuBarItem(
-      {required String title,
-      required Function()? updateFunction,
-      required HomeSelection homeSelectionState,
-      required HomeSelection homeSelectionValue}) {
+  Widget buildMenuBarItem({
+    required String title,
+    required Function()? updateFunction,
+    required HomeSelection homeSelectionState,
+    required HomeSelection homeSelectionValue,
+  }) {
     return Expanded(
       child: Center(
         child: Stack(

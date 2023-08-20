@@ -26,4 +26,3 @@ class FcmMessageDataAlertModel extends IBaseFcmMessageDataModel {
     required this.clickAction,
   });
 }
-

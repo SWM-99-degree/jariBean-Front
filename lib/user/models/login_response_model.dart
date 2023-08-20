@@ -5,7 +5,7 @@ part 'login_response_model.g.dart';
 abstract class LoginResponseModelBase {}
 
 @JsonSerializable()
-class LoginResponseModel extends LoginResponseModelBase{
+class LoginResponseModel extends LoginResponseModelBase {
   final String accessToken;
   final String refreshToken;
   LoginResponseModel({
@@ -13,14 +13,15 @@ class LoginResponseModel extends LoginResponseModelBase{
     required this.refreshToken,
   });
 
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) => _$LoginResponseModelFromJson(json);
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$LoginResponseModelFromJson(json);
 }
 
-class LoginResponseModelError extends LoginResponseModelBase{
+class LoginResponseModelError extends LoginResponseModelBase {
   final Object error;
   final String errorDescription;
 
   LoginResponseModelError(this.error, this.errorDescription);
 }
 
-class LoginResponseModelLoading extends LoginResponseModelBase{}
+class LoginResponseModelLoading extends LoginResponseModelBase {}
