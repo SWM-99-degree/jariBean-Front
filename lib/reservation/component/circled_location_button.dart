@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/reservation/model/service_area_model.dart';
@@ -29,7 +30,9 @@ class CircledLocationButton extends StatelessWidget {
     return Material(
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
-        onTap: () {},
+        onTap: () {
+          context.go('/search?serviceAreaId=$serivceAreaId');
+        },
         child: Ink(
           width: 60.w,
           height: 60.w,
