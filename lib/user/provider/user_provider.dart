@@ -12,23 +12,27 @@ import 'package:jari_bean/user/repository/user_repository.dart';
 final userProvider =
     StateNotifierProvider<UserStateNotifier, UserModelBase?>((ref) {
   final userRepository = ref.watch(userRepositoryProvider);
+  final loginRepository = ref.watch(loginRepositoryProvider);
   final socialLoginResponse = ref.watch(socialLoginProvider);
   final storage = ref.watch(secureStorageProvider);
   return UserStateNotifier(
+      loginRepository: loginRepository,
       userRepository: userRepository,
       storage: storage,
       socialLoginResponse: socialLoginResponse);
 });
 
 class UserStateNotifier extends StateNotifier<UserModelBase?> {
+  final LoginRepository loginRepository;
   final UserRepository userRepository;
   final FlutterSecureStorage storage;
   final SocialLoginResponseModelBase socialLoginResponse;
-  UserStateNotifier(
-      {required this.userRepository,
-      required this.storage,
-      required this.socialLoginResponse})
-      : super(UserModelLoading()) {
+  UserStateNotifier({
+    required this.loginRepository,
+    required this.userRepository,
+    required this.storage,
+    required this.socialLoginResponse,
+  }) : super(UserModelLoading()) {
     getMe();
   }
 
@@ -64,7 +68,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
       final socialLoginResp = socialLoginResponse as SocialLoginResponseModel;
 
       final resp =
-          await userRepository.login(type: type, body: socialLoginResp);
+          await loginRepository.login(type: type, body: socialLoginResp);
 
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
       await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
@@ -74,19 +78,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
       //   return;
       // }
 
-      // state = await userRepository.getMe();
-      /* TestCode #13 */
-      state = await Future.value(UserModel(
-        nickname: 'test',
-        imgUrl: 'https://picsum.photos/200/300',
-        socialLoginType: SocialLoginType.kakao,
-        isRegistered: false,
-      ));
-
-      final pState = state as UserModel;
-      if (pState.isRegistered == false) {
-        return;
-      }
+      state = await userRepository.getMe();
     } catch (e) {
       print(e);
       state = UserModelError(e, '로그인 중 오류가 발생했습니다.');
