@@ -1,8 +1,12 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 enum SocialLoginType { kakao, google, apple }
+
+enum Role { UNREGISTERED, CUSTOMER, MANAGER }
 
 abstract class UserModelBase {}
 
@@ -16,15 +20,21 @@ class UserModelLoading extends UserModelBase {}
 
 @JsonSerializable()
 class UserModel extends UserModelBase {
-  String nickname;
-  SocialLoginType socialLoginType;
-  String imgUrl;
-  bool? isRegistered;
+  final String id;
+  final String nickname;
+  /* ISSUE #64 */
+  final SocialLoginType? socialLoginType;
+  @JsonKey(name: 'imageUrl')
+  final String imgUrl;
+  final String? description;
+  final Role role;
   UserModel({
+    required this.id,
     required this.nickname,
-    required this.socialLoginType,
+    this.socialLoginType,
     required this.imgUrl,
-    this.isRegistered,
+    required this.description,
+    required this.role,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

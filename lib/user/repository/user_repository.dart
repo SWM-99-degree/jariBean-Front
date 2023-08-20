@@ -11,8 +11,8 @@ import 'package:retrofit/retrofit.dart';
 part 'user_repository.g.dart';
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
-  return UserRepository(dio, baseUrl: '$ip/user');
   final dio = ref.watch(dioProvider);
+  return UserRepository(dio, baseUrl: '$ip/api/users');
 });
 
 @RestApi()

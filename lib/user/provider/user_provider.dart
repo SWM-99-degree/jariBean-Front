@@ -46,14 +46,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
         return;
       }
 
-      /* TestCode #13 */
-      final resp = await Future.value(UserModel(
-        nickname: 'test',
-        imgUrl: 'https://picsum.photos/200/300',
-        socialLoginType: SocialLoginType.kakao,
-        isRegistered: true,
-      ));
-      // final resp = await userRepository.getMe();
+      final resp = await userRepository.getMe();
       state = resp;
     } catch (e) {
       print(e);
@@ -72,11 +65,6 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
 
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
       await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
-
-      // if (resp.isRegistered == 'false' || resp.isRegistered == null) {
-      //   isRegistered = true;
-      //   return;
-      // }
 
       state = await userRepository.getMe();
     } catch (e) {
@@ -100,15 +88,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
     try {
       state = UserModelLoading();
 
-      // final resp = await userRepository.register();
-
-      /* TestCode #13 */
-      final resp = await Future.value(UserModel(
-        nickname: 'test',
-        imgUrl: 'https://picsum.photos/200/300',
-        socialLoginType: SocialLoginType.kakao,
-        isRegistered: true,
-      ));
+      final resp = await userRepository.register();
 
       state = resp;
     } catch (e) {
@@ -118,10 +98,13 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   bool checkRegistered() {
-    if(state == null || state is UserModelLoading) {
+    if (state == null || state is UserModelLoading) {
       return false;
     }
-    final pState = state as UserModel;
-    return pState.isRegistered ?? false;
+    /* ISSUE 64 */
+    return true;
+    
+    // final pState = state as UserModel;
+    // return pState.role != Role.UNREGISTERED;
   }
 }
