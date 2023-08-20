@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/screens/alert_details_screen.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
+import 'package:jari_bean/cafe/screen/cafe_detail_screen.dart';
+import 'package:jari_bean/cafe/screen/cafe_screen.dart';
 import 'package:jari_bean/reservation/screen/search_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/screens/login_screen.dart';
@@ -53,6 +55,18 @@ final goRouterProvider = Provider<GoRouter>(
                 ),
               ],
               redirect: provider.redirectAlertLogic,
+            ),
+            GoRoute(
+              path: 'cafe',
+              name: CafeScreen.routerName,
+              builder: (_, state) => CafeScreen(),
+              routes: [
+                GoRoute(
+                  path: ":id",
+                  builder: (_, state) =>
+                      CafeDetailScreen(cafeId: state.pathParameters['id']!),
+                ),
+              ],
             ),
             GoRoute(
               path: 'search',
