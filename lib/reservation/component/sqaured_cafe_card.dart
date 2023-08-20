@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/reservation/model/cafe_description_with_rating_model.dart';
@@ -41,6 +42,7 @@ class SquaredCafeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       onPressed: () {
+        context.push('/cafe/$id');
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
