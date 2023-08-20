@@ -1,30 +1,48 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// // tree, read text, and verify that the values of widget properties are correct.
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:jari_bean/cafe/screen/cafe_detail_info_screen.dart';
+import 'package:jari_bean/common/layout/default_screen_layout.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
+void main() {
+  testWidgets('CafeDetailTableScreen has its info', (tester) async {
+    await tester.pumpWidget(
+      defaultTestableWidgetBuilder(
+        CafeDetailInfoScreen(
+          cafeId: '123',
+          cafeAddress: '부평',
+          cafePhoneNumber: '0102814',
+          cafeRunTime: '00~24',
+          cafeUrl: 'http://google.com',
+        ),
+      ),
+    );
 
-// import 'package:jari_bean/main.dart';
+    expect(find.text('부평'), findsOneWidget);
+    expect(find.text('00~24'), findsOneWidget);
+    expect(find.textContaining('0102814', findRichText: true), findsOneWidget);
+    expect(
+      find.textContaining('http://google.com', findRichText: true),
+      findsOneWidget,
+    );
+  });
+}
 
-// void main() {
-//   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-//     // Build our app and trigger a frame.
-//     await tester.pumpWidget(const MyApp());
-
-//     // Verify that our counter starts at 0.
-//     expect(find.text('0'), findsOneWidget);
-//     expect(find.text('1'), findsNothing);
-
-//     // Tap the '+' icon and trigger a frame.
-//     await tester.tap(find.byIcon(Icons.add));
-//     await tester.pump();
-
-//     // Verify that our counter has incremented.
-//     expect(find.text('0'), findsNothing);
-//     expect(find.text('1'), findsOneWidget);
-//   });
-// }
+Widget defaultTestableWidgetBuilder(Widget widget) {
+  return ProviderScope(
+    child: ScreenUtilInit(
+      designSize: const Size(375, 812),
+      builder: (context, child) => MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaleFactor: 1.0,
+          ),
+          child: DefaultLayout(
+            child: widget,
+          ),
+        ),
+      ),
+    ),
+  );
+}
