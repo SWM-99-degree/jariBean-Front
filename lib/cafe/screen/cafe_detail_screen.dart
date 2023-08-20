@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/cafe/screen/cafe_detail_info_screen.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
@@ -98,8 +99,12 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
                 controller: _tabController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  Container(
-                    color: Colors.redAccent,
+                  CafeDetailInfoScreen(
+                    cafeId: '123',
+                    cafeAddress: '서울 성동구 고산자로 234(우) 04744',
+                    cafePhoneNumber: '1522-3232',
+                    cafeRunTime: '월~목 07:00 ~ 22:00',
+                    cafeUrl: 'www.starbucks.co.kr',
                   ),
                   Container(
                     color: Colors.redAccent,
