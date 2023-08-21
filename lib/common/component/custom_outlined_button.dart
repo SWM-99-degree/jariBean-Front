@@ -39,6 +39,7 @@ class CustomOutlinedButton extends StatelessWidget {
         style: defaultFontStyleBlack.copyWith(
           fontSize: 14.0.sp,
           fontWeight: FontWeight.w500,
+          height: 1.0,
           color: isSelected ? Colors.white : Colors.black,
         ),
       ),
