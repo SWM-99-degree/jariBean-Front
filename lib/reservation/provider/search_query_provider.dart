@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/cafe/model/table_model.dart';
 import 'package:jari_bean/common/models/location_model.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/reservation/model/search_query_model.dart';
