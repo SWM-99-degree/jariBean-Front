@@ -61,6 +61,7 @@ class DefaultCardLayout extends StatelessWidget {
                   imgUrl,
                   width: 84.w,
                   height: 84.w,
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(
