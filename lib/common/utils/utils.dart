@@ -21,4 +21,8 @@ class Utils {
   }) {
     return map[enumValue] ?? '';
   }
+
+  static String getHHMMfromDateTime(DateTime dateTime) {
+    return "${dateTime.hour}시 ${dateTime.minute == 0 ? '00' : dateTime.minute}분";
+  }
 }
