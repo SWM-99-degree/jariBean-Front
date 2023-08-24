@@ -19,3 +19,7 @@ const GRAY_3 = Color(0xFF999999);
 const TEXT_COLOR = Color(0xFF000000);
 
 const TEXT_SUBTITLE_COLOR = Color(0xFF666666);
+
+const TIME_DISPLAY_GREEN = Color(0xFF3CCB54);
+
+const TIME_DISPLAY_RED = Color(0xFFFA4C40);
