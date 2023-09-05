@@ -25,4 +25,10 @@ class Utils {
   static String getHHMMfromDateTime(DateTime dateTime) {
     return "${dateTime.hour}시 ${dateTime.minute == 0 ? '00' : dateTime.minute}분";
   }
+
+  static String getMMSSfromDateSeconds(int timeLeftInSeconds) {
+    int minutes = timeLeftInSeconds ~/ 60;
+    int seconds = timeLeftInSeconds % 60;
+    return "${minutes < 10 ? '0' : ''}$minutes : ${seconds < 10 ? '0' : ''}$seconds";
+  }
 }
