@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_info_screen.dart';
+import 'package:jari_bean/cafe/screen/cafe_detail_table_screen.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
@@ -109,9 +110,7 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
                     cafeRunTime: '월~목 07:00 ~ 22:00',
                     cafeUrl: 'www.starbucks.co.kr',
                   ),
-                  Container(
-                    color: Colors.redAccent,
-                  ),
+                  CafeDetailTableScreen(cafeId: widget.cafeId)
                 ],
               ),
             )
