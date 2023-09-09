@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>508384819940-mgdc36mgjlu8vkp37nbiu3p5jj1k34di.apps.googleusercontent.com</string>
+	<string>508384819940-6tos6ql6526kl4ugs40q00nm9g4r4198.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.508384819940-mgdc36mgjlu8vkp37nbiu3p5jj1k34di</string>
+	<string>com.googleusercontent.apps.508384819940-6tos6ql6526kl4ugs40q00nm9g4r4198</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCxPTnLr4829bMUrIualqclHdZ53XhMh90</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.jari_bean.app</string>
+	<string>com.99degree.jari-bean</string>
 	<key>PROJECT_ID</key>
 	<string>jaribean-3af6f</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:508384819940:ios:ce44713003a9265419caf1</string>
+	<string>1:508384819940:ios:24af09df4d1f0dd719caf1</string>
 </dict>
 </plist>
