@@ -9,6 +9,7 @@ import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 
 class MatchingSuccessScreen extends ConsumerWidget {
@@ -88,6 +89,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
                     SizedBox(
                       height: 24.h,
                     ),
+                    _percentageBuilder(timeLeftInSeconds),
                     SizedBox(
                       height: 32.h,
                     ),
@@ -125,6 +127,89 @@ class MatchingSuccessScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Container _percentageBuilder(int timeLeftInSeconds) {
+    // ignore: constant_identifier_names
+    const TWO_PI = 3.14 * 2;
+
+    double value = 1 - (timeLeftInSeconds / 600);
+    return Container(
+      width: 200.w,
+      height: 200.w,
+      color: Colors.white,
+      child: Stack(
+        children: [
+          ShaderMask(
+            shaderCallback: (rect) {
+              return SweepGradient(
+                startAngle: 0.0,
+                endAngle: TWO_PI,
+                stops: const [0, 0.5, 1.0],
+                center: Alignment.center,
+                colors: const [
+                  PRIMARY_YELLOW,
+                  PRIMARY_ORANGE,
+                  PRIMARY_YELLOW,
+                ],
+                transform: GradientRotation(-TWO_PI / 4),
+              ).createShader(rect);
+            },
+            child: Container(
+              width: 200.w,
+              height: 200.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          ShaderMask(
+            shaderCallback: (rect) {
+              return SweepGradient(
+                startAngle: 0.0,
+                endAngle: TWO_PI,
+                stops: [value, 0],
+                center: Alignment.center,
+                colors: const [
+                  Colors.white,
+                  Colors.transparent,
+                ],
+                transform: GradientRotation(-TWO_PI / 4),
+              ).createShader(rect);
+            },
+            child: Container(
+              width: 200.w,
+              height: 200.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFFF2F2F2),
+              ),
+            ),
+          ),
+          Center(
+            child: Container(
+              width: 175.w,
+              height: 175.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  Utils.getMMSSfromDateSeconds(timeLeftInSeconds),
+                  style: defaultFontStyleBlack.copyWith(
+                    fontSize: 32.sp,
+                    color: PRIMARY_ORANGE,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
