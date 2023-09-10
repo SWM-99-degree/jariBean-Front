@@ -11,10 +11,13 @@ final reservationTimerProvider =
 
 class ReservationTimerStateNotifier extends StateNotifier<int> {
   ReservationTimerStateNotifier() : super(0);
+  bool flag = false;
 
   Future<void> initTimer({
     required int initTimeLeft,
   }) async {
+    if (flag) return;
+    flag = true;
     state = initTimeLeft;
     Timer.periodic(
       Duration(seconds: 1),
@@ -23,6 +26,7 @@ class ReservationTimerStateNotifier extends StateNotifier<int> {
         if (currentTimeLeft <= 0) {
           timer.cancel();
           state = 0;
+          flag = false;
           return;
         }
         state = currentTimeLeft - 1;
