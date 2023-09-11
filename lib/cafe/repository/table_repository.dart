@@ -65,10 +65,7 @@ class TableRepository {
             startTime: DateTime(2023, 08, 25, 0, 0),
             endTime: DateTime(2023, 08, 25, 20, 30),
           ),
-<<<<<<< Updated upstream
-=======
           
->>>>>>> Stashed changes
         ],
       ),
     ];
