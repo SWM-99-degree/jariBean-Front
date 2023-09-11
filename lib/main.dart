@@ -52,12 +52,23 @@ void main() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen(fcmMessageHandler);
-  FirebaseMessaging.onBackgroundMessage(fcmMessageHandler);
+
   FirebaseMessaging.onMessage
       .listen((message) => fcmMessageHandler(message, container));
+  FirebaseMessaging.onBackgroundMessage(
+    (message) => fcmMessageHandler(message, container),
+  );
+
+  FirebaseMessaging.onMessageOpenedApp
+      .listen((message) => fcmOnOpenedAppHandler(message, container));
 
   FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
+  final RemoteMessage? message =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  if (message != null) {
+    fcmOnOpenedAppHandler(message, container);
+  }
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
