@@ -12,11 +12,19 @@ import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/models/custom_dialog_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 
-class MatchingProceedingScreen extends ConsumerWidget {
+class MatchingProceedingScreen extends ConsumerStatefulWidget {
   const MatchingProceedingScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MatchingProceedingScreen> createState() =>
+      _MatchingProceedingScreenState();
+}
+
+class _MatchingProceedingScreenState
+    extends ConsumerState<MatchingProceedingScreen> {
+  @override
+  void initState() {
+    super.initState();
     Future.delayed(
       Duration(seconds: 3),
       Random().nextBool()
@@ -37,6 +45,10 @@ class MatchingProceedingScreen extends ConsumerWidget {
               ),
             ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return DefaultLayout(
       title: '매칭중',
       child: Stack(
@@ -45,7 +57,8 @@ class MatchingProceedingScreen extends ConsumerWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(
-                    'https://s3-alpha-sig.figma.com/img/cac3/1d9a/82f55aab992954a68fd865e6ae95c8f2?Expires=1693785600&Signature=FmHe-6HGLQadGLHJ5o0K-VquKQuEW9U5x68wDQcmC-g1BO5dNa8ej4mc6s2-SNaOySaWMfD2EDN6ZPdbzR4Xpxud6K8HHHZsZHbe7yHIPkt7dIFm141OvgEX0ct3jwTUu11CxFzcX6MUXNll2UvpQbFab6F7J75Kc13nHJaG5I3qzP31ymJgDYGaYPZYx6Rs9qjzk7qHbnZ18YN3L6iThCo2-cnMPTDVnpeFocfR5CNLwD66XKFZyZs3qg0CGLJaeDSGa8LfN3pK9Aq14ydgOFb3UndZbBdbiA2TZBmYt4NYTO3alWUIYmfv1IwKd4xUTV0Ws9icA7R44wjM67uWVQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4'),
+                  'https://s3-alpha-sig.figma.com/img/cac3/1d9a/82f55aab992954a68fd865e6ae95c8f2?Expires=1693785600&Signature=FmHe-6HGLQadGLHJ5o0K-VquKQuEW9U5x68wDQcmC-g1BO5dNa8ej4mc6s2-SNaOySaWMfD2EDN6ZPdbzR4Xpxud6K8HHHZsZHbe7yHIPkt7dIFm141OvgEX0ct3jwTUu11CxFzcX6MUXNll2UvpQbFab6F7J75Kc13nHJaG5I3qzP31ymJgDYGaYPZYx6Rs9qjzk7qHbnZ18YN3L6iThCo2-cnMPTDVnpeFocfR5CNLwD66XKFZyZs3qg0CGLJaeDSGa8LfN3pK9Aq14ydgOFb3UndZbBdbiA2TZBmYt4NYTO3alWUIYmfv1IwKd4xUTV0Ws9icA7R44wjM67uWVQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+                ),
                 fit: BoxFit.cover,
               ),
             ),
