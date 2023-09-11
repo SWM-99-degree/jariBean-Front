@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
 
 AndroidNotificationChannel channel = const AndroidNotificationChannel(
@@ -18,19 +19,6 @@ DarwinInitializationSettings initSettingsIOS =
   requestSoundPermission: true,
   requestBadgePermission: true,
   requestAlertPermission: true,
-  // notificationCategories: [
-  //   DarwinNotificationCategory(
-  //     'jariBean Alert',
-  //     actions: <DarwinNotificationAction>[
-  //       DarwinNotificationAction.text(
-  //         'text_1',
-  //         'Action 1',
-  //         buttonTitle: 'Send',
-  //         placeholder: 'Placeholder',
-  //       ),
-  //     ],
-  //   )
-  // ],
 );
 
 InitializationSettings initSettings = InitializationSettings(
@@ -52,7 +40,7 @@ NotificationDetails notificationDetails = NotificationDetails(
   ),
 );
 
-final notificationStateNotifierProvider = StateNotifierProvider<
+final notificationProvider = StateNotifierProvider<
     NotificationStateNotifier, FlutterLocalNotificationsPlugin>((ref) {
   final goRouter = ref.read(goRouterProvider);
   return NotificationStateNotifier(goRouter: goRouter);
@@ -81,11 +69,7 @@ class NotificationStateNotifier
     await state.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
-        //foreground notification handler
-        if (details.payload == 'test-id') {
-          //payload should have notification id
-          goRouter.go('/alert/${details.payload}');
-        }
+        goRouter.go('/alert/${details.payload}');
       },
     );
   }
@@ -94,12 +78,28 @@ class NotificationStateNotifier
     return state.getNotificationAppLaunchDetails();
   }
 
+  Future<void> showFromFcmMessage({
+    required FcmMessageModel message,
+  }) {
+    return show(
+      alertId: message.id,
+      title: message.title,
+      body: message.body,
+    );
+  }
+
   Future<void> show({
     required String title,
     required String body,
+    String? alertId,
   }) async {
-    //payload should have notification id. notification model is initalized at fcm handler.
-    await state.show(id, title, body, notificationDetails, payload: 'test-id');
+    await state.show(
+      id,
+      title,
+      body,
+      notificationDetails,
+      payload: alertId ?? 'test-id',
+    );
     id++;
   }
 }
@@ -107,14 +107,8 @@ class NotificationStateNotifier
 final openedWithNotiProvider =
     StateProvider<Future<NotificationAppLaunchDetails?>>((ref) async {
   final notificationProviderLocal =
-      ref.read(notificationStateNotifierProvider.notifier);
-  await notificationProviderLocal.init();
+      ref.read(notificationProvider.notifier);
+  await notificationProviderLocal.init(); // vouch init
 
   return notificationProviderLocal.getAlert();
 });
-
-// @pragma('vm:entry-point')
-// onDidReceiveBackgroundNotification(NotificationResponse resp) {
-//   // print('background : ${resp.payload}');
-//   // router.go('/');
-// }
