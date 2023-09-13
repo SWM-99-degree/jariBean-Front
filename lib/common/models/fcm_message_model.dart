@@ -34,7 +34,7 @@ class FcmMessageModel implements IModelWithId {
 
   factory FcmMessageModel.fromFcmMessage(RemoteMessage message) =>
       FcmMessageModel(
-        id: message.messageId!,
+        id: message.messageId!.replaceAll('%', '!'),
         title: message.notification!.title!,
         body: message.notification!.body!,
         type: _getPushMessageType(message.data['type']),
