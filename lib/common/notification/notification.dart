@@ -40,8 +40,8 @@ NotificationDetails notificationDetails = NotificationDetails(
   ),
 );
 
-final notificationProvider = StateNotifierProvider<
-    NotificationStateNotifier, FlutterLocalNotificationsPlugin>((ref) {
+final notificationProvider = StateNotifierProvider<NotificationStateNotifier,
+    FlutterLocalNotificationsPlugin>((ref) {
   final goRouter = ref.read(goRouterProvider);
   return NotificationStateNotifier(goRouter: goRouter);
 });
@@ -104,10 +104,9 @@ class NotificationStateNotifier
   }
 }
 
-final openedWithNotiProvider =
+final launchedByFLNProvider =
     StateProvider<Future<NotificationAppLaunchDetails?>>((ref) async {
-  final notificationProviderLocal =
-      ref.read(notificationProvider.notifier);
+  final notificationProviderLocal = ref.read(notificationProvider.notifier);
   await notificationProviderLocal.init(); // vouch init
 
   return notificationProviderLocal.getAlert();

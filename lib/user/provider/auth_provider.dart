@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/alert/model/alert_model.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
+import 'package:jari_bean/common/firebase/fcm.dart';
+import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/social_login_provider.dart';
@@ -26,6 +30,11 @@ class AuthProvider extends ChangeNotifier {
         }
       }),
     );
+    ref.listen(isInitProvider, (previous, next) {
+      if (previous != next && next == true) {
+        notifyListeners();
+      }
+    });
   }
 
   Future<void> login({required String type}) async {
@@ -40,38 +49,6 @@ class AuthProvider extends ChangeNotifier {
   bool checkRegistered() {
     return ref.read(userProvider.notifier).checkRegistered();
   }
-
-  // FutureOr<String?> redirectLogic(_, GoRouterState state) async {
-  //   final openedWithNotiDetail = await ref.read(openedWithNotiProvider);
-  //   bool isLaunchedByAlert =
-  //       openedWithNotiDetail?.didNotificationLaunchApp ?? false;
-
-  //   final userProviderLocal = ref.read(userProvider);
-
-  //   final isLogginIn = state.location == '/login';
-  //   final isSplashScreen = state.location == '/splash';
-  //   // final isViewingAlert = state.location.contains('/alert');
-
-  //   if (userProviderLocal == null) {
-  //     return isLogginIn ? null : '/login';
-  //   }
-
-  //   if (userProviderLocal is UserModel) {
-  //     if (isLaunchedByAlert) {
-  //       return '/alert/$openedWithNotiDetail!.notificationResponse!.payload!';
-  //     }
-  //     if (isSplashScreen || isLogginIn) {
-  //       return '/home';
-  //     }
-  //     return null;
-  //   }
-
-  //   if (userProviderLocal is UserModelError) {
-  //     return isLogginIn ? null : '/login';
-  //   }
-
-  //   return null;
-  // }
 
   FutureOr<String?> redirectAuthLogic(_, GoRouterState state) async {
     final userProviderLocal = ref.read(userProvider);
@@ -106,25 +83,56 @@ class AuthProvider extends ChangeNotifier {
   }
 
   FutureOr<String?> redirectAlertLogic(_, GoRouterState state) async {
-    final openedWithNotiDetail = await ref.read(openedWithNotiProvider);
-    bool isLaunchedByAlert =
-        openedWithNotiDetail?.didNotificationLaunchApp ?? false;
+    final launchedWithFLNDetail = await ref.read(launchedByFLNProvider);
+    final launchedWithFcmDetail = ref.read(launchedByFCMProvider);
+    bool isLaunchedByFLN =
+        launchedWithFLNDetail?.didNotificationLaunchApp ?? false;
+
+    bool isLaunchedByFCM = launchedWithFcmDetail == null ? false : true;
+
+    bool isLaunchedByAlert = isLaunchedByFLN || isLaunchedByFCM;
 
     bool isDisplayingAlert =
         state.location.contains('/alert') && state.pathParameters.isNotEmpty;
 
-    String? alertId;
-    // = openedWithNotiDetail?.notificationResponse?.payload ?? null;
-    // isLaunchedByAlert = true;
-    alertId = 'test-id';
+    if (!(isLaunchedByAlert || isDisplayingAlert)) {
+      if (!isLaunchedByAlert) {
+        return '/';
+      }
 
-    if (isLaunchedByAlert || isDisplayingAlert) {
-      alertId = isDisplayingAlert
-          ? state.pathParameters['id']
-          : openedWithNotiDetail?.notificationResponse?.payload;
-      return '/alert/$alertId';
+      if (!isLaunchedByAlert) {
+        return '/alert';
+      }
+    }
+
+    String? alertId;
+    if (isLaunchedByAlert) {
+      alertId = isLaunchedByFLN
+          ? launchedWithFLNDetail?.notificationResponse?.payload
+          : launchedWithFcmDetail!.messageId;
+      ref.read(isInitProvider.notifier).state = false;
     } else {
+      alertId = state.pathParameters['id'];
+    }
+
+    if (alertId == null) {
       return '/';
     }
+
+    final AlertModel alert =
+        ref.read(alertProvider.notifier).getAlertById(alertId);
+    if (alert.id == 'error') {
+      return '/';
+    }
+    if (alert.data is MatchingSuccessModel) {
+      final data = alert.data as MatchingSuccessModel;
+      return '/cafe/${data.cafeId}';
+    }
+    if (alert.data is AnnouncementDataModel) {
+      return '/alert/${alert.id}';
+    }
+    return null;
   }
 }
+
+final isInitProvider = StateProvider((ref) => true);
