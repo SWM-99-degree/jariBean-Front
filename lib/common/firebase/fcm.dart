@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/notification/notification.dart';
-import 'package:jari_bean/common/provider/go_router_provider.dart';
 
 final fcmTokenProvider =
     StateNotifierProvider<FcmTokenStateNotifier, String>((ref) {
@@ -46,16 +46,17 @@ Future<void> fcmMessageHandler(
 }
 
 @pragma('vm:entry-point')
-fcmOnOpenedAppHandler(
-  RemoteMessage message,
-  ProviderContainer container,
-) async {
+fcmOnOpenedAppHandler({
+  required RemoteMessage message,
+  required AlertProvider alertProvider,
+  required GoRouter goRouter,
+}) async {
   print('message opened by : ${message.messageId}, ${message.data}');
   final receivedNotification = FcmMessageModel.fromFcmMessage(message);
-  container.read(alertProvider.notifier).addAlertFromFcmMessage(
-        receivedNotification,
-      );
-  container.read(goRouterProvider).push('/alert/${receivedNotification.id}');
+  alertProvider.addAlertFromFcmMessage(
+    receivedNotification,
+  );
+  goRouter.push('/alert/${receivedNotification.id}');
 }
 
 final launchedByFCMProvider = StateProvider<RemoteMessage?>((ref) => null);

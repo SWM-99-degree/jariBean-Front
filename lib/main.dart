@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:logger/logger.dart' as log;
@@ -59,16 +60,23 @@ void main() async {
     (message) => fcmMessageHandler(message, container),
   );
 
-  FirebaseMessaging.onMessageOpenedApp
-      .listen((message) => fcmOnOpenedAppHandler(message, container));
+  FirebaseMessaging.onMessageOpenedApp.listen(
+    (message) => fcmOnOpenedAppHandler(
+      message: message,
+      goRouter: container.read(goRouterProvider),
+      alertProvider: container.read(alertProvider.notifier),
+    ),
+  );
 
-  FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
-  final RemoteMessage? message =
-      await FirebaseMessaging.instance.getInitialMessage();
-
-  if (message != null) {
-    fcmOnOpenedAppHandler(message, container);
-  }
+  await FirebaseMessaging.instance.getInitialMessage().then((message) {
+    if (message != null) {
+      fcmOnOpenedAppHandler(
+        message: message,
+        goRouter: container.read(goRouterProvider),
+        alertProvider: container.read(alertProvider.notifier),
+      );
+    }
+  });
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
