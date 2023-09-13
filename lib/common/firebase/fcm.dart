@@ -57,3 +57,5 @@ fcmOnOpenedAppHandler(
       );
   container.read(goRouterProvider).push('/alert/${receivedNotification.id}');
 }
+
+final launchedByFCMProvider = StateProvider<RemoteMessage?>((ref) => null);
