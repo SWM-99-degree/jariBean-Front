@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/component/oauth_login_button.dart';
@@ -37,14 +39,16 @@ class LoginScreen extends ConsumerWidget {
                   imagePath: 'assets/images/kakao_login_large_wide.png',
                   onPressed: () async {
                     await ref.read(authProvider).login(type: 'kakao');
-                    // if (!((ref.read(userProvider) as UserModel).isRegistered ?? true)) {
                   },
                 ),
                 const SizedBox(height: 12),
-                OauthLoginButton(
-                  imagePath: 'assets/images/apple_login_large_wide.png',
-                  onPressed: () async {},
-                ),
+                if (Platform.isIOS)
+                  OauthLoginButton(
+                    imagePath: 'assets/images/apple_login_large_wide.png',
+                    onPressed: () async {
+                      await ref.read(authProvider).login(type: 'apple');
+                    },
+                  ),
                 const SizedBox(height: 12),
                 OauthLoginButton(
                   imagePath: 'assets/images/google_login_large_wide.png',
