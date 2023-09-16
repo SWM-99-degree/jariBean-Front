@@ -7,6 +7,7 @@ import 'package:jari_bean/user/models/login_response_model.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 part 'user_repository.g.dart';
 
@@ -69,10 +70,19 @@ class SocialLoginRepository {
   }
 
   Future<SocialLoginResponseModelBase> appleLogin() async {
-    return await SocialLogin.socialLogin(
-      loginUrl: appleLoginUrl,
-      callbackUrlScheme: callbackUrlScheme,
-    );
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      return SocialLoginResponseModel.fromJson({
+        'code': credential.authorizationCode,
+      });
+    } catch (e) {
+      return SocialLoginResponseModelError(e, '로그인 실패!');
+    }
   }
 }
 
