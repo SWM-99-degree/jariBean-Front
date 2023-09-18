@@ -2,6 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/alert/model/alert_model.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
+import 'package:jari_bean/alert/repository/alert_repository.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
@@ -40,6 +43,68 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         );
       }
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final alert = await ref.read(alertRepositoryProvider);
+      for (int i = 0; i < 300; i++) {
+        AlertModel alertModel = AlertModel(
+          id: i.toString(),
+          title: '자리빈에 오신것을 환영합니다',
+          isRead: false,
+          body: '메뚜기 월드에 오신걸 환영합니다~',
+          type: PushMessageType.announcement,
+          receivedAt: DateTime.now().subtract(Duration(days: 1)),
+          detailedBody: 'detailedBody',
+          data: MatchingSuccessModel(
+            cafeId: '123',
+            matchingId: '123',
+          ),
+        );
+
+        await alert.insertAlert(alertModel);
+      }
+
+      //get alerts using cursor pagination
+      List<AlertModel> alerts = await alert.getAlerts(0);
+      print(alerts.length); //10
+      print(alerts[0].id); //299
+      print(alerts[9].id); //290
+
+      alerts = await alert.getAlerts(10);
+      print(alerts.length); //10
+      print(alerts[0].id); //289
+      print(alerts[9].id); //280
+
+      alerts = await alert.getAlerts(20);
+      print(alerts.length); //10
+      print(alerts[0].id); //279
+      print(alerts[9].id); //270
+
+      alerts = await alert.getAlerts(30);
+      print(alerts.length); //10
+      print(alerts[0].id); //269
+      print(alerts[9].id); //260
+
+      // marking alert as read
+      await alert.markAsRead('299');
+      final alert299 = await alert.getAlert('299');
+
+      print(alert299.toJson());
+
+      final alertData1 = await alert.getAlertData('1');
+      print(alertData1);
+
+      // delete test
+      await alert.deleteAlert('299');
+      try {
+        print(await alert.getAlert('299'));
+      } catch (e) {
+        print(e);
+      }
+      print(await alert.getAlertData('299'));
+
+      alerts = await alert.getAlerts(0);
+    });
+
     _scrollController.addListener(() {});
   }
 
