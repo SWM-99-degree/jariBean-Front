@@ -96,12 +96,18 @@ class FcmMessageModel implements IModelWithId {
   }
 }
 
+@JsonSerializable()
 class FcmDataModelBase {
   final String? detailedBody;
 
   FcmDataModelBase({
     this.detailedBody,
   });
+
+  factory FcmDataModelBase.fromJson(Map<String, dynamic> json) =>
+      _$FcmDataModelBaseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FcmDataModelBaseToJson(this);
 }
 
 @JsonSerializable()
@@ -114,6 +120,9 @@ class MatchingBaseDataModel extends FcmDataModelBase {
 
   factory MatchingBaseDataModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingBaseDataModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$MatchingBaseDataModelToJson(this);
 }
 
 @JsonSerializable()
@@ -129,6 +138,9 @@ class MatchingSuccessModel extends MatchingBaseDataModel {
 
   factory MatchingSuccessModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingSuccessModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$MatchingSuccessModelToJson(this);
 }
 
 @JsonSerializable()
@@ -141,6 +153,9 @@ class MatchingFailModel extends MatchingBaseDataModel {
 
   factory MatchingFailModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingFailModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$MatchingFailModelToJson(this);
 }
 
 @JsonSerializable()
@@ -153,6 +168,9 @@ class MatchingCancelModel extends MatchingBaseDataModel {
 
   factory MatchingCancelModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingCancelModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$MatchingCancelModelToJson(this);
 }
 
 @JsonSerializable()
@@ -165,6 +183,9 @@ class MatchingUrgentModel extends MatchingBaseDataModel {
 
   factory MatchingUrgentModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingUrgentModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$MatchingUrgentModelToJson(this);
 }
 
 @JsonSerializable()
@@ -181,6 +202,9 @@ class AnnouncementDataModel extends FcmDataModelBase {
 
   factory AnnouncementDataModel.fromJson(Map<String, dynamic> json) =>
       _$AnnouncementDataModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$AnnouncementDataModelToJson(this);
 }
 
 @JsonSerializable()
@@ -197,6 +221,9 @@ class AdsDataModel extends FcmDataModelBase {
 
   factory AdsDataModel.fromJson(Map<String, dynamic> json) =>
       _$AdsDataModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$AdsDataModelToJson(this);
 }
 
 @JsonSerializable()
@@ -209,4 +236,7 @@ class ReservationDataModel extends FcmDataModelBase {
 
   factory ReservationDataModel.fromJson(Map<String, dynamic> json) =>
       _$ReservationDataModelFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ReservationDataModelToJson(this);
 }
