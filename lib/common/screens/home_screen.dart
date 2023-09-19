@@ -7,6 +7,7 @@ import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/alert/repository/alert_repository.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
+import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
@@ -62,46 +63,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         await alert.insertAlert(alertModel);
       }
 
-      //get alerts using cursor pagination
-      List<AlertModel> alerts = await alert.getAlerts(0);
-      print(alerts.length); //10
-      print(alerts[0].id); //299
-      print(alerts[9].id); //290
-
-      alerts = await alert.getAlerts(10);
-      print(alerts.length); //10
-      print(alerts[0].id); //289
-      print(alerts[9].id); //280
-
-      alerts = await alert.getAlerts(20);
-      print(alerts.length); //10
-      print(alerts[0].id); //279
-      print(alerts[9].id); //270
-
-      alerts = await alert.getAlerts(30);
-      print(alerts.length); //10
-      print(alerts[0].id); //269
-      print(alerts[9].id); //260
+      // get alert with data test
+      print('get alert with data test');
+      final alert199 = await alert.getAlert('199');
+      print('alert 199 : ${alert199.toJson()}');
+      final alertData = await alert.getAlertWithData(alert199);
+      print('alert 199 with data : ${alertData.toJson()}');
 
       // marking alert as read
+      print('marking alert as read');
+
+      print('before : ${(await alert.getAlert('299')).toJson()}');
       await alert.markAsRead('299');
       final alert299 = await alert.getAlert('299');
 
-      print(alert299.toJson());
+      print('after : ${alert299.toJson()}');
 
-      final alertData1 = await alert.getAlertData('1');
+      final alertData1 = await alert.getAlertWithData(alert299);
       print(alertData1);
 
       // delete test
+      print('delete test');
+
+      print('delete alert 299');
       await alert.deleteAlert('299');
       try {
+        print('try to get alert 299');
         print(await alert.getAlert('299'));
       } catch (e) {
         print(e);
       }
-      print(await alert.getAlertData('299'));
 
-      alerts = await alert.getAlerts(0);
+      try {
+        print('try to get alert 299 with data : foreign key constraint');
+        print('${(await alert.getAlertWithData(alert299)).toJson()}');
+      } catch (e) {
+        print(e);
+      }
     });
 
     _scrollController.addListener(() {});

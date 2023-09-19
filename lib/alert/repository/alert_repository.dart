@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_db_provider.dart';
+import 'package:jari_bean/common/models/offset_pagination_model.dart';
+import 'package:jari_bean/common/models/pagination_params.dart';
+import 'package:jari_bean/common/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 
 final alertRepositoryProvider = Provider<Future<AlertRepository>>((ref) async {
@@ -13,23 +18,32 @@ class AlertRepository {
   AlertRepository({required this.db});
 
   Future<void> insertAlert(AlertModel alert) async {
-    final alertJson = alert.toJson();
-    final alertData = alert.data;
-    alertJson.remove('data');
-
+    final alertJson = alert.toDB();
     await db.insert(
       'alerts',
       alertJson,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    // duplicate json to prevent modifying original json
-    final alertDataJson = Map<String, dynamic>.from(alertData.toJson());
-    alertDataJson['id'] = alert.id;
-    alertDataJson.remove('detailedBody');
+    final alertDataJson = jsonEncode(alert.data.toJson());
+    /* from model to json to string
+    remind that `toJson` function is a type of `Map<String, dynamic>` and it is not a string.
+    so we need to convert it to string using `jsonEncode` function.
+     example:
+     {
+      "data":{
+        "matchingId": "matchingId",
+        "cafeId": "cafeId",
+      },
+     }
+     see also : https://github.com/SWM-99-degree/jariBean-Front/issues/128
+    */
     await db.insert(
       'alert_data',
-      alertDataJson,
+      {
+        'id': alert.id,
+        'data': alertDataJson,
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -52,6 +66,29 @@ class AlertRepository {
     print('deleted alert $id');
   }
 
+  Future<OffsetPagination<AlertModel>> paginate({
+    required PaginationParams paginationParams,
+  }) async {
+    await Future.delayed(Duration(seconds: 1));
+    final limit = paginationParams.size ?? 20;
+    final offset = (paginationParams.page ?? 0) * (paginationParams.size ?? 20);
+    final List<Map<String, dynamic>> maps = await db.query(
+      'alerts',
+      limit: limit,
+      offset: offset,
+      orderBy: 'receivedAt DESC',
+    );
+    final List<AlertModel> alerts = List.generate(maps.length, (i) {
+      return AlertModel.fromDB(maps[i]);
+    });
+    final last = alerts.isEmpty;
+    return OffsetPagination(
+      content: alerts,
+      page: (paginationParams.page ?? 0) + 1,
+      last: last,
+    );
+  }
+
   // get alerts using cursor pagination
   Future<List<AlertModel>> getAlerts(int? offset) async {
     final List<Map<String, dynamic>> maps = await db.query(
@@ -65,18 +102,6 @@ class AlertRepository {
     });
   }
 
-  Future<Map<String, dynamic>> getAlertData(String id) async {
-    final List<Map<String, dynamic>> maps = await db.query(
-      'alert_data',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-    if (maps.isEmpty) {
-      throw Exception('Alert data not found');
-    }
-    return maps[0];
-  }
-
   Future<AlertModel> getAlert(String id) async {
     final List<Map<String, dynamic>> maps = await db.query(
       'alerts',
@@ -87,5 +112,49 @@ class AlertRepository {
       throw Exception('Alert not found');
     }
     return AlertModel.fromDB(maps[0]);
+  }
+
+  Future<AlertModel> getAlertWithData(AlertModel model) async {
+    final List<Map<String, dynamic>> maps = await db.query(
+      'alert_data',
+      where: 'id = ?',
+      whereArgs: [model.id],
+    );
+    if (maps.isEmpty) {
+      throw Exception('Alert has no data : $model.id');
+    }
+    final alertDataJson = maps[0];
+    /* has items like matchingId, cafeId etc in data, 
+     example:
+     {
+      "data":{
+        "matchingId": "matchingId",
+        "cafeId": "cafeId",
+      },
+     }
+    */
+    final typeToString = model.type.toString().split('.')[1];
+    /* 
+      typeToString is like matchingSuccess, matchingFail etc.
+      since it is enum, it is not matchingSuccess but PushMessageType.matchingSuccess
+      so we need to convert it to matchingSuccess by splitting and getting the last item.
+     */
+    final decodedData = jsonDecode(alertDataJson['data']);
+    /* 
+      original `data` was encoded to json string.
+      so we need to decode it to json object.
+      and it has return type of `Map<String, String>`
+      example : 
+      {
+        "matchingId": "matchingId",
+        "cafeId": "cafeId",
+      }
+     see also : https://github.com/SWM-99-degree/jariBean-Front/issues/128
+     */
+    final alertData = Utils.getPushMessageData(
+      type: typeToString,
+      data: decodedData,
+    );
+    return model.replaceData(alertData);
   }
 }

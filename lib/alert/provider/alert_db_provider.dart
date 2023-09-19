@@ -5,11 +5,12 @@ import 'package:sqflite/sqflite.dart';
 final alertDBProvider = Provider<Future<Database>>((ref) async {
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'alert_db.db');
+  deleteDatabase(path);
   final db = await openDatabase(
     path,
     version: 1,
+    onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
     onCreate: (db, version) {
-      //create two tables
       db.execute('''
         CREATE TABLE alerts(
           id TEXT PRIMARY KEY,
@@ -17,18 +18,19 @@ final alertDBProvider = Provider<Future<Database>>((ref) async {
           body TEXT,
           type TEXT NOT NULL,
           receivedAt TEXT NOT NULL,
-          detailedBody TEXT,
-          isRead INTEGER
+          isRead INTEGER,
+          data TEXT
         )''');
       db.execute('''
         CREATE TABLE alert_data(
           id TEXT PRIMARY KEY,
-          matchingId TEXT,
-  		    cafeId TEXT,
-  	      reservationId TEXT,
-          announcementId TEXT,
-          adsId TEXT
-        )''');
+          data TEXT,
+          CONSTRAINT fk_alert_id
+            FOREIGN KEY (id)
+            REFERENCES alerts(id)
+            ON DELETE CASCADE
+        )
+      ''');
     },
   );
   return db;
