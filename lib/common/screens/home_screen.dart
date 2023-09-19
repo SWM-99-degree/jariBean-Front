@@ -51,9 +51,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           title: '자리빈에 오신것을 환영합니다',
           isRead: false,
           body: '메뚜기 월드에 오신걸 환영합니다~',
-          type: PushMessageType.announcement,
+          type: PushMessageType.matchingSuccess,
           receivedAt: DateTime.now().subtract(Duration(days: 1)),
-          detailedBody: 'detailedBody',
           data: MatchingSuccessModel(
             cafeId: '123',
             matchingId: '123',

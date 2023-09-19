@@ -7,7 +7,6 @@ part 'alert_model.g.dart';
 class AlertModel extends FcmMessageModel {
   @JsonKey(fromJson: dateTimeFromJson, toJson: dateTimeToJson)
   final DateTime receivedAt;
-  final String? detailedBody;
   @JsonKey(
     defaultValue: false,
     fromJson: boolFromInt,
@@ -17,7 +16,6 @@ class AlertModel extends FcmMessageModel {
 
   AlertModel({
     required this.receivedAt,
-    required this.detailedBody,
     required this.isRead,
     required String id,
     required String title,
@@ -34,7 +32,6 @@ class AlertModel extends FcmMessageModel {
 
   factory AlertModel.fromFcmMessage(FcmMessageModel message) => AlertModel(
         receivedAt: DateTime.now(),
-        detailedBody: message.data.detailedBody,
         isRead: false,
         id: message.id,
         title: message.title,
@@ -43,6 +40,7 @@ class AlertModel extends FcmMessageModel {
         data: message.data,
       );
 
+  @override
   Map<String, dynamic> toJson() => _$AlertModelToJson(this);
 
   Map<String, dynamic> toDB() {
@@ -57,7 +55,6 @@ class AlertModel extends FcmMessageModel {
   factory AlertModel.fromDB(Map<String, dynamic> json) {
     // duplicate json to prevent modifying original json
     final alertJson = Map<String, dynamic>.from(json);
-    alertJson.remove('data');
     alertJson.addEntries(
       [
         MapEntry('data', {'detailedBody': ''})
@@ -69,7 +66,6 @@ class AlertModel extends FcmMessageModel {
   replaceData(FcmDataModelBase nextData) {
     return AlertModel(
       receivedAt: receivedAt,
-      detailedBody: detailedBody,
       isRead: isRead,
       id: id,
       title: title,
