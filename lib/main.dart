@@ -74,16 +74,6 @@ void main() async {
     ),
   );
 
-  await FirebaseMessaging.instance.getInitialMessage().then((message) {
-    if (message != null) {
-      fcmOnOpenedAppHandler(
-        message: message,
-        goRouter: container.read(goRouterProvider),
-        alertProvider: container.read(alertProvider.notifier),
-      );
-    }
-  });
-
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

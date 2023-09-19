@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,8 +7,10 @@ import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/alert/repository/alert_repository.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
@@ -45,6 +48,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       }
     });
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await FirebaseMessaging.instance.getInitialMessage().then((message) {
+        if (message != null) {
+          fcmOnOpenedAppHandler(
+            message: message,
+            goRouter: ref.read(goRouterProvider),
+            alertProvider: ref.read(alertProvider.notifier),
+          );
+        }
+      });
+
       final alert = await ref.read(alertRepositoryProvider);
       for (int i = 0; i < 300; i++) {
         AlertModel alertModel = AlertModel(
