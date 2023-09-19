@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:jari_bean/common/models/model_with_id.dart';
+import 'package:jari_bean/common/utils/utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'fcm_message_model.g.dart';
@@ -32,67 +33,19 @@ class FcmMessageModel implements IModelWithId {
     required this.data,
   });
 
-  factory FcmMessageModel.fromFcmMessage(RemoteMessage message) =>
-      FcmMessageModel(
-        id: message.messageId!.replaceAll('%', '!'),
-        title: message.notification!.title!,
-        body: message.notification!.body!,
-        type: _getPushMessageType(message.data['type']),
-        data: _getPushMessageData(message.data),
-      );
-
-  static PushMessageType _getPushMessageType(String type) {
-    switch (type) {
-      case 'matchingSuccess':
-        return PushMessageType.matchingSuccess;
-      case 'matchingFail':
-        return PushMessageType.matchingFail;
-      case 'matchingCancel':
-        return PushMessageType.matchingCancel;
-      case 'matchingUrgent':
-        return PushMessageType.matchingUrgent;
-      case 'announcement':
-        return PushMessageType.announcement;
-      case 'ads':
-        return PushMessageType.ads;
-      case 'reservationInfo':
-        return PushMessageType.reservationInfo;
-      case 'reservationComplete':
-        return PushMessageType.reservationComplete;
-      case 'reservationCanceled':
-        return PushMessageType.reservationCanceled;
-      case 'reservationUrgent':
-        return PushMessageType.reservationUrgent;
-      default:
-        throw Exception('Unknown push message type: $type');
-    }
   }
 
-  static FcmDataModelBase _getPushMessageData(Map<String, dynamic> data) {
-    switch (data['type']) {
-      case 'matchingSuccess':
-        return MatchingSuccessModel.fromJson(data);
-      case 'matchingFail':
-        return MatchingFailModel.fromJson(data);
-      case 'matchingCancel':
-        return MatchingCancelModel.fromJson(data);
-      case 'matchingUrgent':
-        return MatchingUrgentModel.fromJson(data);
-      case 'announcement':
-        return AnnouncementDataModel.fromJson(data);
-      case 'ads':
-        return AdsDataModel.fromJson(data);
-      case 'reservationInfo':
-        return ReservationDataModel.fromJson(data);
-      case 'reservationComplete':
-        return ReservationDataModel.fromJson(data);
-      case 'reservationCanceled':
-        return ReservationDataModel.fromJson(data);
-      case 'reservationUrgent':
-        return ReservationDataModel.fromJson(data);
-      default:
-        throw Exception('Unknown push message type: ${data['type']}');
-    }
+  factory FcmMessageModel.fromFcmMessage(RemoteMessage message) {
+    return FcmMessageModel(
+      id: message.messageId!.replaceAll('%', '!'),
+      title: message.notification!.title!,
+      body: message.notification!.body!,
+      type: Utils.getPushMessageType(message.data['type']),
+      data: Utils.getPushMessageData(
+        type: message.data['type'],
+        data: message.data['data'],
+      ),
+    );
   }
 }
 
