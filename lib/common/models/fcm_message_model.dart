@@ -18,12 +18,14 @@ enum PushMessageType {
   reservationUrgent,
 }
 
+@JsonSerializable()
 class FcmMessageModel implements IModelWithId {
   @override
   final String id;
   final String title;
   final String body;
   final PushMessageType type;
+  @JsonKey(toJson: dataToJson)
   final FcmDataModelBase data;
   FcmMessageModel({
     required this.id,
@@ -33,7 +35,15 @@ class FcmMessageModel implements IModelWithId {
     required this.data,
   });
 
+  /// convert FcmDataModelBase to json
+  /// data must be inherited from FcmDataModelBase
+  /// given data will execute toJson function from its class
+  /// this will be executed when FcmMessageModel is converted to json
+  static dataToJson(FcmDataModelBase data) {
+    return data.toJson();
   }
+
+  Map<String, dynamic> toJson() => _$FcmMessageModelToJson(this);
 
   factory FcmMessageModel.fromFcmMessage(RemoteMessage message) {
     return FcmMessageModel(
