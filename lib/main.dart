@@ -53,6 +53,12 @@ void main() async {
     sound: true,
   );
 
+  FirebaseMessaging.instance.onTokenRefresh.listen(
+    (token) => fcmTokenRefreshHandler(
+      token,
+      container.read(fcmTokenProvider.notifier),
+    ),
+  );
 
   FirebaseMessaging.onMessage
       .listen((message) => fcmMessageHandler(message, container));
