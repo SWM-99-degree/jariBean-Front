@@ -65,7 +65,19 @@ class AlertRepository {
     );
     print('deleted alert $id');
   }
-
+  /// get alerts using offset pagination
+  /// return type is `OffsetPagination<AlertModel>`. 
+  /// its parameter `page` will have the page number of the next page. 
+  /// if there is no more page, `last` will be `true`.
+  /// example:
+  /// ```
+  /// OffsetPagination<AlertModel>(
+  ///  content: [AlertModel, AlertModel, AlertModel],
+  ///  page: 2,
+  ///  last: false,
+  /// )
+  /// ```
+  /// see also : https://github.com/SWM-99-degree/jariBean-Front/issues/129
   Future<OffsetPagination<AlertModel>> paginate({
     required PaginationParams paginationParams,
   }) async {
