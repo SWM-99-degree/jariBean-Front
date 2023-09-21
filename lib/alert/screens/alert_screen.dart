@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jari_bean/alert/model/alert_model.dart';
-import 'package:jari_bean/alert/provider/alert_pagination.dart';
+import 'package:jari_bean/alert/provider/alert_pagination_provider.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 
@@ -33,9 +33,7 @@ class _AlertScreenState extends ConsumerState<AlertScreen> {
     if (_scrollController.offset >
         _scrollController.position.maxScrollExtent - 300) {
       final alerts = ref.read(alertPaginationProvider.notifier);
-      alerts.paginate(
-        fetchMore: true,
-      );
+      alerts.alertPaginate(fetchMore: true);
     }
   }
 
@@ -64,14 +62,16 @@ class _AlertScreenState extends ConsumerState<AlertScreen> {
     }
 
     final op = alerts as OffsetPagination;
+    // final list = op.content;
+    final list = ref.watch(alertProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: ListView.separated(
         controller: _scrollController,
-        itemCount: op.content.length + 1,
+        itemCount: list.length + 1,
         itemBuilder: (_, index) {
-          if (index == op.content.length) {
+          if (index == list.length) {
             return Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -82,13 +82,13 @@ class _AlertScreenState extends ConsumerState<AlertScreen> {
               ),
             );
           }
-          final pItem = op.content[index] as AlertModel;
+          final pItem = list[index];
           return Dismissible(
             key: Key(pItem.id),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
-              final alerts = ref.read(alertPaginationProvider.notifier);
-              alerts.remove(pItem);
+              final alerts = ref.read(alertProvider.notifier);
+              alerts.delete(pItem);
             },
             background: Container(
               color: Colors.red,
