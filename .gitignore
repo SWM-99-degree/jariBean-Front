@@ -47,3 +47,5 @@ app.*.map.json
 /lib/common/config/.env
 /lib/common/const/data.dart
 /android/app/google-services.json
+
+**/*.g.dart

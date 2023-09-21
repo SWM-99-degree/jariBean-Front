@@ -27,10 +27,26 @@ Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
   );
 }
 
+class Logger extends ProviderObserver {
+  @override
+  void didUpdateProvider(
+    ProviderBase<Object?> provider,
+    Object? previousValue,
+    Object? newValue,
+    ProviderContainer container,
+  ) {
+    print('''
+{
+  "provider": "${provider.name ?? provider.runtimeType}",
+  "newValue": "$newValue"
+}''');
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final container = ProviderContainer();
+  final container = ProviderContainer(observers: [Logger()]);
 
   await dotenv.load(fileName: "lib/common/config/.env");
   await Firebase.initializeApp(
@@ -105,6 +121,10 @@ class _App extends ConsumerWidget {
       designSize: const Size(375, 812),
       builder: (context, child) => MaterialApp.router(
         routerConfig: router,
+        theme: ThemeData(
+          primarySwatch: Colors.deepOrange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
             textScaleFactor: 1.0,
