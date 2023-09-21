@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_db_provider.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/models/pagination_params.dart';
 import 'package:jari_bean/common/repository/pagination_base_repository.dart';
@@ -11,12 +12,17 @@ import 'package:sqflite/sqflite.dart';
 
 final alertRepositoryProvider = Provider<Future<AlertRepository>>((ref) async {
   final db = await ref.read(alertDBProvider);
-  return AlertRepository(db: db);
+  final offset = ref.read(alertOffsetProvider.notifier);
+  return AlertRepository(db: db, offset: offset);
 });
 
 class AlertRepository implements IPaginationBaseRepository<AlertModel> {
   final Database db;
-  AlertRepository({required this.db});
+  final StateController<int> offset;
+  AlertRepository({
+    required this.db,
+    required this.offset,
+  });
 
   Future<void> insertAlert(AlertModel alert) async {
     final alertJson = alert.toDB();
@@ -86,7 +92,9 @@ class AlertRepository implements IPaginationBaseRepository<AlertModel> {
   }) async {
     await Future.delayed(Duration(seconds: 1));
     final limit = paginationParams.size ?? 20;
-    final offset = (paginationParams.page ?? 0) * (paginationParams.size ?? 20);
+    final offset =
+        (paginationParams.page ?? 0) * (paginationParams.size ?? 20) +
+            this.offset.state;
     final List<Map<String, dynamic>> maps = await db.query(
       'alerts',
       limit: limit,
