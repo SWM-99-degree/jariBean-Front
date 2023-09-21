@@ -6,15 +6,19 @@ import 'package:jari_bean/common/models/fcm_message_model.dart';
 final alertProvider =
     StateNotifierProvider<AlertStateNotifier, List<AlertModel>>((ref) {
   final repository = ref.read(alertRepositoryProvider);
+  final offset = ref.read(alertOffsetProvider.notifier);
   return AlertStateNotifier(
     repository: repository,
+    offset: offset,
   );
 });
 
 class AlertStateNotifier extends StateNotifier<List<AlertModel>> {
   final Future<AlertRepository> repository;
+  final StateController<int> offset;
   AlertStateNotifier({
     required this.repository,
+    required this.offset,
   }) : super(
           [],
         );
@@ -29,6 +33,7 @@ class AlertStateNotifier extends StateNotifier<List<AlertModel>> {
     ];
     try {
       await (await repository).insertAlert(model);
+      offset.state++;
     } catch (e) {
       print('failed to insert alert to the DB.');
       print(e);
@@ -50,6 +55,7 @@ class AlertStateNotifier extends StateNotifier<List<AlertModel>> {
     }
     try {
       await (await repository).deleteAlert(model.id);
+      offset.state--;
     } catch (e) {
       print('failed to insert alert to the DB.');
       print(e);
@@ -75,17 +81,9 @@ class AlertStateNotifier extends StateNotifier<List<AlertModel>> {
     if (state.any((element) => element.id == message.id)) {
       return;
     }
-    state = [
-      AlertModel.fromFcmMessage(message),
-      ...state,
-    ];
 
-    try {
-      final repository = await this.repository;
-      await repository.insertAlert(AlertModel.fromFcmMessage(message));
-    } catch (e) {
-      print(e);
-    }
+    final alert = AlertModel.fromFcmMessage(message);
+    await insert(alert);
   }
 
   Future<void> markAsRead(String id) async {
@@ -101,3 +99,7 @@ class AlertStateNotifier extends StateNotifier<List<AlertModel>> {
     }
   }
 }
+
+final alertOffsetProvider = StateProvider<int>((ref) {
+  return 0;
+});
