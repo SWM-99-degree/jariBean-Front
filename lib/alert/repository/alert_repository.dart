@@ -5,6 +5,7 @@ import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_db_provider.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/models/pagination_params.dart';
+import 'package:jari_bean/common/repository/pagination_base_repository.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -13,7 +14,7 @@ final alertRepositoryProvider = Provider<Future<AlertRepository>>((ref) async {
   return AlertRepository(db: db);
 });
 
-class AlertRepository {
+class AlertRepository implements IPaginationBaseRepository<AlertModel> {
   final Database db;
   AlertRepository({required this.db});
 
@@ -65,9 +66,10 @@ class AlertRepository {
     );
     print('deleted alert $id');
   }
+
   /// get alerts using offset pagination
-  /// return type is `OffsetPagination<AlertModel>`. 
-  /// its parameter `page` will have the page number of the next page. 
+  /// return type is `OffsetPagination<AlertModel>`.
+  /// its parameter `page` will have the page number of the next page.
   /// if there is no more page, `last` will be `true`.
   /// example:
   /// ```
@@ -78,6 +80,7 @@ class AlertRepository {
   /// )
   /// ```
   /// see also : https://github.com/SWM-99-degree/jariBean-Front/issues/129
+  @override
   Future<OffsetPagination<AlertModel>> paginate({
     required PaginationParams paginationParams,
   }) async {

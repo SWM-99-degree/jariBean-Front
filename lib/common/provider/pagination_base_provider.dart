@@ -1,37 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jari_bean/alert/model/alert_model.dart';
-import 'package:jari_bean/alert/repository/alert_repository.dart';
-import 'package:jari_bean/common/models/fcm_message_model.dart';
+import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/models/pagination_params.dart';
+import 'package:jari_bean/common/repository/pagination_base_repository.dart';
 
-final alertPaginationProvider =
-    StateNotifierProvider<AlertPaginationProvider, OffsetPaginationBase>((ref) {
-  final repository = ref.read(alertRepositoryProvider);
-  return AlertPaginationProvider(
-    repository: repository,
-  );
-});
-
-final errorAlert = AlertModel(
-  id: 'error',
-  title: '에러가 발생했어요',
-  isRead: false,
-  body: '에러가 발생했어요',
-  type: PushMessageType.announcement,
-  receivedAt: DateTime.now(),
-  data: FcmDataModelBase(),
-);
-
-class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
-  final Future<AlertRepository> repository;
-  AlertPaginationProvider({
+/// PaginationBaseStateNotifier is a StateNotifier that provides pagination.
+/// It is used to provide pagination to the UI.
+/// repository must be a Future of IPaginationBaseRepository because of the DB initialization issue.
+/// pass two generics to PaginationBaseStateNotifier.
+/// T is a type of IModelWithId.
+/// U is a type of IPaginationBaseRepository.
+class PaginationBaseStateNotifier<T extends IModelWithId,
+        U extends IPaginationBaseRepository<T>>
+    extends StateNotifier<OffsetPaginationBase> {
+  final Future<U> repository;
+  PaginationBaseStateNotifier({
     required this.repository,
   }) : super(OffsetPaginationLoading()) {
     paginate();
   }
 
-  paginate({
+  Future<List<T>> paginate({
     int fetchCount = 20,
     int page = 0,
     bool fetchMore = false,
@@ -41,7 +30,7 @@ class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
       if (state is OffsetPagination && !forceRefetch) {
         final pState = state as OffsetPagination;
 
-        if (pState.last) return;
+        if (pState.last) return [];
       }
 
       final isLoading = state is OffsetPaginationLoading;
@@ -49,7 +38,7 @@ class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
       final isFetchingMore = state is OffsetPaginationFetchingMore;
       if (fetchMore && (isLoading || isRefetching || isFetchingMore)) {
         print(isFetchingMore);
-        return;
+        return [];
       }
 
       PaginationParams paginationParams = PaginationParams(
@@ -58,8 +47,8 @@ class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
       );
 
       if (fetchMore) {
-        final pState = state as OffsetPagination<AlertModel>;
-        state = OffsetPaginationFetchingMore<AlertModel>(
+        final pState = state as OffsetPagination<T>;
+        state = OffsetPaginationFetchingMore<T>(
           content: pState.content,
           page: pState.page,
           last: pState.last,
@@ -71,9 +60,9 @@ class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
       } else {
         if (state is OffsetPagination && !forceRefetch) {
           print('언제 수행??');
-          final pState = state as OffsetPagination<AlertModel>;
+          final pState = state as OffsetPagination<T>;
 
-          state = OffsetPaginationRefetching<AlertModel>(
+          state = OffsetPaginationRefetching<T>(
             content: pState.content,
             page: pState.page,
             last: pState.last,
@@ -88,7 +77,7 @@ class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
       );
 
       if (state is OffsetPaginationFetchingMore) {
-        final pState = state as OffsetPaginationFetchingMore<AlertModel>;
+        final pState = state as OffsetPaginationFetchingMore<T>;
 
         state = resp.copyWith(
           content: [
@@ -99,36 +88,13 @@ class AlertPaginationProvider extends StateNotifier<OffsetPaginationBase> {
       } else {
         state = resp;
       }
+
+      return resp.content;
     } catch (e, stack) {
       state = OffsetPaginationError(message: '데이터 수신 실패!');
       print(e);
       print(stack);
     }
-  }
-
-  add(AlertModel model) async {
-    // duplicated id occurred
-    if (state is OffsetPagination) {
-      final pState = state as OffsetPagination<AlertModel>;
-      state = pState.copyWith(
-        content: [
-          model,
-          ...pState.content,
-        ],
-      );
-    }
-    await (await repository).insertAlert(model);
-  }
-
-  remove(AlertModel model) async {
-    if (state is OffsetPagination) {
-      final pState = state as OffsetPagination<AlertModel>;
-      state = pState.copyWith(
-        content: [
-          ...pState.content.where((element) => element.id != model.id),
-        ],
-      );
-    }
-    await (await repository).deleteAlert(model.id);
+    return [];
   }
 }
