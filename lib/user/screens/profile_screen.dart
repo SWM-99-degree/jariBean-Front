@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProfileScreen extends ConsumerWidget {
+  static String get routerName => '/profile';
   const ProfileScreen({super.key});
 
   @override

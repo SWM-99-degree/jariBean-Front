@@ -1,48 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
-import 'package:jari_bean/common/screens/test_screen.dart';
-import 'package:jari_bean/history/screens/history_screen.dart';
-import 'package:jari_bean/common/screens/home_screen.dart';
-import 'package:jari_bean/user/screens/profile_screen.dart';
 
-class RootScreen extends ConsumerStatefulWidget {
+class RootScreen extends StatelessWidget {
   static String get routerName => '/';
-  const RootScreen({super.key});
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _RootScreenState();
-}
-
-class _RootScreenState extends ConsumerState<RootScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController controller;
-
-  int index = 0;
-
-  void tabListener() {
-    setState(() {
-      index = controller.index;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    controller = TabController(length: 4, vsync: this);
-
-    controller.addListener(tabListener);
-  }
-
-  @override
-  void dispose() {
-    controller.removeListener(tabListener);
-    controller.dispose();
-
-    super.dispose();
-  }
+  final Widget child;
+  const RootScreen({required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +20,35 @@ class _RootScreenState extends ConsumerState<RootScreen>
         // type: BottomNavigationBarType.shifting,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
-          controller.animateTo(index);
+          switch (index) {
+            case 0:
+              context.go('/home');
+              break;
+            case 1:
+              context.go('/history');
+              break;
+            case 2:
+              context.go('/alert');
+              break;
+            case 3:
+              context.go('/profile');
+              break;
+          }
         },
-        currentIndex: index,
+        currentIndex: () {
+          switch (GoRouterState.of(context).location) {
+            case '/home':
+              return 0;
+            case '/history':
+              return 1;
+            case '/alert':
+              return 2;
+            case '/profile':
+              return 3;
+            default:
+              return 0;
+          }
+        }(),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(JariBeanIconPack.home),
@@ -77,30 +68,9 @@ class _RootScreenState extends ConsumerState<RootScreen>
           ),
         ],
       ),
-      child: TabBarView(
-        controller: controller,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment(0.86, -0.52),
-                end: Alignment(-0.86, 0.52),
-                colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
-              ),
-            ),
-            child: SafeArea(
-              child: Center(
-                child: HomeScreen(),
-              ),
-            ),
-          ),
-          Center(child: TestScreen()),
-          Center(
-            child: HistoryScreen(),
-          ),
-          ProfileScreen()
-        ],
+      child: Container(
+        color: Colors.white,
+        child: child,
       ),
     );
   }
