@@ -66,7 +66,7 @@ class AuthProvider extends ChangeNotifier {
 
   FutureOr<String?> redirectRegisterLogic(_, GoRouterState state) async {
     if (ref.read(userProvider.notifier).checkRegistered()) {
-      return '/';
+      return '/home';
     } else {
       return null;
     }

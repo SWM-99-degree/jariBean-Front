@@ -18,6 +18,7 @@ import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
+  static String get routerName => '/home';
   const HomeScreen({super.key});
 
   @override
@@ -127,107 +128,119 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     flag = ref.watch(matchingInfoProvider);
-    return DefaultTabController(
-      length: 2,
-      child: NestedScrollView(
-        controller: _scrollController,
-        headerSliverBuilder: (context, _) => [
-          SliverAppBar(
-            toolbarHeight: (flag) ? 176.h : 0,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerRight,
-                    end: Alignment.centerLeft,
-                    colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 20.h,
-                    ),
-                    Icon(
-                      JariBeanIconPack.ok_sign,
-                      size: 52.w,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
-                    Text(
-                      '매칭 성공',
-                      textAlign: TextAlign.center,
-                      style: defaultFontStyleWhite.copyWith(
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w700,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerRight,
+          end: Alignment.centerLeft,
+          colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
+        ),
+      ),
+      child: SafeArea(
+        child: DefaultTabController(
+          length: 2,
+          child: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder: (context, _) => [
+              SliverAppBar(
+                toolbarHeight: (flag) ? 176.h : 0,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerRight,
+                        end: Alignment.centerLeft,
+                        colors: const [PRIMARY_YELLOW, PRIMARY_ORANGE],
                       ),
                     ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Icon(
+                          JariBeanIconPack.ok_sign,
+                          size: 52.w,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: 8.h,
+                        ),
+                        Text(
+                          '매칭 성공',
+                          textAlign: TextAlign.center,
+                          style: defaultFontStyleWhite.copyWith(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                backgroundColor: Colors.transparent,
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyTabBarDelegate(
+                  TabBar(
+                    indicator:
+                        TriangleTabIndicator(color: Colors.white, radius: 10),
+                    indicatorPadding: EdgeInsets.only(bottom: 20),
+                    controller: _tabController,
+                    tabs: _tabs
+                        .map(
+                          (String name) => Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Tab(
+                                  child: Text(
+                                    name,
+                                    style: defaultFontStyleWhite.copyWith(
+                                      color: Colors.white.withOpacity(
+                                        _tabController.index ==
+                                                _tabs.indexOf(name)
+                                            ? 1
+                                            : 0.5,
+                                      ),
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18.sp,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12.h + 20,
+                              ),
+                            ],
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ],
+            body: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(top: 30.h),
+                child: TabBarView(
+                  controller: _tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    ReservationHomeScreen(),
+                    flag ? MatchingSuccessScreen() : MatchingHomeScreen()
                   ],
                 ),
               ),
-            ),
-            backgroundColor: Colors.transparent,
-          ),
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _StickyTabBarDelegate(
-              TabBar(
-                indicator:
-                    TriangleTabIndicator(color: Colors.white, radius: 10),
-                indicatorPadding: EdgeInsets.only(bottom: 20),
-                controller: _tabController,
-                tabs: _tabs
-                    .map(
-                      (String name) => Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Tab(
-                              child: Text(
-                                name,
-                                style: defaultFontStyleWhite.copyWith(
-                                  color: Colors.white.withOpacity(
-                                    _tabController.index == _tabs.indexOf(name)
-                                        ? 1
-                                        : 0.5,
-                                  ),
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 18.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 12.h + 20,
-                          ),
-                        ],
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-          ),
-        ],
-        body: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            color: Colors.white,
-          ),
-          child: Padding(
-            padding: EdgeInsets.only(top: 30.h),
-            child: TabBarView(
-              controller: _tabController,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                ReservationHomeScreen(),
-                flag ? MatchingSuccessScreen() : MatchingHomeScreen()
-              ],
             ),
           ),
         ),
