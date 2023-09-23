@@ -115,7 +115,7 @@ class RegisterScreen extends ConsumerWidget {
                         }
 
                         ref.read(userProvider.notifier).register();
-                        context.go('/alert');
+                        context.go('/home');
                       },
                     ),
                   ],
