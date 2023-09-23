@@ -32,103 +32,94 @@ final goRouterProvider = Provider<GoRouter>(
       redirect: provider.redirectAuthLogic,
       routes: [
         GoRoute(
-          path: '/',
-          name: RootScreen.routerName,
-          builder: (_, __) => RootScreen(
-            child: HomeScreen(),
-          ),
+          path: '/splash',
+          name: SplashScreen.routerName,
+          builder: (_, __) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: LoginScreen.routerName,
+          builder: (_, __) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register',
+          name: RegisterScreen.routerName,
+          builder: (_, __) => const RegisterScreen(),
+          redirect: provider.redirectRegisterLogic,
+        ),
+        ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (context, state, child) {
+            return RootScreen(
+              child: child,
+            );
+          },
           routes: [
             GoRoute(
-              path: 'splash',
-              name: SplashScreen.routerName,
-              builder: (_, __) => const SplashScreen(),
-            ),
-            GoRoute(
-              path: 'login',
-              name: LoginScreen.routerName,
-              builder: (_, __) => const LoginScreen(),
-            ),
-            GoRoute(
-              path: 'register',
-              name: RegisterScreen.routerName,
-              builder: (_, __) => const RegisterScreen(),
-              redirect: provider.redirectRegisterLogic,
-            ),
-            ShellRoute(
-              navigatorKey: _shellNavigatorKey,
-              builder: (context, state, child) {
-                return RootScreen(
-                  child: child,
-                );
-              },
-              routes: [
-                GoRoute(
-                  path: 'home',
-                  name: HomeScreen.routerName,
-                  pageBuilder: (_, __) => NoTransitionPage(
-                    child: HomeScreen(),
-                  ),
-                ),
-                GoRoute(
-                  path: 'history',
-                  name: HistoryScreen.routerName,
-                  pageBuilder: (_, __) => NoTransitionPage(
-                    child: HistoryScreen(),
-                  ),
-                ),
-                GoRoute(
-                  path: 'profile',
-                  name: ProfileScreen.routerName,
-                  pageBuilder: (_, __) => NoTransitionPage(
-                    child: ProfileScreen(),
-                  ),
-                ),
-                GoRoute(
-                  path: 'alert',
-                  name: AlertScreen.routerName,
-                  pageBuilder: (_, __) => NoTransitionPage(
-                    child: AlertScreen(),
-                  ),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: 'cafe',
-              name: CafeScreen.routerName,
-              builder: (_, state) => CafeScreen(),
-              routes: [
-                GoRoute(
-                  path: ":id",
-                  builder: (_, state) =>
-                      CafeDetailScreen(cafeId: state.pathParameters['id']!),
-                ),
-              ],
-            ),
-            GoRoute(
-              path: 'search',
-              name: SearchScreen.routerName,
-              builder: (_, state) => SearchScreen(
-                serviceAreaId: state.queryParameters['serviceAreaId'],
+              path: '/home',
+              name: HomeScreen.routerName,
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: HomeScreen(),
               ),
             ),
             GoRoute(
-              path: 'result',
-              name: ResultScreen.routerName,
-              builder: (_, __) => const ResultScreen(
-                cafeId: '1',
+              path: '/history',
+              name: HistoryScreen.routerName,
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: HistoryScreen(),
               ),
             ),
             GoRoute(
-              path: 'matching/proceeding',
-              name: 'matching/proceeding',
-              builder: (_, __) => MatchingProceedingScreen(),
+              path: '/profile',
+              name: ProfileScreen.routerName,
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: ProfileScreen(),
+              ),
             ),
             GoRoute(
-              path: 'matching/success',
-              name: 'matching/success',
-              builder: (_, __) => MatchingSuccessScreen(),
-            )
+              path: '/alert',
+              name: AlertScreen.routerName,
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: AlertScreen(),
+              ),
+            ),
           ],
+        ),
+        GoRoute(
+          path: '/cafe',
+          name: CafeScreen.routerName,
+          builder: (_, state) => CafeScreen(),
+          routes: [
+            GoRoute(
+              path: ":id",
+              builder: (_, state) =>
+                  CafeDetailScreen(cafeId: state.pathParameters['id']!),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/search',
+          name: SearchScreen.routerName,
+          builder: (_, state) => SearchScreen(
+            serviceAreaId: state.queryParameters['serviceAreaId'],
+          ),
+        ),
+        GoRoute(
+          path: '/result',
+          name: ResultScreen.routerName,
+          builder: (_, __) => const ResultScreen(
+            cafeId: '1',
+          ),
+        ),
+        GoRoute(
+          path: '/matching/proceeding',
+          name: '/matching/proceeding',
+          builder: (_, __) => MatchingProceedingScreen(),
+        ),
+        GoRoute(
+          path: '/matching/success',
+          name: '/matching/success',
+          builder: (_, __) => MatchingSuccessScreen(),
         )
       ],
     );

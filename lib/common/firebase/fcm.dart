@@ -87,7 +87,7 @@ Future<void> fcmMessageHandler(
 @pragma('vm:entry-point')
 fcmOnOpenedAppHandler({
   required RemoteMessage message,
-  required AlertProvider alertProvider,
+  required AlertStateNotifier alertProvider,
   required GoRouter goRouter,
 }) async {
   print('message opened by : ${message.messageId}, ${message.data}');
