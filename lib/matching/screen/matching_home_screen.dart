@@ -9,6 +9,7 @@ import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_provider.dart';
 
 class MatchingHomeScreen extends ConsumerWidget {
+  static const routerName = '/home/matching';
   const MatchingHomeScreen({super.key});
 
   @override
