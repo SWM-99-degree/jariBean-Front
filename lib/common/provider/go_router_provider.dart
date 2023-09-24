@@ -4,12 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_screen.dart';
+import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/screens/home_screen.dart';
 import 'package:jari_bean/history/screens/history_screen.dart';
-import 'package:jari_bean/matching/screen/matching_home_screen.dart';
 import 'package:jari_bean/matching/screen/matching_proceeding_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
-import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
 import 'package:jari_bean/reservation/screen/result_screen.dart';
 import 'package:jari_bean/reservation/screen/search_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
@@ -22,7 +21,6 @@ import 'package:jari_bean/user/screens/register_screen.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> _shellNavigatorKey =
     GlobalKey<NavigatorState>();
-final GlobalKey<NavigatorState> _homeNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>(
   (ref) {
@@ -53,32 +51,30 @@ final goRouterProvider = Provider<GoRouter>(
         ShellRoute(
           navigatorKey: _shellNavigatorKey,
           builder: (context, state, child) {
+            print(child);
             return RootScreen(
               child: child,
             );
           },
           routes: [
-            ShellRoute(
-              navigatorKey: _homeNavigatorKey,
-              pageBuilder: (_, __, child) => NoTransitionPage(
-                child: HomeScreen(child: child),
-              ),
-              routes: [
-                GoRoute(
-                  path: '/home/matching',
-                  name: MatchingHomeScreen.routerName,
-                  pageBuilder: (_, __) => NoTransitionPage(
-                    child: MatchingHomeScreen(),
-                  ),
-                ),
-                GoRoute(
-                  path: '/home/reservation',
-                  name: ReservationHomeScreen.routerName,
-                  pageBuilder: (_, __) => NoTransitionPage(
-                    child: ReservationHomeScreen(),
-                  ),
-                ),
-              ],
+            GoRoute(
+              path: '/home',
+              name: HomeScreen.routerName,
+              pageBuilder: (context, state) {
+                if (state.queryParameters['selection'] == 'matching') {
+                  ref
+                      .read(homeSelectionProvider.notifier)
+                      .update(HomeSelection.matching);
+                } else if (state.queryParameters['selection'] ==
+                    'reservation') {
+                  ref
+                      .read(homeSelectionProvider.notifier)
+                      .update(HomeSelection.reservation);
+                }
+                return NoTransitionPage(
+                  child: HomeScreen(),
+                );
+              },
             ),
             GoRoute(
               path: '/history',

@@ -28,7 +28,7 @@ class _MatchingProceedingScreenState
     Future.delayed(
       Duration(seconds: 3),
       Random().nextBool()
-          ? () => context.go('/matching/success')
+          ? () => context.push('/matching/success')
           : showCustomDialog(
               context: context,
               model: CustomDialogWithTwoButtonsModel(

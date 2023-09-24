@@ -116,7 +116,7 @@ class MatchingHomeScreen extends ConsumerWidget {
         CustomButton(
           text: '매칭하기',
           onPressed: () {
-            context.go('/matching/proceeding');
+            context.push('/matching/proceeding');
           },
         ),
       ],

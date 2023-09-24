@@ -12,6 +12,7 @@ import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
+import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
@@ -19,8 +20,7 @@ import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static String get routerName => '/home';
-  final Widget child;
-  const HomeScreen({required this.child, super.key});
+  const HomeScreen({super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -28,28 +28,39 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
+  late final TabController _tabController = TabController(
+    length: 2,
+    vsync: this,
+    initialIndex: ref.read(homeSelectionProvider).index,
+  );
   final ScrollController _scrollController =
       ScrollController(initialScrollOffset: 50.h);
-  late final TabController _tabController;
-
   bool flag = false;
 
   final List<String> _tabs = ['자리 예약하기', '실시간 매칭하기'];
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
-    _tabController.index = getIndexFromChild(widget.child);
     _tabController.addListener(() {
-      setState(() {});
       if (_tabController.indexIsChanging) {
         _scrollController.animateTo(
           ((flag && _tabController.index == 0) ? 176.h : 0) + 50.h,
           duration: Duration(milliseconds: flag ? 250 : 150),
           curve: Curves.easeInOut,
         );
+        if (_tabController.index == 1) {
+          ref.read(homeSelectionProvider.notifier).update(
+                HomeSelection.matching,
+              );
+        } else {
+          ref.read(homeSelectionProvider.notifier).update(
+                HomeSelection.reservation,
+              );
+        }
+        context.go('/home');
       }
     });
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await FirebaseMessaging.instance.getInitialMessage().then((message) {
         if (message != null) {
@@ -121,6 +132,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -128,6 +140,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   @override
   Widget build(BuildContext context) {
     flag = ref.watch(matchingInfoProvider);
+    final index = ref.watch(homeSelectionProvider);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -185,32 +199,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 pinned: true,
                 delegate: _StickyTabBarDelegate(
                   TabBar(
-                    indicator:
-                        TriangleTabIndicator(color: Colors.white, radius: 10),
-                    indicatorPadding: EdgeInsets.only(bottom: 20),
                     controller: _tabController,
-                    onTap: (index) {
-                      if (index == 1) {
-                        context.go('/home/matching');
-                      } else {
-                        context.go('/home/reservation');
-                      }
-                    },
                     tabs: _tabs
+                        .asMap()
+                        .entries
                         .map(
-                          (String name) => Column(
+                          (e) => Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: Tab(
                                   child: Text(
-                                    name,
+                                    e.value,
                                     style: defaultFontStyleWhite.copyWith(
                                       color: Colors.white.withOpacity(
-                                        _tabController.index ==
-                                                _tabs.indexOf(name)
-                                            ? 1
-                                            : 0.5,
+                                        (index.index == e.key) ? 1 : 0.5,
                                       ),
                                       fontWeight: FontWeight.w800,
                                       fontSize: 18.sp,
@@ -239,7 +242,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
               child: Padding(
                 padding: EdgeInsets.only(top: 30.h),
-                child: widget.child,
+                child: index == HomeSelection.reservation
+                    ? ReservationHomeScreen()
+                    : MatchingHomeScreen(),
               ),
             ),
           ),
@@ -247,12 +252,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       ),
     );
   }
-}
-
-int getIndexFromChild(Widget child) {
-  if (child is ReservationHomeScreen) return 0;
-  if (child is MatchingHomeScreen) return 1;
-  return 0;
 }
 
 class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
@@ -295,7 +294,7 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
               TriangleTabIndicator(color: Colors.white, radius: 10.w * 0.5),
           indicatorPadding:
               EdgeInsets.only(bottom: 20 * scrollAnimationValue(shrinkOffset)),
-          onTap: tabBar.onTap,
+          controller: tabBar.controller,
         ),
       ),
     );
