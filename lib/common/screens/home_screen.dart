@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/alert/repository/alert_repository.dart';
@@ -16,6 +15,7 @@ import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
+import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -57,9 +57,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 HomeSelection.reservation,
               );
         }
-        context.go('/home');
       }
     });
+    _tabController.index = ref.read(homeSelectionProvider).index;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await FirebaseMessaging.instance.getInitialMessage().then((message) {
@@ -244,7 +244,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 padding: EdgeInsets.only(top: 30.h),
                 child: index == HomeSelection.reservation
                     ? ReservationHomeScreen()
-                    : MatchingHomeScreen(),
+                    : ref.watch(matchingInfoProvider)
+                        ? MatchingSuccessScreen()
+                        : MatchingHomeScreen(),
               ),
             ),
           ),
@@ -304,12 +306,6 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
     return tabBar != oldDelegate.tabBar;
   }
-}
-
-int getIndexFromLocation(String location) {
-  if (location.startsWith('/home/matching')) return 1;
-  if (location.startsWith('/home/reservation')) return 0;
-  return 0;
 }
 
 class TriangleTabIndicator extends Decoration {
