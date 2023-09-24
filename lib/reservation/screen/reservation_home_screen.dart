@@ -17,6 +17,7 @@ import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
 
 class ReservationHomeScreen extends ConsumerWidget {
+  static const routerName = '/home/reservation';
   const ReservationHomeScreen({super.key});
 
   @override

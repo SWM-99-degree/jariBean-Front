@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/alert/repository/alert_repository.dart';
@@ -14,12 +15,12 @@ import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
-import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static String get routerName => '/home';
-  const HomeScreen({super.key});
+  final Widget child;
+  const HomeScreen({required this.child, super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -38,6 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
+    _tabController.index = getIndexFromChild(widget.child);
     _tabController.addListener(() {
       setState(() {});
       if (_tabController.indexIsChanging) {
@@ -115,8 +117,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         print(e);
       }
     });
-
-    _scrollController.addListener(() {});
   }
 
   @override
@@ -189,6 +189,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                         TriangleTabIndicator(color: Colors.white, radius: 10),
                     indicatorPadding: EdgeInsets.only(bottom: 20),
                     controller: _tabController,
+                    onTap: (index) {
+                      if (index == 1) {
+                        context.go('/home/matching');
+                      } else {
+                        context.go('/home/reservation');
+                      }
+                    },
                     tabs: _tabs
                         .map(
                           (String name) => Column(
@@ -232,14 +239,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
               child: Padding(
                 padding: EdgeInsets.only(top: 30.h),
-                child: TabBarView(
-                  controller: _tabController,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
-                    ReservationHomeScreen(),
-                    flag ? MatchingSuccessScreen() : MatchingHomeScreen()
-                  ],
-                ),
+                child: widget.child,
               ),
             ),
           ),
@@ -247,6 +247,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       ),
     );
   }
+}
+
+int getIndexFromChild(Widget child) {
+  if (child is ReservationHomeScreen) return 0;
+  if (child is MatchingHomeScreen) return 1;
+  return 0;
 }
 
 class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
@@ -285,11 +291,11 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
         ),
         child: TabBar(
           tabs: tabBar.tabs,
-          controller: tabBar.controller,
           indicator:
               TriangleTabIndicator(color: Colors.white, radius: 10.w * 0.5),
           indicatorPadding:
               EdgeInsets.only(bottom: 20 * scrollAnimationValue(shrinkOffset)),
+          onTap: tabBar.onTap,
         ),
       ),
     );
@@ -299,6 +305,12 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
     return tabBar != oldDelegate.tabBar;
   }
+}
+
+int getIndexFromLocation(String location) {
+  if (location.startsWith('/home/matching')) return 1;
+  if (location.startsWith('/home/reservation')) return 0;
+  return 0;
 }
 
 class TriangleTabIndicator extends Decoration {

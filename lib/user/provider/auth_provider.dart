@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/social_login_provider.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
@@ -66,7 +67,7 @@ class AuthProvider extends ChangeNotifier {
 
   FutureOr<String?> redirectRegisterLogic(_, GoRouterState state) async {
     if (ref.read(userProvider.notifier).checkRegistered()) {
-      return '/home';
+      return INITIAL_LOCATION;
     } else {
       return null;
     }

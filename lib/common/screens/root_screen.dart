@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 
@@ -22,7 +23,7 @@ class RootScreen extends StatelessWidget {
         onTap: (int index) {
           switch (index) {
             case 0:
-              context.go('/home');
+              context.go(INITIAL_LOCATION);
               break;
             case 1:
               context.go('/history');
@@ -36,18 +37,12 @@ class RootScreen extends StatelessWidget {
           }
         },
         currentIndex: () {
-          switch (GoRouterState.of(context).location) {
-            case '/home':
-              return 0;
-            case '/history':
-              return 1;
-            case '/alert':
-              return 2;
-            case '/profile':
-              return 3;
-            default:
-              return 0;
-          }
+          final location = GoRouterState.of(context).location;
+          if (location.startsWith('/home')) return 0;
+          if (location.startsWith('/history')) return 1;
+          if (location.startsWith('/alert')) return 2;
+          if (location.startsWith('/profile')) return 3;
+          return 0;
         }(),
         items: const [
           BottomNavigationBarItem(
