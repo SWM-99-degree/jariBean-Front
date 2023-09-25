@@ -14,10 +14,10 @@ class ReservationRepository {
         'reserveTime': '2023-08-14 23:30:10',
         'reserveNumber': '1',
         'cafeSummaryDto': {
-          'cafeId': '1',
-          'cafeName': '카페 이름',
-          'cafeAddress': '카페 주소',
-          'cafeImageUrl': 'https://picsum.photos/250?image=9',
+          'id': '1',
+          'name': '카페 이름',
+          'address': '카페 주소',
+          'imageUrl': 'https://picsum.photos/250?image=9',
         },
       }),
     );
