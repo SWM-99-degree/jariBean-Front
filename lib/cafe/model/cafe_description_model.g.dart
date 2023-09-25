@@ -9,17 +9,17 @@ part of 'cafe_description_model.dart';
 CafeDescriptionModel _$CafeDescriptionModelFromJson(
         Map<String, dynamic> json) =>
     CafeDescriptionModel(
-      id: json['cafeId'] as String,
-      title: json['cafeName'] as String,
-      imgUrl: json['cafeImageUrl'] as String,
-      cafeAddress: json['cafeAddress'] as String,
+      id: json['id'] as String,
+      title: json['name'] as String,
+      imgUrl: json['imageUrl'] as String,
+      cafeAddress: json['address'] as String,
     );
 
 Map<String, dynamic> _$CafeDescriptionModelToJson(
         CafeDescriptionModel instance) =>
     <String, dynamic>{
-      'cafeId': instance.id,
-      'cafeName': instance.title,
-      'cafeImageUrl': instance.imgUrl,
-      'cafeAddress': instance.cafeAddress,
+      'id': instance.id,
+      'name': instance.title,
+      'imageUrl': instance.imgUrl,
+      'address': instance.cafeAddress,
     };
