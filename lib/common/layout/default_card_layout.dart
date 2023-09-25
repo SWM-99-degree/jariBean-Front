@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/cafe/component/cafe_description.dart';
 import 'package:jari_bean/cafe/component/cafe_description_with_time.dart';
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
@@ -35,7 +36,9 @@ class DefaultCardLayout extends StatelessWidget {
       id: model.id,
       name: model.title,
       imgUrl: model.imgUrl,
-      child: Text('미구현'),
+      child: CafeDescription.fromModel(
+        model: model,
+      ),
     );
   }
 
@@ -61,6 +64,7 @@ class DefaultCardLayout extends StatelessWidget {
                   imgUrl,
                   width: 84.w,
                   height: 84.w,
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(

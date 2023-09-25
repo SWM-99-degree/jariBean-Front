@@ -1,20 +1,5 @@
-// ignore_for_file: constant_identifier_names
-
+import 'package:jari_bean/cafe/model/table_model.dart';
 import 'package:jari_bean/common/models/location_model.dart';
-
-enum TableType {
-  HIGH,
-  RECTANGLE,
-  PLUG,
-  BACKREST,
-}
-
-final tableTypeButtonName = {
-  TableType.HIGH: '높은의자',
-  TableType.RECTANGLE: '직사각형',
-  TableType.PLUG: '콘센트',
-  TableType.BACKREST: '등받이',
-};
 
 class SearchQueryModel {
   final String searchText;

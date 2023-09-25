@@ -87,32 +87,42 @@ class CustomInterceptor extends Interceptor {
     }
 
     final isStatus401 = err.response?.statusCode == 401;
-    final isPathRefresh =
-        err.requestOptions.path == '/auth/token'; //token 리프레시 하다가 발생한 에러인가?
+    final isPathRefresh = err.requestOptions.path ==
+        '/api/token/jwt'; // check is error occurred from token refreshing api => if true, there is nothing we can do to fix this error
 
     if (isStatus401 && !isPathRefresh) {
       final dio = Dio();
 
       try {
-        final resp = await dio.post(
-          '$ip/auth/token',
+        final resp = await dio.patch(
+          '$ip/api/token/jwt',
           options: Options(
             headers: {
-              'ACCESS_AUTHORIZATION': refreshToken,
+              'REFRESH_AUTHORIZATION': refreshToken,
             },
           ),
         );
-        final accessToken = resp.data['accessToken'];
+        final pData = DefualtTransferModel.fromJson(resp.data);
+        final newAccessToken = pData.data['accessToken'];
+        final newRefreshToken = pData.data['refreshToken'];
 
         final options = err.requestOptions;
 
         options.headers.addAll({
-          'ACCESS_AUTHORIZATION': accessToken,
+          'ACCESS_AUTHORIZATION': newAccessToken,
         });
 
-        await storage.write(key: ACCESS_TOKEN_KEY, value: accessToken);
+        await storage.write(key: ACCESS_TOKEN_KEY, value: newAccessToken);
+        await storage.write(key: REFRESH_TOKEN_KEY, value: newRefreshToken);
 
-        final response = await dio.fetch(err.requestOptions);
+        Response response = await dio.fetch(err.requestOptions);
+
+        final pResponse = DefualtTransferModel.fromJson(response.data);
+
+        print(
+          '[RES] [${response.requestOptions.method}] ${response.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}',
+        );
+        response.data = pResponse.data;
 
         return handler.resolve(response);
       } on DioException catch (e) {

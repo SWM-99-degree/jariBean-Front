@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
 import 'package:jari_bean/user/models/user_model.dart';
@@ -15,11 +14,13 @@ final userProvider =
   final loginRepository = ref.watch(loginRepositoryProvider);
   final socialLoginResponse = ref.watch(socialLoginProvider);
   final storage = ref.watch(secureStorageProvider);
+  final fcm = ref.watch(fcmTokenProvider.notifier);
   return UserStateNotifier(
     loginRepository: loginRepository,
     userRepository: userRepository,
     storage: storage,
     socialLoginResponse: socialLoginResponse,
+    fcm: fcm,
   );
 });
 
@@ -28,27 +29,22 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
   final UserRepository userRepository;
   final FlutterSecureStorage storage;
   final SocialLoginResponseModelBase socialLoginResponse;
+  final FcmTokenStateNotifier fcm;
   UserStateNotifier({
     required this.loginRepository,
     required this.userRepository,
     required this.storage,
     required this.socialLoginResponse,
+    required this.fcm,
   }) : super(UserModelLoading()) {
     getMe();
   }
 
   getMe() async {
     try {
-      final accessToken = await storage.read(key: ACCESS_TOKEN_KEY);
-      final refreshToken = await storage.read(key: REFRESH_TOKEN_KEY);
-
-      if (accessToken == null || refreshToken == null) {
-        state = null;
-        return;
-      }
-
       final resp = await userRepository.getMe();
       state = resp;
+      fcm.uploadToken();
     } catch (e) {
       print(e);
       state = UserModelError(e, '프로필을 가져오던 중 오류가 발생했습니다.');
@@ -67,7 +63,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
       await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
 
-      state = await userRepository.getMe();
+      getMe();
     } catch (e) {
       print(e);
       state = UserModelError(e, '로그인 중 오류가 발생했습니다.');
@@ -102,10 +98,6 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
     if (state == null || state is UserModelLoading) {
       return false;
     }
-    /* ISSUE 64 */
     return true;
-
-    // final pState = state as UserModel;
-    // return pState.role != Role.UNREGISTERED;
   }
 }

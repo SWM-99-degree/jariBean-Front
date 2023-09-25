@@ -4,8 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
-import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -27,8 +27,27 @@ Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
   );
 }
 
+class Logger extends ProviderObserver {
+  @override
+  void didUpdateProvider(
+    ProviderBase<Object?> provider,
+    Object? previousValue,
+    Object? newValue,
+    ProviderContainer container,
+  ) {
+    print('''
+{
+  "provider": "${provider.name ?? provider.runtimeType}",
+  "newValue": "$newValue"
+}''');
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final container = ProviderContainer(observers: [Logger()]);
+
   await dotenv.load(fileName: "lib/common/config/.env");
   await Firebase.initializeApp(
       // options: DefaultFirebaseOptions.currentPlatform,
@@ -50,10 +69,26 @@ void main() async {
     sound: true,
   );
 
-  FirebaseMessaging.onMessage.listen(fcmMessageHandler);
-  FirebaseMessaging.onBackgroundMessage(fcmMessageHandler);
+  FirebaseMessaging.instance.onTokenRefresh.listen(
+    (token) => fcmTokenRefreshHandler(
+      token,
+      container.read(fcmTokenProvider.notifier),
+    ),
+  );
 
-  FirebaseMessaging.instance.onTokenRefresh.listen(fcmTokenRefreshHandler);
+  FirebaseMessaging.onMessage
+      .listen((message) => fcmMessageHandler(message, container));
+  FirebaseMessaging.onBackgroundMessage(
+    (message) => fcmMessageHandler(message, container),
+  );
+
+  FirebaseMessaging.onMessageOpenedApp.listen(
+    (message) => fcmOnOpenedAppHandler(
+      message: message,
+      goRouter: container.read(goRouterProvider),
+      alertProvider: container.read(alertProvider.notifier),
+    ),
+  );
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -67,44 +102,14 @@ void main() async {
     ),
   );
 
-  await ProviderContainer().read(openedWithNotiProvider);
   initializeDateFormatting().then(
     (_) => runApp(
-      const ProviderScope(
+      UncontrolledProviderScope(
+        container: container,
         child: _App(),
       ),
     ),
   );
-
-  // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
-  // AndroidNotificationChannel? androidNotificationChannel;
-  // if (Platform.isIOS) {
-  //   await requestPermissionIOS(fbMsg);
-  // } else if (Platform.isAndroid) {
-  //   //Android 8 (API 26) 이상부터는 채널설정이 필수.
-  //   androidNotificationChannel = const AndroidNotificationChannel(
-  //     'important_channel', // id
-  //     'Important_Notifications', // name
-  //     description: '중요도가 높은 알림을 위한 채널.',
-  //     // description
-  //     importance: Importance.high,
-  //   );
-
-  //   await flutterLocalNotificationsPlugin
-  //       .resolvePlatformSpecificImplementation<
-  //           AndroidFlutterLocalNotificationsPlugin>()
-  //       ?.createNotificationChannel(androidNotificationChannel);
-  // }
-  //Background Handling 백그라운드 메세지 핸들링
-  // FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
-  // //Foreground Handling 포어그라운드 메세지 핸들링
-  // FirebaseMessaging.onMessage.listen((message) {
-  //   fcmForegroundHandler(
-  //       message, flutterLocalNotificationsPlugin, androidNotificationChannel);
-  // });
-
-  // await setupInteractedMessage(fbMsg);
 }
 
 class _App extends ConsumerWidget {
@@ -116,6 +121,10 @@ class _App extends ConsumerWidget {
       designSize: const Size(375, 812),
       builder: (context, child) => MaterialApp.router(
         routerConfig: router,
+        theme: ThemeData(
+          primarySwatch: Colors.deepOrange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
         builder: (context, child) => MediaQuery(
           data: MediaQuery.of(context).copyWith(
             textScaleFactor: 1.0,

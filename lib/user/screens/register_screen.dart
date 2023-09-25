@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_checkbox_tile.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/user/provider/registration_provider.dart';
@@ -115,7 +116,7 @@ class RegisterScreen extends ConsumerWidget {
                         }
 
                         ref.read(userProvider.notifier).register();
-                        context.go('/alert');
+                        context.go(INITIAL_LOCATION);
                       },
                     ),
                   ],
