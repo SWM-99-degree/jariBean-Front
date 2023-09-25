@@ -2,19 +2,21 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final reservationTimerProvider =
-    StateNotifierProvider<ReservationTimerStateNotifier, int>(
+final reservationTimerProvider = StateNotifierProvider<TimerStateNotifier, int>(
   (ref) {
-    return ReservationTimerStateNotifier();
+    return TimerStateNotifier();
   },
 );
 
-class ReservationTimerStateNotifier extends StateNotifier<int> {
-  ReservationTimerStateNotifier() : super(0);
+class TimerStateNotifier extends StateNotifier<int> {
+  bool flag = false;
+  TimerStateNotifier() : super(0);
 
   Future<void> initTimer({
     required int initTimeLeft,
   }) async {
+    if (flag) return;
+    flag = true;
     state = initTimeLeft;
     Timer.periodic(
       Duration(seconds: 1),
@@ -23,6 +25,7 @@ class ReservationTimerStateNotifier extends StateNotifier<int> {
         if (currentTimeLeft <= 0) {
           timer.cancel();
           state = 0;
+          flag = false;
           return;
         }
         state = currentTimeLeft - 1;

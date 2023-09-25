@@ -11,14 +11,14 @@ class CafeDescriptionModelLoading extends CafeDescriptionModelBase {}
 class CafeDescriptionModel extends CafeDescriptionModelBase
     implements BasicCardModel {
   @override
-  @JsonKey(name: 'cafeId')
   final String id;
   @override
-  @JsonKey(name: 'cafeName')
+  @JsonKey(name: 'name')
   final String title;
   @override
-  @JsonKey(name: 'cafeImageUrl')
+  @JsonKey(name: 'imageUrl')
   final String imgUrl;
+  @JsonKey(name: 'address')
   final String cafeAddress;
 
   CafeDescriptionModel({

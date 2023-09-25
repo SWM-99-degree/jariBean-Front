@@ -3,15 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
-import 'package:jari_bean/common/component/custom_dialog.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
-import 'package:jari_bean/common/models/custom_button_model.dart';
-import 'package:jari_bean/common/models/custom_dialog_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_provider.dart';
 
 class MatchingHomeScreen extends ConsumerWidget {
+  static const routerName = '/home/matching';
   const MatchingHomeScreen({super.key});
 
   @override
@@ -117,28 +115,9 @@ class MatchingHomeScreen extends ConsumerWidget {
         ),
         CustomButton(
           text: '매칭하기',
-          onPressed: showCustomDialog(
-            context: context,
-            // model: CustomDialogModel(
-            //   title: '매칭 신청 완료',
-            //   description: '매칭 신청이 완료되었습니다.\n매칭이 성사되면 알림을 통해 알려드릴게요.',
-            //   customButtonModel: CustomButtonModel(
-            //     title: '확인',
-            //   ),
-            // ),
-            model: CustomDialogWithTwoButtonsModel(
-              title: '매칭에 실패했어요',
-              description: '같은 조건으로 매칭을 다시 시도해볼까요?',
-              customButtonModel: CustomButtonModel(
-                title: '취소',
-                isDismiss: true,
-              ),
-              customButtonModelSecond: CustomButtonModel(
-                title: '다시하기',
-                onPressed: () => context.go('/alert/test-id'),
-              ),
-            ),
-          ),
+          onPressed: () {
+            context.push('/matching/proceeding');
+          },
         ),
       ],
     );

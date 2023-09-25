@@ -1,21 +1,30 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jari_bean/alert/screens/alert_details_screen.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_screen.dart';
+import 'package:jari_bean/common/provider/home_selection_provider.dart';
+import 'package:jari_bean/common/screens/home_screen.dart';
+import 'package:jari_bean/history/screens/history_screen.dart';
+import 'package:jari_bean/matching/screen/matching_proceeding_screen.dart';
+import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/result_screen.dart';
 import 'package:jari_bean/reservation/screen/search_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/screens/login_screen.dart';
 import 'package:jari_bean/common/screens/root_screen.dart';
 import 'package:jari_bean/common/screens/splash_screen.dart';
+import 'package:jari_bean/user/screens/profile_screen.dart';
 import 'package:jari_bean/user/screens/register_screen.dart';
+
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>(
   (ref) {
     final provider = ref.read(authProvider);
     return GoRouter(
+      navigatorKey: _rootNavigatorKey,
       initialLocation: '/splash',
       debugLogDiagnostics: true,
       refreshListenable: provider,
@@ -24,7 +33,9 @@ final goRouterProvider = Provider<GoRouter>(
         GoRoute(
           path: '/',
           name: RootScreen.routerName,
-          builder: (_, __) => const RootScreen(),
+          builder: (_, __) => const RootScreen(
+            child: HomeScreen(),
+          ),
           routes: [
             GoRoute(
               path: 'splash',
@@ -43,18 +54,52 @@ final goRouterProvider = Provider<GoRouter>(
               redirect: provider.redirectRegisterLogic,
             ),
             GoRoute(
+              path: 'home',
+              name: HomeScreen.routerName,
+              pageBuilder: (context, state) {
+                if (state.queryParameters['selection'] == 'matching') {
+                  ref
+                      .read(homeSelectionProvider.notifier)
+                      .update(HomeSelection.matching);
+                } else if (state.queryParameters['selection'] ==
+                    'reservation') {
+                  ref
+                      .read(homeSelectionProvider.notifier)
+                      .update(HomeSelection.reservation);
+                }
+                return NoTransitionPage(
+                  child: RootScreen(
+                    child: HomeScreen(),
+                  ),
+                );
+              },
+            ),
+            GoRoute(
+              path: 'history',
+              name: HistoryScreen.routerName,
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: RootScreen(
+                  child: HistoryScreen(),
+                ),
+              ),
+            ),
+            GoRoute(
               path: 'alert',
               name: AlertScreen.routerName,
-              builder: (_, state) => const AlertScreen(),
-              routes: [
-                GoRoute(
-                  path: ":id",
-                  name: AlertDetailsScreen.routerName,
-                  builder: (_, state) =>
-                      AlertDetailsScreen(alertId: state.pathParameters['id']!),
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: RootScreen(
+                  child: AlertScreen(),
                 ),
-              ],
-              redirect: provider.redirectAlertLogic,
+              ),
+            ),
+            GoRoute(
+              path: 'profile',
+              name: ProfileScreen.routerName,
+              pageBuilder: (_, __) => NoTransitionPage(
+                child: RootScreen(
+                  child: ProfileScreen(),
+                ),
+              ),
             ),
             GoRoute(
               path: 'cafe',
@@ -78,10 +123,22 @@ final goRouterProvider = Provider<GoRouter>(
             GoRoute(
               path: 'result',
               name: ResultScreen.routerName,
-              builder: (_, __) => const ResultScreen(),
-            )
+              builder: (_, __) => const ResultScreen(
+                cafeId: '1',
+              ),
+            ),
+            GoRoute(
+              path: 'matching/proceeding',
+              name: 'matching/proceeding',
+              builder: (_, __) => MatchingProceedingScreen(),
+            ),
+            GoRoute(
+              path: 'matching/success',
+              name: 'matching/success',
+              builder: (_, __) => MatchingSuccessScreen(),
+            ),
           ],
-        )
+        ),
       ],
     );
   },
