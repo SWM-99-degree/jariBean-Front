@@ -15,12 +15,7 @@ class AlertDetailsScreen extends ConsumerWidget {
       title: alert.id,
       child: Column(
         children: [
-          Image.network(alert.image),
-          Text(alert.description),
-          ElevatedButton(
-            onPressed: () {},
-            child: Text(alert.buttonTitle),
-          )
+          Text(alert.title),
         ],
       ),
     );
