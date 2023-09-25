@@ -47,23 +47,23 @@
 //   );
 // }
 
-import 'package:jari_bean/alert/model/alert_model.dart';
-import 'package:jari_bean/common/models/fcm_message_model.dart';
+// import 'package:jari_bean/alert/model/alert_model.dart';
+// import 'package:jari_bean/common/models/fcm_message_model.dart';
 
 void main() async {
-  final model = ReservationDataModel.fromJson({
-    "reserveId": "6510dffd05e62d52edc13edc",
-    "reserveStartTime": "2023-09-29T06:00:00",
-    "reserveEndTime": "2023-09-29T08:00:00",
-    "matchingSeating": 5,
-    "cafeSummaryDto": {
-      "id": "64fd48821a11b172e165f2fd",
-      "name": "스타벅스 테헤란로아남타워점",
-      "address": "아남타워빌딩 1층",
-      "imageUrl": "https://picsum.photos/50/50"
-    }
-  });
-  print(model);
+  // final model = ReservationDataModel.fromJson({
+  //   "reserveId": "6510dffd05e62d52edc13edc",
+  //   "reserveStartTime": "2023-09-29T06:00:00",
+  //   "reserveEndTime": "2023-09-29T08:00:00",
+  //   "matchingSeating": 5,
+  //   "cafeSummaryDto": {
+  //     "id": "64fd48821a11b172e165f2fd",
+  //     "name": "스타벅스 테헤란로아남타워점",
+  //     "address": "아남타워빌딩 1층",
+  //     "imageUrl": "https://picsum.photos/50/50"
+  //   }
+  // });
+  // print(model);
   // final container = ProviderContainer();
   // final AlertRepository alert = await container.read(alertRepositoryProvider);
 
