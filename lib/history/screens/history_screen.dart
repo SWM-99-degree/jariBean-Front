@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
-import 'package:jari_bean/history/model/matching_model.dart';
-import 'package:jari_bean/history/model/reservation_model.dart';
+import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/common/utils/utils.dart';
+import 'package:jari_bean/history/provider/matching_history_provider.dart';
 
 class HistoryScreen extends ConsumerWidget {
   static String get routerName => '/history';
@@ -10,34 +13,47 @@ class HistoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
+    final matchingModelBundles = ref.watch(matchingBundlesProvider);
+    return ListView.builder(
+      itemCount: matchingModelBundles.length,
+      itemBuilder: (_, index) {
+        final curBundle = matchingModelBundles[index];
+        final date = curBundle.date;
+        final models = curBundle.models;
+        return Column(
+          children: [
+            _buildDateDiscriminator(date),
+            SizedBox(height: 8.h),
+            ...models.map(
+              (model) => DefaultCardLayout.fromHistoryModel(model: model),
+            ),
+            SizedBox(height: 12.h)
+          ],
+        );
+      },
+    );
+  }
+
+  _buildDateDiscriminator(DateTime date) {
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        DefaultCardLayout.fromMatchingModel(
-          model: MatchingModel.fromJson({
-            "id": "6503b645b723d27a6739687a",
-            "seating": 3,
-            "startTime": "2023-09-15T01:41:25.286",
-            "cafeSummaryDto": {
-              "id": "64fd48821a11b172e165f2fd",
-              "name": "스타벅스 테헤란로아남타워점",
-              "address": "아남타워빌딩 1층",
-              "imageUrl": "https://picsum.photos/50/50"
-            }
-          }),
+        Container(
+          color: GRAY_1,
+          height: 2,
         ),
-        DefaultCardLayout.fromReservationModel(
-          model: ReservationModel.fromJson({
-            "reserveId": "6503b645b723d27a6739687a",
-            "reserveStartTime": "2023-09-15T01:41:25.286",
-            "reserveEndTime": "2023-09-15T11:41:25.286",
-            "matchingSeating": 3,
-            "cafeSummaryDto": {
-              "id": "64fd48821a11b172e165f2fd",
-              "name": "스타벅스 테헤란로아남타워점",
-              "address": "아남타워빌딩 1층",
-              "imageUrl": "https://picsum.photos/50/50"
-            }
-          }),
+        Center(
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              Utils.getYYYYMMDDfromDateTime(date),
+              style: defaultFontStyleWhite.copyWith(
+                fontSize: 12.sp,
+                color: GRAY_3,
+              ),
+            ),
+          ),
         ),
       ],
     );
