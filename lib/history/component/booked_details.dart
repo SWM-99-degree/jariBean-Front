@@ -27,6 +27,8 @@ class BookedDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // temporary violation of MVVM pattern due to DTO structure
+    bool isExpired = startTime.isBefore(DateTime.now());
     return Container(
       padding: EdgeInsets.only(
         top: 8,
@@ -40,6 +42,7 @@ class BookedDetails extends StatelessWidget {
             CustomOutlinedButtonForCafeDetail(
               text: _dateTimeToString(startTime),
               onPressed: null,
+              isDisabled: isExpired,
             ),
             SizedBox(
               width: 4.w,
@@ -50,6 +53,7 @@ class BookedDetails extends StatelessWidget {
                   endTime!.difference(startTime),
                 ),
                 onPressed: null,
+                isDisabled: isExpired,
               ),
             if (endTime != null)
               SizedBox(
@@ -58,6 +62,7 @@ class BookedDetails extends StatelessWidget {
             CustomOutlinedButtonForCafeDetail(
               text: '$headCount명',
               onPressed: null,
+              isDisabled: isExpired,
             )
           ],
         ),
