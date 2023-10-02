@@ -27,6 +27,11 @@ class Utils {
     return "${dateTime.hour}시 ${dateTime.minute == 0 ? '00' : dateTime.minute}분";
   }
 
+  static String getHHMMAmountfromDuration(Duration duration) {
+    final minute = duration.inMinutes % 60;
+    return "${duration.inHours}시간 ${minute == 0 ? '' : '$minute분'}";
+  }
+
   static String getMMSSfromDateSeconds(int timeLeftInSeconds) {
     int minutes = timeLeftInSeconds ~/ 60;
     int seconds = timeLeftInSeconds % 60;
