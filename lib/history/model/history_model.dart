@@ -1,10 +1,12 @@
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
+import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'history_model.g.dart';
 
 @JsonSerializable()
-class HistoryBaseModel {
+class HistoryBaseModel implements IModelWithId {
+  @override
   final String id;
   final int headCount;
   final DateTime startTime;
