@@ -16,14 +16,14 @@ class DefaultCardLayout extends StatelessWidget {
   final String name;
   final String imgUrl;
   final Widget child;
-  final Color color;
+  final Color borderColor;
   final bool isShadowVisible;
   const DefaultCardLayout({
     required this.id,
     required this.name,
     required this.imgUrl,
     required this.child,
-    this.color = PRIMARY_ORANGE,
+    this.borderColor = PRIMARY_ORANGE,
     this.isShadowVisible = false,
     super.key,
   });
@@ -58,7 +58,7 @@ class DefaultCardLayout extends StatelessWidget {
       id: model.reservationId,
       name: model.model.title,
       imgUrl: model.model.imgUrl,
-      color: Colors.transparent,
+      borderColor: Colors.transparent,
       isShadowVisible: true,
       child: buildCafeInfo(
         cafeModel: model.model,
@@ -74,7 +74,7 @@ class DefaultCardLayout extends StatelessWidget {
       id: model.matchingId,
       name: model.model.title,
       imgUrl: model.model.imgUrl,
-      color: Colors.transparent,
+      borderColor: Colors.transparent,
       isShadowVisible: true,
       child: buildCafeInfo(
         cafeModel: model.model,
@@ -93,7 +93,7 @@ class DefaultCardLayout extends StatelessWidget {
           width: 335.w,
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.w, color: color),
+              side: BorderSide(width: 1.w, color: borderColor),
               borderRadius: BorderRadius.circular(8),
             ),
             color: Colors.white,
