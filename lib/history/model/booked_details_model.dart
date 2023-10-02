@@ -1,5 +1,4 @@
-import 'package:jari_bean/history/model/matching_model.dart';
-import 'package:jari_bean/history/model/reservation_model.dart';
+import 'package:jari_bean/history/model/history_model.dart';
 
 class BookedDetailsModel {
   final DateTime startTime;
@@ -16,9 +15,9 @@ class BookedDetailsModel {
     required MatchingModel model,
   }) {
     return BookedDetailsModel(
-      startTime: model.matchingStartTime,
+      startTime: model.startTime,
       endTime: null,
-      headCount: model.matchingHeadCount,
+      headCount: model.headCount,
     );
   }
 
@@ -26,9 +25,26 @@ class BookedDetailsModel {
     required ReservationModel model,
   }) {
     return BookedDetailsModel(
-      startTime: model.reservationStartTime,
-      endTime: model.reservationEndTime,
-      headCount: model.reservationHeadCount,
+      startTime: model.startTime,
+      endTime: model.endTime,
+      headCount: model.headCount,
+    );
+  }
+
+  factory BookedDetailsModel.fromHistoryModel({
+    required HistoryBaseModel model,
+  }) {
+    if (model is ReservationModel) {
+      return BookedDetailsModel(
+        startTime: model.startTime,
+        endTime: model.endTime,
+        headCount: model.headCount,
+      );
+    }
+    return BookedDetailsModel(
+      startTime: model.startTime,
+      endTime: null,
+      headCount: model.headCount,
     );
   }
 }

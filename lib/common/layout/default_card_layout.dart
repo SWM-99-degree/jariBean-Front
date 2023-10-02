@@ -8,8 +8,9 @@ import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/history/component/booked_details.dart';
 import 'package:jari_bean/history/model/booked_details_model.dart';
-import 'package:jari_bean/history/model/matching_model.dart';
-import 'package:jari_bean/history/model/reservation_model.dart';
+import 'package:jari_bean/history/model/history_model.dart';
+// import 'package:jari_bean/history/model/matching_model.dart';
+// import 'package:jari_bean/history/model/reservation_model.dart';
 
 class DefaultCardLayout extends StatelessWidget {
   final String id;
@@ -51,34 +52,50 @@ class DefaultCardLayout extends StatelessWidget {
     );
   }
 
-  factory DefaultCardLayout.fromReservationModel({
-    required ReservationModel model,
-  }) {
-    return DefaultCardLayout(
-      id: model.reservationId,
-      name: model.model.title,
-      imgUrl: model.model.imgUrl,
-      borderColor: Colors.transparent,
-      isShadowVisible: true,
-      child: buildCafeInfo(
-        cafeModel: model.model,
-        bookedModel: BookedDetailsModel.fromReservationModel(model: model),
-      ),
-    );
-  }
+  // factory DefaultCardLayout.fromReservationModel({
+  //   required ReservationModel model,
+  // }) {
+  //   return DefaultCardLayout(
+  //     id: model.reservationId,
+  //     name: model.model.title,
+  //     imgUrl: model.model.imgUrl,
+  //     borderColor: Colors.transparent,
+  //     isShadowVisible: true,
+  //     child: buildCafeInfo(
+  //       cafeModel: model.model,
+  //       bookedModel: BookedDetailsModel.fromReservationModel(model: model),
+  //     ),
+  //   );
+  // }
 
-  factory DefaultCardLayout.fromMatchingModel({
-    required MatchingModel model,
+  // factory DefaultCardLayout.fromMatchingModel({
+  //   required MatchingModel model,
+  // }) {
+  //   return DefaultCardLayout(
+  //     id: model.matchingId,
+  //     name: model.model.title,
+  //     imgUrl: model.model.imgUrl,
+  //     borderColor: Colors.transparent,
+  //     isShadowVisible: true,
+  //     child: buildCafeInfo(
+  //       cafeModel: model.model,
+  //       bookedModel: BookedDetailsModel.fromMatchingModel(model: model),
+  //     ),
+  //   );
+  // }
+
+  factory DefaultCardLayout.fromHistoryModel({
+    required HistoryBaseModel model,
   }) {
     return DefaultCardLayout(
-      id: model.matchingId,
+      id: model.id,
       name: model.model.title,
       imgUrl: model.model.imgUrl,
       borderColor: Colors.transparent,
       isShadowVisible: true,
       child: buildCafeInfo(
         cafeModel: model.model,
-        bookedModel: BookedDetailsModel.fromMatchingModel(model: model),
+        bookedModel: BookedDetailsModel.fromHistoryModel(model: model),
       ),
     );
   }
