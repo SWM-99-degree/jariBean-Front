@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
+import 'package:jari_bean/history/screens/history_screen.dart';
+import 'package:jari_bean/user/screens/profile_screen.dart';
 
 class RootScreen extends StatelessWidget {
   static String get routerName => '/';
@@ -12,7 +15,22 @@ class RootScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final String appBarText;
+    switch (child.runtimeType) {
+      case HistoryScreen:
+        appBarText = '나의 예약';
+        break;
+      case AlertScreen:
+        appBarText = '알림';
+        break;
+      case ProfileScreen:
+        appBarText = '내 정보';
+        break;
+      default:
+        appBarText = '';
+    }
     return DefaultLayout(
+      title: appBarText,
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: PRIMARY_ORANGE,
         unselectedItemColor: TEXT_COLOR,
