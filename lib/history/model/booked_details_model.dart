@@ -32,7 +32,7 @@ class BookedDetailsModel {
   }
 
   factory BookedDetailsModel.fromHistoryModel({
-    required HistoryBaseModel model,
+    required IHistoryModelBase model,
   }) {
     if (model is ReservationModel) {
       return BookedDetailsModel(

@@ -4,50 +4,69 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'history_model.g.dart';
 
-@JsonSerializable()
-class HistoryBaseModel implements IModelWithId {
+abstract class IHistoryModelBase implements IModelWithId {
   @override
   final String id;
   final int headCount;
   final DateTime startTime;
-  @JsonKey(name: 'cafeSummaryDto')
   final CafeDescriptionModel model;
 
-  HistoryBaseModel({
+  IHistoryModelBase({
+    required this.id,
+    required this.headCount,
+    required this.startTime,
+    required this.model,
+  });
+}
+
+@JsonSerializable()
+class MatchingModel implements IHistoryModelBase {
+  @override
+  final String id;
+  @override
+  @JsonKey(name: 'seating')
+  final int headCount;
+  @override
+  @JsonKey(name: 'startTime')
+  final DateTime startTime;
+  @override
+  @JsonKey(name: 'cafeSummaryDto')
+  final CafeDescriptionModel model;
+  MatchingModel({
     required this.id,
     required this.headCount,
     required this.startTime,
     required this.model,
   });
 
-  factory HistoryBaseModel.fromJson(Map<String, dynamic> json) =>
-      _$HistoryBaseModelFromJson(json);
-}
-
-@JsonSerializable()
-class MatchingModel extends HistoryBaseModel {
-  MatchingModel({
-    required super.id,
-    required super.headCount,
-    required super.startTime,
-    required super.model,
-  }) : super();
-
   factory MatchingModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingModelFromJson(json);
 }
 
 @JsonSerializable()
-class ReservationModel extends HistoryBaseModel {
+class ReservationModel implements IHistoryModelBase {
+  @override
+  @JsonKey(name: 'reserveId')
+  final String id;
+  @override
+  @JsonKey(name: 'matchingSeating')
+  final int headCount;
+  @override
+  @JsonKey(name: 'reserveStartTime')
+  final DateTime startTime;
+  @JsonKey(name: 'reserveEndTime')
   final DateTime endTime;
+  @override
+  @JsonKey(name: 'cafeSummaryDto')
+  final CafeDescriptionModel model;
 
   ReservationModel({
-    required super.id,
-    required super.headCount,
-    required super.startTime,
-    required super.model,
+    required this.id,
+    required this.headCount,
+    required this.startTime,
+    required this.model,
     required this.endTime,
-  }) : super();
+  });
 
   factory ReservationModel.fromJson(Map<String, dynamic> json) =>
       _$ReservationModelFromJson(json);
@@ -55,7 +74,7 @@ class ReservationModel extends HistoryBaseModel {
 
 class HistoryBundleByDateModel {
   final DateTime date;
-  final List<HistoryBaseModel> models;
+  final List<IHistoryModelBase> models;
 
   HistoryBundleByDateModel({
     required this.date,
