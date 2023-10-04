@@ -85,7 +85,7 @@ class DefaultCardLayout extends StatelessWidget {
   // }
 
   factory DefaultCardLayout.fromHistoryModel({
-    required HistoryBaseModel model,
+    required IHistoryModelBase model,
   }) {
     return DefaultCardLayout(
       id: model.id,
