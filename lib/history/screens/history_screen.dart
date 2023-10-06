@@ -42,7 +42,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       }
       setState(() {});
     });
-    _tabController.index = ref.read(historySelectionProvider).index;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       globalKey.currentState!.innerController.addListener(
         () => PaginationUtils.scrollListener(
@@ -63,6 +62,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     final index = ref.watch(historySelectionProvider);
+    _tabController.index = index.index;
     final Map<String, bool> dateDiscriminatorMap = {};
     final todayModel = MatchingModel.fromJson({
       "id": "6503b645b723d27a6739687a",
@@ -160,7 +160,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                 Text(
                                   e.value,
                                   style: defaultFontStyleWhite.copyWith(
-                                    color: e.key == _tabController.index
+                                    color: e.key == index.index
                                         ? PRIMARY_ORANGE
                                         : GRAY_3,
                                     fontWeight: FontWeight.w800,
