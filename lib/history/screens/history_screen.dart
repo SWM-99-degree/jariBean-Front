@@ -8,6 +8,7 @@ import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/pagination_utils.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/history/model/history_model.dart';
+import 'package:jari_bean/history/provider/hisotry_selection_provider.dart';
 import 'package:jari_bean/history/provider/history_provider.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
@@ -32,8 +33,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       initialIndex: 0,
     );
     _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        ref.read(historySelectionProvider.notifier).update(
+              _tabController.index == 0
+                  ? HistorySelection.reservation
+                  : HistorySelection.matching,
+            );
+      }
       setState(() {});
     });
+    _tabController.index = ref.read(historySelectionProvider).index;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       globalKey.currentState!.innerController.addListener(
         () => PaginationUtils.scrollListener(
@@ -53,6 +62,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final index = ref.watch(historySelectionProvider);
     final Map<String, bool> dateDiscriminatorMap = {};
     final todayModel = MatchingModel.fromJson({
       "id": "6503b645b723d27a6739687a",
@@ -169,28 +179,31 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ),
         ],
-        body: PaginationListView<MatchingModel>(
-          itemBuilder: (context, ref, index, model) {
-            if (!dateDiscriminatorMap
-                .containsKey(Utils.getYYYYMMDDfromDateTime(model.startTime))) {
-              dateDiscriminatorMap[
-                  Utils.getYYYYMMDDfromDateTime(model.startTime)] = true;
-              return Column(
-                children: [
-                  _buildDateDiscriminator(model.startTime),
-                  DefaultCardLayout.fromHistoryModel(
+        body: index == HistorySelection.reservation
+            ? PaginationListView<MatchingModel>(
+                itemBuilder: (context, ref, index, model) {
+                  if (!dateDiscriminatorMap.containsKey(
+                    Utils.getYYYYMMDDfromDateTime(model.startTime),
+                  )) {
+                    dateDiscriminatorMap[
+                        Utils.getYYYYMMDDfromDateTime(model.startTime)] = true;
+                    return Column(
+                      children: [
+                        _buildDateDiscriminator(model.startTime),
+                        DefaultCardLayout.fromHistoryModel(
+                          model: model,
+                        ),
+                      ],
+                    );
+                  }
+                  return DefaultCardLayout.fromHistoryModel(
                     model: model,
-                  ),
-                ],
-              );
-            }
-            return DefaultCardLayout.fromHistoryModel(
-              model: model,
-            );
-          },
-          provider: matchingProvider,
-          isInsideNestedScrollView: true,
-        ),
+                  );
+                },
+                provider: matchingProvider,
+                isInsideNestedScrollView: true,
+              )
+            : Text('1'),
       ),
     );
   }
