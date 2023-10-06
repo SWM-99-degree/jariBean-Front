@@ -71,13 +71,3 @@ class ReservationModel implements IHistoryModelBase {
   factory ReservationModel.fromJson(Map<String, dynamic> json) =>
       _$ReservationModelFromJson(json);
 }
-
-class HistoryBundleByDateModel {
-  final DateTime date;
-  final List<IHistoryModelBase> models;
-
-  HistoryBundleByDateModel({
-    required this.date,
-    required this.models,
-  });
-}
