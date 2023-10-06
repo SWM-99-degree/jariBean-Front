@@ -1,6 +1,8 @@
 import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'offset_pagination_model.g.dart';
+
 abstract class OffsetPaginationBase {}
 
 class OffsetPaginationError extends OffsetPaginationBase {
@@ -15,6 +17,7 @@ class OffsetPaginationLoading extends OffsetPaginationBase {}
 )
 class OffsetPagination<T extends IModelWithId> extends OffsetPaginationBase {
   final List<T> content;
+  @JsonKey(name: 'number')
   final int page;
   final bool last;
 
@@ -35,6 +38,12 @@ class OffsetPagination<T extends IModelWithId> extends OffsetPaginationBase {
       last: last ?? this.last,
     );
   }
+
+  factory OffsetPagination.fromJson(
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) =>
+      _$OffsetPaginationFromJson(json, fromJsonT);
 }
 
 @JsonSerializable(

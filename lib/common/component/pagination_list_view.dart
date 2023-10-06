@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
-import 'package:jari_bean/alert/provider/alert_pagination_provider.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/provider/pagination_base_provider.dart';
+import 'package:jari_bean/common/utils/pagination_utils.dart';
 
 typedef PaginationWidgetBuilder<T extends IModelWithId> = Widget Function(
   BuildContext context,
@@ -19,11 +19,14 @@ class PaginationListView<T extends IModelWithId>
     extends ConsumerStatefulWidget {
   final StateNotifierProvider<PaginationBaseStateNotifier, OffsetPaginationBase>
       provider;
+  final bool
+      isInsideNestedScrollView; // for nested scroll view. it will null controller inside listview.
 
   final PaginationWidgetBuilder<T> itemBuilder;
   const PaginationListView({
     required this.provider,
     required this.itemBuilder,
+    this.isInsideNestedScrollView = false,
     super.key,
   });
 
@@ -39,27 +42,24 @@ class _PaginationListViewState<T extends IModelWithId>
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(scrollListener);
+    _scrollController.addListener(
+      () => PaginationUtils.scrollListener(
+        scrollController: _scrollController,
+        provider: ref.read(widget.provider.notifier),
+      ),
+    );
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(scrollListener);
+    _scrollController.removeListener(
+      () => PaginationUtils.scrollListener(
+        scrollController: _scrollController,
+        provider: ref.read(widget.provider.notifier),
+      ),
+    );
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void scrollListener() {
-    if (_scrollController.offset >
-        _scrollController.position.maxScrollExtent - 300) {
-      final provider = ref.read(widget.provider.notifier);
-      if (provider is AlertPaginationProvider) {
-        // checking type of provider to call different method. espacially for alert screen.
-        provider.alertPaginate(fetchMore: true);
-      } else {
-        provider.paginate(fetchMore: true);
-      }
-    }
   }
 
   @override
@@ -83,6 +83,7 @@ class _PaginationListViewState<T extends IModelWithId>
     }
 
     final op = state as OffsetPagination<T>;
+    // this part is for specific model especially for modles that must be processed before rendering.
     if (T == AlertModel) {
       final list = ref.watch(alertProvider);
       return _listBuilder(
@@ -101,7 +102,7 @@ class _PaginationListViewState<T extends IModelWithId>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: ListView.separated(
-        controller: _scrollController,
+        controller: widget.isInsideNestedScrollView ? null : _scrollController,
         itemCount: list.length + 1,
         itemBuilder: (_, index) {
           if (index == list.length) {
