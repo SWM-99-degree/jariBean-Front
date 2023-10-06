@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/common/component/pagination_list_view.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/common/utils/pagination_utils.dart';
 import 'package:jari_bean/common/utils/utils.dart';
-import 'package:jari_bean/history/provider/matching_history_provider.dart';
+import 'package:jari_bean/history/model/history_model.dart';
+import 'package:jari_bean/history/provider/history_provider.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   static String get routerName => '/history';
@@ -19,6 +22,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final List<String> _tabs = ['예약', '매칭'];
+  final GlobalKey<NestedScrollViewState> globalKey = GlobalKey();
 
   @override
   void initState() {
@@ -29,6 +33,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     );
     _tabController.addListener(() {
       setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      globalKey.currentState!.innerController.addListener(
+        () => PaginationUtils.scrollListener(
+          scrollController: globalKey.currentState!.innerController,
+          provider: ref.read(matchingProvider.notifier),
+        ),
+      );
     });
     super.initState();
   }
@@ -41,11 +53,22 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final matchingModelBundles = ref.watch(matchingBundlesProvider);
-    final todayModel = ref.watch(matchingHistoryProvider).first;
+    final Map<String, bool> dateDiscriminatorMap = {};
+    final todayModel = MatchingModel.fromJson({
+      "id": "6503b645b723d27a6739687a",
+      "seating": 3,
+      "startTime": "2023-09-25T01:41:25.286",
+      "cafeSummaryDto": {
+        "id": "64fd48821a11b172e165f2fd",
+        "name": "스타벅스 테헤란로아남타워점",
+        "address": "아남타워빌딩 1층",
+        "imageUrl": "https://picsum.photos/50/50"
+      }
+    });
     return DefaultTabController(
       length: 2,
       child: NestedScrollView(
+        key: globalKey,
         headerSliverBuilder: (_, __) => [
           SliverAppBar(
             leading: SizedBox(),
@@ -146,23 +169,27 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ),
         ],
-        body: ListView.builder(
-          itemCount: matchingModelBundles.length,
-          itemBuilder: (_, index) {
-            final curBundle = matchingModelBundles[index];
-            final date = curBundle.date;
-            final models = curBundle.models;
-            return Column(
-              children: [
-                SizedBox(height: 12.h),
-                _buildDateDiscriminator(date),
-                SizedBox(height: 8.h),
-                ...models.map(
-                  (model) => DefaultCardLayout.fromHistoryModel(model: model),
-                ),
-              ],
+        body: PaginationListView<MatchingModel>(
+          itemBuilder: (context, ref, index, model) {
+            if (!dateDiscriminatorMap
+                .containsKey(Utils.getYYYYMMDDfromDateTime(model.startTime))) {
+              dateDiscriminatorMap[
+                  Utils.getYYYYMMDDfromDateTime(model.startTime)] = true;
+              return Column(
+                children: [
+                  _buildDateDiscriminator(model.startTime),
+                  DefaultCardLayout.fromHistoryModel(
+                    model: model,
+                  ),
+                ],
+              );
+            }
+            return DefaultCardLayout.fromHistoryModel(
+              model: model,
             );
           },
+          provider: matchingProvider,
+          isInsideNestedScrollView: true,
         ),
       ),
     );
