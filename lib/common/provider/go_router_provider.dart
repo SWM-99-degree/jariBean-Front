@@ -6,6 +6,7 @@ import 'package:jari_bean/cafe/screen/cafe_detail_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_screen.dart';
 import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/screens/home_screen.dart';
+import 'package:jari_bean/history/provider/hisotry_selection_provider.dart';
 import 'package:jari_bean/history/screens/history_screen.dart';
 import 'package:jari_bean/matching/screen/matching_proceeding_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
@@ -57,16 +58,18 @@ final goRouterProvider = Provider<GoRouter>(
               path: 'home',
               name: HomeScreen.routerName,
               pageBuilder: (context, state) {
-                if (state.queryParameters['selection'] == 'matching') {
-                  ref
-                      .read(homeSelectionProvider.notifier)
-                      .update(HomeSelection.matching);
-                } else if (state.queryParameters['selection'] ==
-                    'reservation') {
-                  ref
-                      .read(homeSelectionProvider.notifier)
-                      .update(HomeSelection.reservation);
-                }
+                Future(() {
+                  if (state.queryParameters['selection'] == 'matching') {
+                    ref
+                        .read(homeSelectionProvider.notifier)
+                        .update(HomeSelection.matching);
+                  } else if (state.queryParameters['selection'] ==
+                      'reservation') {
+                    ref
+                        .read(homeSelectionProvider.notifier)
+                        .update(HomeSelection.reservation);
+                  }
+                });
                 return NoTransitionPage(
                   child: RootScreen(
                     child: HomeScreen(),
@@ -77,11 +80,25 @@ final goRouterProvider = Provider<GoRouter>(
             GoRoute(
               path: 'history',
               name: HistoryScreen.routerName,
-              pageBuilder: (_, __) => NoTransitionPage(
-                child: RootScreen(
-                  child: HistoryScreen(),
-                ),
-              ),
+              pageBuilder: (context, state) {
+                Future(() {
+                  if (state.queryParameters['selection'] == 'matching') {
+                    ref
+                        .read(historySelectionProvider.notifier)
+                        .update(HistorySelection.matching);
+                  } else if (state.queryParameters['selection'] ==
+                      'reservation') {
+                    ref
+                        .read(historySelectionProvider.notifier)
+                        .update(HistorySelection.reservation);
+                  }
+                });
+                return NoTransitionPage(
+                  child: RootScreen(
+                    child: HistoryScreen(),
+                  ),
+                );
+              },
             ),
             GoRoute(
               path: 'alert',

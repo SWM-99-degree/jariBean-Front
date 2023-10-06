@@ -59,8 +59,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         }
       }
     });
-    _tabController.index = ref.read(homeSelectionProvider).index;
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await FirebaseMessaging.instance.getInitialMessage().then((message) {
         if (message != null) {
@@ -141,6 +139,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Widget build(BuildContext context) {
     flag = ref.watch(matchingInfoProvider);
     final index = ref.watch(homeSelectionProvider);
+    _tabController.index = index.index;
 
     return Container(
       decoration: BoxDecoration(
