@@ -55,7 +55,7 @@ class PaginationBaseStateNotifier<T extends IModelWithId,
         );
 
         paginationParams = paginationParams.copyWith(
-          page: pState.page,
+          page: pState.page + 1,
         );
       } else {
         if (state is OffsetPagination && !forceRefetch) {
