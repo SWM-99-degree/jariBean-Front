@@ -9,8 +9,7 @@ final matchingProvider =
         (ref) {
   final repository = ref.read(matchingRepositoryProvider);
   return MatchingPaginationProvider(
-    repository: Future.delayed(
-      Duration(seconds: 0),
+    repository: Future(
       () => repository,
     ),
   );
@@ -19,6 +18,24 @@ final matchingProvider =
 class MatchingPaginationProvider
     extends PaginationBaseStateNotifier<MatchingModel, MatchingRepository> {
   MatchingPaginationProvider({
+    required super.repository,
+  });
+}
+
+final reservationProvider =
+    StateNotifierProvider<ReservationPaginationProvider, OffsetPaginationBase>(
+        (ref) {
+  final repository = ref.read(reservationRepositoryProvider);
+  return ReservationPaginationProvider(
+    repository: Future(
+      () => repository,
+    ),
+  );
+});
+
+class ReservationPaginationProvider extends PaginationBaseStateNotifier<
+    ReservationModel, ReservationRepository> {
+  ReservationPaginationProvider({
     required super.repository,
   });
 }
