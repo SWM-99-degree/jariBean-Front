@@ -107,7 +107,7 @@ class AlertRepository implements IPaginationBaseRepository<AlertModel> {
     final last = alerts.isEmpty;
     return OffsetPagination(
       content: alerts,
-      page: (paginationParams.page ?? 0) + 1,
+      page: paginationParams.page ?? 0,
       last: last,
     );
   }
