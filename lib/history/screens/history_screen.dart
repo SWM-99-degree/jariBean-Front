@@ -46,7 +46,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       globalKey.currentState!.innerController.addListener(
         () => PaginationUtils.scrollListener(
           scrollController: globalKey.currentState!.innerController,
-          provider: ref.read(matchingProvider.notifier),
+          provider: ref.read(reservationProvider.notifier),
         ),
       );
     });
@@ -63,7 +63,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   Widget build(BuildContext context) {
     final index = ref.watch(historySelectionProvider);
     _tabController.index = index.index;
-    final Map<String, bool> dateDiscriminatorMap = {};
+    final Map<String, int> dateDiscriminatorMap = {};
     final todayModel = MatchingModel.fromJson({
       "id": "6503b645b723d27a6739687a",
       "seating": 3,
@@ -186,7 +186,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                     Utils.getYYYYMMDDfromDateTime(model.startTime),
                   )) {
                     dateDiscriminatorMap[
-                        Utils.getYYYYMMDDfromDateTime(model.startTime)] = true;
+                        Utils.getYYYYMMDDfromDateTime(model.startTime)] = index;
+                  }
+                  if (index ==
+                      dateDiscriminatorMap[
+                          Utils.getYYYYMMDDfromDateTime(model.startTime)]) {
                     return Column(
                       children: [
                         _buildDateDiscriminator(model.startTime),
@@ -203,7 +207,33 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                 provider: matchingProvider,
                 isInsideNestedScrollView: true,
               )
-            : Text('1'),
+            : PaginationListView<ReservationModel>(
+                itemBuilder: (context, ref, index, model) {
+                  if (!dateDiscriminatorMap.containsKey(
+                    Utils.getYYYYMMDDfromDateTime(model.startTime),
+                  )) {
+                    dateDiscriminatorMap[
+                        Utils.getYYYYMMDDfromDateTime(model.startTime)] = index;
+                  }
+                  if (index ==
+                      dateDiscriminatorMap[
+                          Utils.getYYYYMMDDfromDateTime(model.startTime)]) {
+                    return Column(
+                      children: [
+                        _buildDateDiscriminator(model.startTime),
+                        DefaultCardLayout.fromHistoryModel(
+                          model: model,
+                        ),
+                      ],
+                    );
+                  }
+                  return DefaultCardLayout.fromHistoryModel(
+                    model: model,
+                  );
+                },
+                provider: reservationProvider,
+                isInsideNestedScrollView: true,
+              ),
       ),
     );
   }
