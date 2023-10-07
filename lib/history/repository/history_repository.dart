@@ -34,3 +34,29 @@ abstract class MatchingRepository
     @Queries() PaginationParams? paginationParams = const PaginationParams(),
   });
 }
+
+final reservationRepositoryProvider = Provider<ReservationRepository>(
+  (ref) {
+    final dio = ref.watch(dioProvider);
+    return ReservationRepository(
+      dio,
+      baseUrl: '$ip/api/reserve',
+    );
+  },
+);
+
+@RestApi()
+abstract class ReservationRepository
+    implements IPaginationBaseRepository<ReservationModel> {
+  factory ReservationRepository(Dio dio, {String baseUrl}) =
+      _ReservationRepository;
+
+  @override
+  @GET('/')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<OffsetPagination<ReservationModel>> paginate({
+    @Queries() PaginationParams? paginationParams = const PaginationParams(),
+  });
+}
