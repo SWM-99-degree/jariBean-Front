@@ -32,23 +32,45 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       vsync: this,
       initialIndex: 0,
     );
+    reservationListener() => PaginationUtils.scrollListener(
+          scrollController: globalKey.currentState!.innerController,
+          provider: ref.read(
+            reservationProvider.notifier,
+          ),
+        );
+    matchingListener() => PaginationUtils.scrollListener(
+          scrollController: globalKey.currentState!.innerController,
+          provider: ref.read(
+            matchingProvider.notifier,
+          ),
+        );
     _tabController.addListener(() {
-      if (_tabController.indexIsChanging) {
-        ref.read(historySelectionProvider.notifier).update(
-              _tabController.index == 0
-                  ? HistorySelection.reservation
-                  : HistorySelection.matching,
-            );
+      if (_tabController.index == HistorySelection.reservation.index) {
+        if (_tabController.indexIsChanging) {
+          ref.read(historySelectionProvider.notifier).update(
+                HistorySelection.reservation,
+              );
+        }
+        globalKey.currentState!.innerController.removeListener(
+          matchingListener,
+        );
+        globalKey.currentState!.innerController.addListener(
+          reservationListener,
+        );
+      } else {
+        if (_tabController.indexIsChanging) {
+          ref.read(historySelectionProvider.notifier).update(
+                HistorySelection.matching,
+              );
+        }
+        globalKey.currentState!.innerController.removeListener(
+          reservationListener,
+        );
+        globalKey.currentState!.innerController.addListener(
+          matchingListener,
+        );
       }
       setState(() {});
-    });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      globalKey.currentState!.innerController.addListener(
-        () => PaginationUtils.scrollListener(
-          scrollController: globalKey.currentState!.innerController,
-          provider: ref.read(reservationProvider.notifier),
-        ),
-      );
     });
     super.initState();
   }
@@ -179,7 +201,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ),
         ],
-        body: index == HistorySelection.reservation
+        body: index == HistorySelection.matching
             ? PaginationListView<MatchingModel>(
                 itemBuilder: (context, ref, index, model) {
                   if (!dateDiscriminatorMap.containsKey(
