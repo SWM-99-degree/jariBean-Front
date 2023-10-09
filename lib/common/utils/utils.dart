@@ -27,6 +27,13 @@ class Utils {
     return "${dateTime.year}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.day.toString().padLeft(2, '0')}";
   }
 
+  static String getYYYYMMDDHHMMfromDateTimeWithKorean(
+    DateTime dateTime, {
+    bool showHHMM = false,
+  }) {
+    return "${dateTime.year}년 ${dateTime.month.toString().padLeft(2, '0')}월 ${dateTime.day.toString().padLeft(2, '0')}일 ${showHHMM ? getHHMMfromDateTime(dateTime) : ''}";
+  }
+
   static String getHHMMfromDateTime(DateTime dateTime) {
     return "${dateTime.hour}시 ${dateTime.minute == 0 ? '00' : dateTime.minute}분";
   }
