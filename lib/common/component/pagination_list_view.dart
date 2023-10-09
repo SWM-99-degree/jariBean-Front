@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
-import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/provider/pagination_base_provider.dart';
@@ -66,19 +65,15 @@ class _PaginationListViewState<T extends IModelWithId>
   Widget build(BuildContext context) {
     final state = ref.watch(widget.provider);
     if (state is OffsetPaginationError) {
-      return DefaultLayout(
-        child: Center(
-          child: Text('에러가 발생했어요'),
-        ),
+      return Center(
+        child: Text('에러가 발생했어요'),
       );
     }
 
     if (state is OffsetPaginationRefetching ||
         state is OffsetPaginationLoading) {
-      return DefaultLayout(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+      return Center(
+        child: CircularProgressIndicator(),
       );
     }
 
@@ -104,6 +99,7 @@ class _PaginationListViewState<T extends IModelWithId>
       child: ListView.separated(
         controller: widget.isInsideNestedScrollView ? null : _scrollController,
         itemCount: list.length + 1,
+        shrinkWrap: true,
         itemBuilder: (_, index) {
           if (index == list.length) {
             return Padding(
