@@ -10,7 +10,8 @@ import 'package:retrofit/retrofit.dart';
 
 part 'alert_announcement_repository.g.dart';
 
-final alertAnnouncementRepositoryProvider = Provider<AlertAnnouncementRepository>(
+final alertAnnouncementRepositoryProvider =
+    Provider<AlertAnnouncementRepository>(
   (ref) {
     final dio = ref.watch(dioProvider);
     return AlertAnnouncementRepository(
@@ -33,5 +34,15 @@ abstract class AlertAnnouncementRepository
   })
   Future<OffsetPagination<AlertAnnouncementModel>> paginate({
     @Queries() PaginationParams? paginationParams = const PaginationParams(),
+  });
+
+  @GET('/')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<OffsetPagination<AlertAnnouncementModel>> latestAlert({
+    @Queries() PaginationParams? paginationParams = const PaginationParams(
+      size: 1,
+    ),
   });
 }

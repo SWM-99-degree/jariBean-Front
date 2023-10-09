@@ -17,3 +17,34 @@ class AlertAnnouncementProvider extends PaginationBaseStateNotifier<
     required super.repository,
   });
 }
+
+final topAnnouncementProvider =
+    StateNotifierProvider<TopAnnouncementProvider, AlertAnnouncementModelBase>(
+        (ref) {
+  final repository = ref.read(alertAnnouncementRepositoryProvider);
+  return TopAnnouncementProvider(repository: repository);
+});
+
+class TopAnnouncementProvider
+    extends StateNotifier<AlertAnnouncementModelBase> {
+  final AlertAnnouncementRepository repository;
+  TopAnnouncementProvider({
+    required this.repository,
+  }) : super(AlertAnnouncementLoadingModel()) {
+    getTopAnnouncement();
+  }
+
+  Future<void> getTopAnnouncement() async {
+    state = AlertAnnouncementLoadingModel();
+    try {
+      final result = await repository.latestAlert();
+      if (result.content.isEmpty) {
+        state = AlertAnnouncementErrorModel();
+      } else {
+        state = result.content.first;
+      }
+    } catch (e) {
+      state = AlertAnnouncementErrorModel();
+    }
+  }
+}
