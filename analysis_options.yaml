@@ -13,4 +13,4 @@ analyzer:
   errors:
     avoid_print: info
     prefer_const_constructors: info
-    require_trailing_commas: info
+    require_trailing_commas: warning
