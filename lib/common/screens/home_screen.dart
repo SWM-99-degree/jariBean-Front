@@ -72,20 +72,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
       final alert = await ref.read(alertRepositoryProvider);
       for (int i = 0; i < 300; i++) {
-        AlertModel alertModel = AlertModel(
-          id: i.toString(),
-          title: '자리빈에 오신것을 환영합니다',
-          isRead: false,
-          body: '메뚜기 월드에 오신걸 환영합니다~',
-          type: PushMessageType.matchingSuccess,
-          receivedAt: DateTime.now().subtract(Duration(days: 1)),
-          data: MatchingSuccessModel(
-            cafeId: '123',
-            matchingId: '123',
-          ),
-        );
-
-        await alert.insertAlert(alertModel);
+        if (i % 3 == 0) {
+          AlertModel alertModel = AlertModel(
+            id: i.toString(),
+            title: '[Matching Success] 자리빈에 오신것을 환영합니다]',
+            isRead: false,
+            body: '메뚜기 월드에 오신걸 환영합니다~',
+            type: PushMessageType.matchingSuccess,
+            receivedAt: DateTime.now().subtract(Duration(days: 1)),
+            data: MatchingSuccessModel(
+              cafeId: '123',
+              matchingId: '123',
+            ),
+          );
+          await alert.insertAlert(alertModel);
+        } else if (i % 3 == 1) {
+          AlertModel alertModel = AlertModel(
+            id: i.toString(),
+            title: '[Matching Fail] 자리빈에 오신것을 환영합니다]',
+            isRead: false,
+            body: '메뚜기 월드에 오신걸 환영합니다~',
+            type: PushMessageType.matchingFail,
+            receivedAt: DateTime.now().subtract(Duration(days: 1)),
+            data: MatchingFailModel(
+              matchingId: '123',
+            ),
+          );
+          await alert.insertAlert(alertModel);
+        } else {
+          AlertModel alertModel = AlertModel(
+            id: i.toString(),
+            title: '[Reservation Complete] 자리빈에 오신것을 환영합니다]',
+            isRead: false,
+            body: '메뚜기 월드에 오신걸 환영합니다~',
+            type: PushMessageType.reservationComplete,
+            receivedAt: DateTime.now().subtract(Duration(days: 1)),
+            data: ReservationDataModel(
+              reservationId: '123',
+            ),
+          );
+          await alert.insertAlert(alertModel);
+        }
       }
 
       // get alert with data test

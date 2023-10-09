@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/alert/screens/alert_announcement_screen.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
@@ -21,6 +22,7 @@ class RootScreen extends StatelessWidget {
         appBarText = '나의 예약';
         break;
       case AlertScreen:
+      case AlertAnnouncementScreen:
         appBarText = '알림';
         break;
       case ProfileScreen:
