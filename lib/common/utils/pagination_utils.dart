@@ -20,5 +20,13 @@ class PaginationUtils {
         provider.paginate(fetchMore: true);
       }
     }
+    if (scrollController.offset <
+        scrollController.position.minScrollExtent - 100) {
+      if (provider is AlertPaginationProvider) {
+        provider.alertPaginate(forceRefetch: true);
+      } else {
+        provider.paginate(forceRefetch: true);
+      }
+    }
   }
 }
