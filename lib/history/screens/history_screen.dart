@@ -72,6 +72,19 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       }
       setState(() {});
     });
+    // prevent calling listener before build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ref.read(historySelectionProvider).index ==
+          HistorySelection.reservation.index) {
+        globalKey.currentState!.innerController.addListener(
+          reservationListener,
+        );
+      } else {
+        globalKey.currentState!.innerController.addListener(
+          matchingListener,
+        );
+      }
+    });
     super.initState();
   }
 
@@ -201,61 +214,66 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ),
         ],
-        body: index == HistorySelection.matching
-            ? PaginationListView<MatchingModel>(
-                itemBuilder: (context, ref, index, model) {
-                  if (!dateDiscriminatorMap.containsKey(
-                    Utils.getYYYYMMDDfromDateTime(model.startTime),
-                  )) {
-                    dateDiscriminatorMap[
-                        Utils.getYYYYMMDDfromDateTime(model.startTime)] = index;
-                  }
-                  if (index ==
+        body: Padding(
+          padding: EdgeInsets.only(top: 16.h),
+          child: index == HistorySelection.matching
+              ? PaginationListView<MatchingModel>(
+                  itemBuilder: (context, ref, index, model) {
+                    if (!dateDiscriminatorMap.containsKey(
+                      Utils.getYYYYMMDDfromDateTime(model.startTime),
+                    )) {
                       dateDiscriminatorMap[
-                          Utils.getYYYYMMDDfromDateTime(model.startTime)]) {
-                    return Column(
-                      children: [
-                        _buildDateDiscriminator(model.startTime),
-                        DefaultCardLayout.fromHistoryModel(
-                          model: model,
-                        ),
-                      ],
+                              Utils.getYYYYMMDDfromDateTime(model.startTime)] =
+                          index;
+                    }
+                    if (index ==
+                        dateDiscriminatorMap[
+                            Utils.getYYYYMMDDfromDateTime(model.startTime)]) {
+                      return Column(
+                        children: [
+                          _buildDateDiscriminator(model.startTime),
+                          DefaultCardLayout.fromHistoryModel(
+                            model: model,
+                          ),
+                        ],
+                      );
+                    }
+                    return DefaultCardLayout.fromHistoryModel(
+                      model: model,
                     );
-                  }
-                  return DefaultCardLayout.fromHistoryModel(
-                    model: model,
-                  );
-                },
-                provider: matchingProvider,
-                isInsideNestedScrollView: true,
-              )
-            : PaginationListView<ReservationModel>(
-                itemBuilder: (context, ref, index, model) {
-                  if (!dateDiscriminatorMap.containsKey(
-                    Utils.getYYYYMMDDfromDateTime(model.startTime),
-                  )) {
-                    dateDiscriminatorMap[
-                        Utils.getYYYYMMDDfromDateTime(model.startTime)] = index;
-                  }
-                  if (index ==
+                  },
+                  provider: matchingProvider,
+                  isInsideNestedScrollView: true,
+                )
+              : PaginationListView<ReservationModel>(
+                  itemBuilder: (context, ref, index, model) {
+                    if (!dateDiscriminatorMap.containsKey(
+                      Utils.getYYYYMMDDfromDateTime(model.startTime),
+                    )) {
                       dateDiscriminatorMap[
-                          Utils.getYYYYMMDDfromDateTime(model.startTime)]) {
-                    return Column(
-                      children: [
-                        _buildDateDiscriminator(model.startTime),
-                        DefaultCardLayout.fromHistoryModel(
-                          model: model,
-                        ),
-                      ],
+                              Utils.getYYYYMMDDfromDateTime(model.startTime)] =
+                          index;
+                    }
+                    if (index ==
+                        dateDiscriminatorMap[
+                            Utils.getYYYYMMDDfromDateTime(model.startTime)]) {
+                      return Column(
+                        children: [
+                          _buildDateDiscriminator(model.startTime),
+                          DefaultCardLayout.fromHistoryModel(
+                            model: model,
+                          ),
+                        ],
+                      );
+                    }
+                    return DefaultCardLayout.fromHistoryModel(
+                      model: model,
                     );
-                  }
-                  return DefaultCardLayout.fromHistoryModel(
-                    model: model,
-                  );
-                },
-                provider: reservationProvider,
-                isInsideNestedScrollView: true,
-              ),
+                  },
+                  provider: reservationProvider,
+                  isInsideNestedScrollView: true,
+                ),
+        ),
       ),
     );
   }
