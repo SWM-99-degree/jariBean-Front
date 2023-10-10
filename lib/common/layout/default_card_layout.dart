@@ -9,8 +9,7 @@ import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/history/component/booked_details.dart';
 import 'package:jari_bean/history/model/booked_details_model.dart';
 import 'package:jari_bean/history/model/history_model.dart';
-// import 'package:jari_bean/history/model/matching_model.dart';
-// import 'package:jari_bean/history/model/reservation_model.dart';
+import 'package:skeletons/skeletons.dart';
 
 class DefaultCardLayout extends StatelessWidget {
   final String id;
@@ -52,37 +51,40 @@ class DefaultCardLayout extends StatelessWidget {
     );
   }
 
-  // factory DefaultCardLayout.fromReservationModel({
-  //   required ReservationModel model,
-  // }) {
-  //   return DefaultCardLayout(
-  //     id: model.reservationId,
-  //     name: model.model.title,
-  //     imgUrl: model.model.imgUrl,
-  //     borderColor: Colors.transparent,
-  //     isShadowVisible: true,
-  //     child: buildCafeInfo(
-  //       cafeModel: model.model,
-  //       bookedModel: BookedDetailsModel.fromReservationModel(model: model),
-  //     ),
-  //   );
-  // }
-
-  // factory DefaultCardLayout.fromMatchingModel({
-  //   required MatchingModel model,
-  // }) {
-  //   return DefaultCardLayout(
-  //     id: model.matchingId,
-  //     name: model.model.title,
-  //     imgUrl: model.model.imgUrl,
-  //     borderColor: Colors.transparent,
-  //     isShadowVisible: true,
-  //     child: buildCafeInfo(
-  //       cafeModel: model.model,
-  //       bookedModel: BookedDetailsModel.fromMatchingModel(model: model),
-  //     ),
-  //   );
-  // }
+  factory DefaultCardLayout.fromTodayReservationModel({
+    required ReservationModelBase model,
+  }) {
+    if (model is ReservationModel) {
+      return DefaultCardLayout(
+        id: model.id,
+        name: model.model.title,
+        imgUrl: model.model.imgUrl,
+        borderColor: Colors.transparent,
+        isShadowVisible: true,
+        child: buildCafeInfo(
+          cafeModel: model.model,
+          bookedModel: BookedDetailsModel.fromReservationModel(model: model),
+        ),
+      );
+    } else if (model is ResrevationModelError) {
+      return DefaultCardLayout(
+        id: 'error',
+        name: 'error',
+        imgUrl: 'error',
+        borderColor: Colors.transparent,
+        isShadowVisible: true,
+        child: Text(model.message),
+      );
+    }
+    return DefaultCardLayout(
+      id: 'loading',
+      name: 'loading',
+      imgUrl: 'loading',
+      borderColor: Colors.transparent,
+      isShadowVisible: true,
+      child: buildSkeleton(),
+    );
+  }
 
   factory DefaultCardLayout.fromHistoryModel({
     required IHistoryModelBase model,
@@ -97,6 +99,17 @@ class DefaultCardLayout extends StatelessWidget {
         cafeModel: model.model,
         bookedModel: BookedDetailsModel.fromHistoryModel(model: model),
       ),
+    );
+  }
+
+  factory DefaultCardLayout.preloading() {
+    return DefaultCardLayout(
+      id: 'loading',
+      name: 'loading',
+      imgUrl: 'loading',
+      borderColor: Colors.transparent,
+      isShadowVisible: true,
+      child: buildSkeleton(),
     );
   }
 
@@ -128,11 +141,35 @@ class DefaultCardLayout extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  imgUrl,
-                  width: 84.w,
-                  height: 84.w,
-                  fit: BoxFit.cover,
+                child: Skeleton(
+                  isLoading: id == 'loading',
+                  skeleton: SkeletonAvatar(
+                    style: SkeletonAvatarStyle(
+                      width: 84.w,
+                      height: 84.w,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Image.network(
+                    imgUrl,
+                    width: 84.w,
+                    height: 84.w,
+                    fit: BoxFit.cover,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      return Skeleton(
+                        isLoading: frame == null,
+                        skeleton: SkeletonAvatar(
+                          style: SkeletonAvatarStyle(
+                            width: 84.w,
+                            height: 84.w,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: child,
+                      );
+                    },
+                  ),
                 ),
               ),
               SizedBox(
@@ -173,6 +210,41 @@ Widget buildCafeInfo({
       BookedDetails.fromModel(
         model: bookedModel,
       )
+    ],
+  );
+}
+
+Widget buildSkeleton() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SkeletonLine(
+        style: SkeletonLineStyle(
+          height: 16.h,
+          width: 200.w,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      SizedBox(
+        height: 8.h,
+      ),
+      SkeletonLine(
+        style: SkeletonLineStyle(
+          height: 16.h,
+          width: 100.w,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      SizedBox(
+        height: 12.h,
+      ),
+      SkeletonLine(
+        style: SkeletonLineStyle(
+          height: 24.h,
+          width: 100.w,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
     ],
   );
 }
