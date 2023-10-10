@@ -28,7 +28,7 @@ class DefaultLayout extends StatelessWidget {
   }
 
   AppBar? renderAppBar(BuildContext context) {
-    if (title != null) {
+    if (title != null && title != '') {
       return AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
