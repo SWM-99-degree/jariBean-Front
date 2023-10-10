@@ -4,6 +4,36 @@ import 'package:jari_bean/common/provider/pagination_base_provider.dart';
 import 'package:jari_bean/history/model/history_model.dart';
 import 'package:jari_bean/history/repository/history_repository.dart';
 
+final todayReservationProvider =
+    StateNotifierProvider<TodayReservationProvider, ReservationModelBase>(
+  (ref) {
+    final repository = ref.watch(todayReservationRepositoryProvider);
+    return TodayReservationProvider(
+      repository: repository,
+    );
+  },
+);
+
+class TodayReservationProvider extends StateNotifier<ReservationModelBase> {
+  final TodayReservationRespository repository;
+  TodayReservationProvider({
+    required this.repository,
+  }) : super(ResrevationModelLoading()) {
+    getTodayReservation();
+  }
+
+  Future<void> getTodayReservation() async {
+    try {
+      final result = await repository.getTodayReservation();
+      state = result;
+    } catch (e) {
+      state = ResrevationModelError(
+        message: e.toString(),
+      );
+    }
+  }
+}
+
 final matchingProvider =
     StateNotifierProvider<MatchingPaginationProvider, OffsetPaginationBase>(
         (ref) {

@@ -43,8 +43,20 @@ class MatchingModel implements IHistoryModelBase {
       _$MatchingModelFromJson(json);
 }
 
+abstract class ReservationModelBase {}
+
+class ResrevationModelLoading extends ReservationModelBase {}
+
+class ResrevationModelError extends ReservationModelBase {
+  final String message;
+  ResrevationModelError({
+    required this.message,
+  });
+}
+
 @JsonSerializable()
-class ReservationModel implements IHistoryModelBase {
+class ReservationModel extends ReservationModelBase
+    implements IHistoryModelBase {
   @override
   @JsonKey(name: 'reserveId')
   final String id;

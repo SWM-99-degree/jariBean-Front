@@ -10,6 +10,31 @@ import 'package:retrofit/retrofit.dart';
 
 part 'history_repository.g.dart';
 
+final todayReservationRepositoryProvider =
+    Provider<TodayReservationRespository>(
+  (ref) {
+    final dio = ref.watch(dioProvider);
+    return TodayReservationRespository(
+      dio,
+      baseUrl: '$ip/api/home/reserve',
+    );
+  },
+);
+
+@RestApi()
+abstract class TodayReservationRespository {
+  factory TodayReservationRespository(Dio dio, {String baseUrl}) =
+      _TodayReservationRespository;
+
+  @GET('/')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<ReservationModel> getTodayReservation({
+    @Queries() PaginationParams? paginationParams = const PaginationParams(),
+  });
+}
+
 final matchingRepositoryProvider = Provider<MatchingRepository>(
   (ref) {
     final dio = ref.watch(dioProvider);
