@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
@@ -124,6 +125,8 @@ class ReservationHomeScreen extends ConsumerWidget {
           DefaultCardLayout.fromModel(
             model: urgentReservation,
           ),
+        if (urgentReservation is CafeDescriptionModelLoading)
+          DefaultCardLayout.preloading(),
         SizedBox(
           height: 32.h,
         ),
