@@ -23,8 +23,24 @@ class Utils {
     return map[enumValue] ?? '';
   }
 
+  static String getYYYYMMDDfromDateTime(DateTime dateTime) {
+    return "${dateTime.year}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.day.toString().padLeft(2, '0')}";
+  }
+
+  static String getYYYYMMDDHHMMfromDateTimeWithKorean(
+    DateTime dateTime, {
+    bool showHHMM = false,
+  }) {
+    return "${dateTime.year}년 ${dateTime.month.toString().padLeft(2, '0')}월 ${dateTime.day.toString().padLeft(2, '0')}일 ${showHHMM ? getHHMMfromDateTime(dateTime) : ''}";
+  }
+
   static String getHHMMfromDateTime(DateTime dateTime) {
     return "${dateTime.hour}시 ${dateTime.minute == 0 ? '00' : dateTime.minute}분";
+  }
+
+  static String getHHMMAmountfromDuration(Duration duration) {
+    final minute = duration.inMinutes % 60;
+    return "${duration.inHours}시간 ${minute == 0 ? '' : '$minute분'}";
   }
 
   static String getMMSSfromDateSeconds(int timeLeftInSeconds) {

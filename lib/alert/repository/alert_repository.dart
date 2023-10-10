@@ -77,6 +77,7 @@ class AlertRepository implements IPaginationBaseRepository<AlertModel> {
   /// return type is `OffsetPagination<AlertModel>`.
   /// its parameter `page` will have the page number of the next page.
   /// if there is no more page, `last` will be `true`.
+  /// due to addition of announcement pagination, `type != 'announcement'` is added in `where` clause.
   /// example:
   /// ```
   /// OffsetPagination<AlertModel>(
@@ -99,6 +100,8 @@ class AlertRepository implements IPaginationBaseRepository<AlertModel> {
       'alerts',
       limit: limit,
       offset: offset,
+      where: 'type != ?',
+      whereArgs: ['announcement'],
       orderBy: 'receivedAt DESC',
     );
     final List<AlertModel> alerts = List.generate(maps.length, (i) {
@@ -107,7 +110,7 @@ class AlertRepository implements IPaginationBaseRepository<AlertModel> {
     final last = alerts.isEmpty;
     return OffsetPagination(
       content: alerts,
-      page: (paginationParams.page ?? 0) + 1,
+      page: paginationParams.page ?? 0,
       last: last,
     );
   }

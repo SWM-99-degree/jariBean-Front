@@ -16,6 +16,8 @@ const GRAY_2 = Color(0xFFCCCCCC);
 
 const GRAY_3 = Color(0xFF999999);
 
+const GRAY_4 = Color(0xFF666666);
+
 const TEXT_COLOR = Color(0xFF000000);
 
 const TEXT_SUBTITLE_COLOR = Color(0xFF666666);
