@@ -22,7 +22,7 @@ class UserModelLoading extends UserModelBase {}
 class UserModel extends UserModelBase {
   final String id;
   final String nickname;
-  /* ISSUE #64 */
+  @JsonKey(name: 'socialId')
   final SocialLoginType? socialLoginType;
   @JsonKey(name: 'imageUrl')
   final String imgUrl;
@@ -31,7 +31,7 @@ class UserModel extends UserModelBase {
   UserModel({
     required this.id,
     required this.nickname,
-    this.socialLoginType,
+    required this.socialLoginType,
     required this.imgUrl,
     required this.description,
     required this.role,
