@@ -76,99 +76,135 @@ class ProfileScreen extends ConsumerWidget {
         },
       ),
     ];
-    final List<Map<String, Function>> footerList = [
-      {'이용약관': () {}},
-      {'개인정보 처리방침': () {}},
-      {'고객센터': () {}},
-      {'제휴문의': () {}},
-      {'회원탈퇴': () {}},
+    //copy footerList contents into infoList
+    final List<IconTitleFunctionModel> infoList = [
+      IconTitleFunctionModel(
+        iconData: Icons.receipt,
+        title: '이용약관',
+        onTap: () {},
+      ),
+      IconTitleFunctionModel(
+        iconData: Icons.receipt,
+        title: '개인정보 처리방침',
+        onTap: () {},
+      ),
+      IconTitleFunctionModel(
+        iconData: Icons.phone,
+        title: '고객센터',
+        onTap: () {},
+      ),
+      IconTitleFunctionModel(
+        iconData: Icons.handshake,
+        title: '제휴문의',
+        onTap: () {},
+      ),
+      IconTitleFunctionModel(
+        iconData: Icons.exit_to_app,
+        title: '회원탈퇴',
+        onTap: () {},
+      ),
     ];
-    return SingleChildScrollView(
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          SizedBox(
-            height: 20.h,
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 64.w,
-                  height: 64.w,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      user.imgUrl,
+
+    return ListView(
+      children: [
+        Column(
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 64.w,
+                    height: 64.w,
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        user.imgUrl,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  width: 20.w,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.nickname,
-                      style: defaultFontStyleBlack.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
+                  SizedBox(
+                    width: 20.w,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.nickname,
+                        style: defaultFontStyleBlack.copyWith(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 4.h,
-                    ),
-                    Text(
-                      user.description ?? '상태 메시지를 입력해 주세요',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
+                      SizedBox(
+                        height: 4.h,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Text(
+                        user.description ?? '상태 메시지를 입력해 주세요',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 16.h,
-          ),
-          Container(
-            height: 40.h,
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: CustomButton(text: '프로필 수정', onPressed: () {}),
-          ),
-          SizedBox(
-            height: 16.h,
-          ),
-          Container(
-            height: 10.h,
-            color: Color(0xFFF5F5F5),
-          ),
-          SizedBox(
-            height: 12.h,
-          ),
-          _buildSocialType(user.socialLoginType),
-          SizedBox(
-            height: 12.h,
-          ),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) => _settingItemBuilder(
-              iconData: settingList[index].iconData,
-              title: settingList[index].title,
-              onTap: settingList[index].onTap,
+            SizedBox(
+              height: 16.h,
             ),
-            separatorBuilder: (context, index) => SizedBox(
+            Container(
+              height: 40.h,
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: CustomButton(text: '프로필 수정', onPressed: () {}),
+            ),
+            SizedBox(
+              height: 16.h,
+            ),
+            Container(
+              height: 10.h,
+              color: Color(0xFFF5F5F5),
+            ),
+            SizedBox(
               height: 12.h,
             ),
-            itemCount: settingList.length,
-          ),
-          _buildFooter(footerList),
-        ],
-      ),
+            _buildSocialType(user.socialLoginType),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) => _settingItemBuilder(
+                iconData: settingList[index].iconData,
+                title: settingList[index].title,
+                onTap: settingList[index].onTap,
+              ),
+              itemCount: settingList.length,
+            ),
+            SizedBox(
+              height: 12.h,
+            ),
+            Container(
+              height: 10.h,
+              color: Color(0xFFF5F5F5),
+            ),
+            SizedBox(
+              height: 12.h,
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) => _settingItemBuilder(
+                iconData: infoList[index].iconData,
+                title: infoList[index].title,
+                onTap: infoList[index].onTap,
+              ),
+              itemCount: infoList.length,
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -187,8 +223,9 @@ class ProfileScreen extends ConsumerWidget {
       default:
         socialLoginTypeText = 'Unknown';
     }
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+    return Container(
+      height: 48.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Row(
         children: [
           Icon(
@@ -222,78 +259,13 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildFooter(List<Map<String, Function>> footerList) {
-    return Container(
-      width: 375.w,
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(color: Color(0xFFF2F2F2)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '자리:Bean',
-            style: defaultFontStyleBlack.copyWith(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
-              color: GRAY_4,
-              height: 1,
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 40.h,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        alignment: Alignment.centerLeft,
-                      ),
-                      onPressed: () => footerList[index].values.first,
-                      child: Text(
-                        footerList[index].keys.first,
-                        style: defaultFontStyleBlack.copyWith(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w500,
-                          color: GRAY_3,
-                          height: 0,
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: footerList.length,
-                  shrinkWrap: true,
-                ),
-              ),
-              Text(
-                'Copyright ⓒ 99℃ All rights Reserved',
-                style: defaultFontStyleBlack.copyWith(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w500,
-                  color: GRAY_3,
-                  height: 1,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _settingItemBuilder({
     required IconData iconData,
     required String title,
     required Function onTap,
   }) {
-    return Padding(
+    return Container(
+      height: 48.h,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: ListTile(
         horizontalTitleGap: 12.w,
