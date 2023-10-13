@@ -17,6 +17,7 @@ import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/screens/login_screen.dart';
 import 'package:jari_bean/common/screens/root_screen.dart';
 import 'package:jari_bean/common/screens/splash_screen.dart';
+import 'package:jari_bean/user/screens/profile_edit_screen.dart';
 import 'package:jari_bean/user/screens/profile_screen.dart';
 import 'package:jari_bean/user/screens/register_screen.dart';
 
@@ -129,6 +130,15 @@ final goRouterProvider = Provider<GoRouter>(
                   child: ProfileScreen(),
                 ),
               ),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  name: ProfileEditScreen.routerName,
+                  pageBuilder: (_, __) => NoTransitionPage(
+                    child: ProfileEditScreen(),
+                  ),
+                ),
+              ],
             ),
             GoRoute(
               path: 'cafe',
