@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
@@ -159,7 +160,12 @@ class ProfileScreen extends ConsumerWidget {
             Container(
               height: 40.h,
               padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: CustomButton(text: '프로필 수정', onPressed: () {}),
+              child: CustomButton(
+                text: '프로필 수정',
+                onPressed: () {
+                  context.push('/profile/edit');
+                },
+              ),
             ),
             SizedBox(
               height: 16.h,
