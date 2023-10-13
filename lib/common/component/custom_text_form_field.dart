@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/common/const/color.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -7,6 +8,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool isPassword;
   final bool autofocus;
   final ValueChanged<String>? onChanged;
+  final int maxLines;
 
   const CustomTextFormField({
     this.autofocus = false,
@@ -14,6 +16,7 @@ class CustomTextFormField extends StatelessWidget {
     this.hintText,
     this.errorText,
     required this.onChanged,
+    this.maxLines = 1,
     Key? key,
   }) : super(key: key);
 
@@ -31,13 +34,17 @@ class CustomTextFormField extends StatelessWidget {
       obscureText: isPassword,
       autofocus: autofocus,
       onChanged: onChanged,
+      maxLines: maxLines,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(20),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 16.w,
+          vertical: 12.h,
+        ),
         hintText: hintText,
         errorText: errorText,
-        hintStyle: const TextStyle(
+        hintStyle: TextStyle(
           color: GRAY_3,
-          fontSize: 14,
+          fontSize: 14.sp,
         ),
         fillColor: TEXTFIELD_INNER,
         filled: true,
