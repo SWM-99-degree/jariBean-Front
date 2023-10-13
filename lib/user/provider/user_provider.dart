@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jari_bean/common/const/data.dart';
@@ -91,6 +92,17 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
     } catch (e) {
       print(e);
       state = UserModelError(e, '회원가입 중 오류가 발생했습니다.');
+    }
+  }
+
+  updateProfile({
+    required FormData body,
+  }) async {
+    try {
+      await userRepository.updateProfile(body: body);
+      getMe();
+    } catch (e) {
+      print(e);
     }
   }
 
