@@ -27,6 +27,12 @@ abstract class UserRepository {
   @PUT('/register')
   @Headers({'accessToken': 'true'})
   Future<UserModel> register();
+
+  @PATCH('/')
+  @Headers({'accessToken': 'true', 'Content-Type': 'multipart/form-data'})
+  Future updateProfile({
+    @Body() required FormData body,
+  });
 }
 
 final loginRepositoryProvider = Provider<LoginRepository>((ref) {
