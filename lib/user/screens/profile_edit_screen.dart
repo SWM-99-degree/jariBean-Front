@@ -17,6 +17,8 @@ class ProfileEditScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userModel = ref.watch(userProvider);
     final updateProfile = ref.watch(updateProfileProvider);
+    final bool isUpdated =
+        ref.watch(updateProfileProvider.notifier).isUpdated();
     if (userModel == null) {
       return Center(
         child: Text('로그인이 필요합니다.'),
@@ -93,6 +95,7 @@ class ProfileEditScreen extends ConsumerWidget {
             ),
             CustomButton(
               text: '프로필 적용',
+              isDisabled: !isUpdated,
               onPressed: () {
                 ref.read(userProvider.notifier).updateProfile(
                       body: updateProfile.toFormData(),
