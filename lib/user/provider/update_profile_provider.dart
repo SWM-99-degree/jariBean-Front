@@ -31,4 +31,10 @@ class UpdateProfileProvider extends StateNotifier<UpdateProfileModel> {
       print(e);
     }
   }
+
+  bool isUpdated() {
+    return state.nickname != null ||
+        state.description != null ||
+        state.imgFile != null;
+  }
 }
