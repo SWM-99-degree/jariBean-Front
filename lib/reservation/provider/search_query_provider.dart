@@ -17,10 +17,7 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
           SearchQueryModel(
             searchText: '',
             serviceAreaId: null,
-            location: LocationModel(
-              latitude: 0,
-              longitude: 0,
-            ),
+            location: null,
             startTime: Utils.truncateToQuaterHour(
               DateTime.now(),
             ),
