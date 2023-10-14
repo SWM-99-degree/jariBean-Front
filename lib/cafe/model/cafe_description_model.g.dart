@@ -11,7 +11,7 @@ CafeDescriptionModel _$CafeDescriptionModelFromJson(
     CafeDescriptionModel(
       id: json['id'] as String,
       title: json['name'] as String,
-      imgUrl: json['imageUrl'] as String,
+      imgUrl: json['imageUrl'] as String?,
       cafeAddress: json['address'] as String,
     );
 

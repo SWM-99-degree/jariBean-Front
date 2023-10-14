@@ -8,7 +8,7 @@ import 'package:jari_bean/reservation/model/cafe_description_with_rating_model.d
 class SquaredCafeCard extends StatelessWidget {
   final String id;
   final String title;
-  final String imgUrl;
+  final String? imgUrl;
   final String cafeAddress;
   final double rating;
 
@@ -50,7 +50,8 @@ class SquaredCafeCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: Image.network(
-              imgUrl,
+              imgUrl ??
+                  'https://picsum.photos/200/300', // Todo: change to default image
               width: 120.w,
               height: 120.w,
             ),
