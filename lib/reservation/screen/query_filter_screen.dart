@@ -7,9 +7,12 @@ import 'package:jari_bean/cafe/model/table_model.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_outlined_button.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/models/location_model.dart';
+import 'package:jari_bean/common/provider/location_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
+import 'package:jari_bean/reservation/provider/search_result_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 enum FilterType {
@@ -46,6 +49,10 @@ class QueryFilterScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              LocationFilter(),
+              SizedBox(
+                height: 16.h,
+              ),
               TimeFilter(),
               SizedBox(
                 height: 16.h,
@@ -65,9 +72,62 @@ class QueryFilterScreen extends ConsumerWidget {
               CustomButton(
                 text: '검색하기',
                 onPressed: () {
+                  ref.read(searchResultProvider.notifier).search();
                   context.push('/result');
                 },
               ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LocationFilter extends ConsumerWidget {
+  const LocationFilter({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final titleTextStyle = defaultFontStyleBlack.copyWith(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w700,
+      height: 1.5,
+    );
+    final geocode = ref.watch(geocodeProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('위치', style: titleTextStyle),
+        SizedBox(
+          height: 8.h,
+        ),
+        Padding(
+          padding: EdgeInsets.only(right: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                geocode,
+                style: defaultFontStyleBlack.copyWith(
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(
+                width: 100.w,
+                height: 40.h,
+                child: CustomButton(
+                  text: '현재 위치',
+                  onPressed: () {
+                    ref.read(geocodeProvider.notifier).getGeocode();
+                    final location = ref.read(locationProvider);
+                    if (location is LocationModel) {
+                      ref.read(searchQueryProvider.notifier).location =
+                          location;
+                    }
+                  },
+                ),
+              )
             ],
           ),
         ),
