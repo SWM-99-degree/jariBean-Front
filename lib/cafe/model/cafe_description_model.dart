@@ -17,7 +17,7 @@ class CafeDescriptionModel extends CafeDescriptionModelBase
   final String title;
   @override
   @JsonKey(name: 'imageUrl')
-  final String imgUrl;
+  final String? imgUrl;
   @JsonKey(name: 'address')
   final String cafeAddress;
 

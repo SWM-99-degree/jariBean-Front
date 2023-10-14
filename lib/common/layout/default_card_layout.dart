@@ -14,7 +14,7 @@ import 'package:skeletons/skeletons.dart';
 class DefaultCardLayout extends StatelessWidget {
   final String id;
   final String name;
-  final String imgUrl;
+  final String? imgUrl;
   final Widget child;
   final Color borderColor;
   final bool isShadowVisible;
@@ -151,7 +151,8 @@ class DefaultCardLayout extends StatelessWidget {
                     ),
                   ),
                   child: Image.network(
-                    imgUrl,
+                    imgUrl ??
+                        'https://picsum.photos/200/300', // Todo: change to default image
                     width: 84.w,
                     height: 84.w,
                     fit: BoxFit.cover,
