@@ -5,10 +5,12 @@ import 'package:jari_bean/common/const/color.dart';
 class DefaultSearchBoxLayout extends StatelessWidget {
   final Function()? onPressed;
   final List<Widget> children;
+  final bool isGPSset;
 
   const DefaultSearchBoxLayout({
     required this.children,
     this.onPressed,
+    this.isGPSset = false,
     super.key,
   });
 
@@ -36,7 +38,7 @@ class DefaultSearchBoxLayout extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              Icons.search,
+              isGPSset ? Icons.gps_fixed : Icons.search,
               color: GRAY_3,
             ),
             SizedBox(

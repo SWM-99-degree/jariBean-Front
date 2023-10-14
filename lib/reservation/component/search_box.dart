@@ -19,6 +19,7 @@ class SearchBox extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultSearchBoxLayout(
+      isGPSset: searchArea != null,
       onPressed: null,
       children: [
         Text(
