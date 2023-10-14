@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
+import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/provider/pagination_base_provider.dart';
 import 'package:jari_bean/common/utils/pagination_utils.dart';
+import 'package:jari_bean/reservation/provider/search_result_provider.dart';
 
 typedef PaginationWidgetBuilder<T extends IModelWithId> = Widget Function(
   BuildContext context,
@@ -20,7 +22,6 @@ class PaginationListView<T extends IModelWithId>
       provider;
   final bool
       isInsideNestedScrollView; // for nested scroll view. it will null controller inside listview.
-
   final PaginationWidgetBuilder<T> itemBuilder;
   const PaginationListView({
     required this.provider,
@@ -59,6 +60,10 @@ class _PaginationListViewState<T extends IModelWithId>
     );
     _scrollController.dispose();
     super.dispose();
+    if (T == CafeDescriptionModel) {
+      print('dispose');
+      ref.invalidate(searchResultProvider);
+    }
   }
 
   @override
