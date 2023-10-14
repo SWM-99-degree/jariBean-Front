@@ -25,8 +25,13 @@ class PaginationBaseStateNotifier<T extends IModelWithId,
     int page = 0,
     bool fetchMore = false,
     bool forceRefetch = false,
+    Future<OffsetPagination<T>> Function({
+      required PaginationParams paginationParams,
+    })? paginate,
   }) async {
     try {
+      paginate ??= (await repository).paginate;
+
       if (state is OffsetPagination && !forceRefetch) {
         final pState = state as OffsetPagination;
 
@@ -72,7 +77,7 @@ class PaginationBaseStateNotifier<T extends IModelWithId,
         }
       }
 
-      final resp = await (await repository).paginate(
+      final resp = await paginate(
         paginationParams: paginationParams,
       );
 
