@@ -34,29 +34,41 @@ class AvaliableTimeRange {
 }
 
 @JsonSerializable()
-class TableModel implements IModelWithId {
-  @JsonKey(name: 'tableId')
-  @override
-  final String id;
-  @JsonKey(name: 'tableName')
-  final String name;
-  @JsonKey(name: 'tableSeating')
-  final int maxHeadcount;
-  @JsonKey(name: 'tableImageUrl')
-  final String imgUrl;
-  final List<TableType> tableOptionsList;
+class TableDetailModel {
+  @JsonKey(name: 'tableDetailDto')
+  final TableDescriptionModel tableModel;
   @JsonKey(name: 'availableTimeList')
   final List<AvaliableTimeRange> avaliableTimeRangeList;
 
-  TableModel({
-    required this.id,
-    required this.name,
-    required this.maxHeadcount,
-    required this.imgUrl,
-    required this.tableOptionsList,
+  TableDetailModel({
+    required this.tableModel,
     required this.avaliableTimeRangeList,
   });
 
-  factory TableModel.fromJson(Map<String, dynamic> json) =>
-      _$TableModelFromJson(json);
+  factory TableDetailModel.fromJson(Map<String, dynamic> json) =>
+      _$TableDetailModelFromJson(json);
+}
+
+@JsonSerializable()
+class TableDescriptionModel implements IModelWithId {
+  @override
+  final String id;
+  @JsonKey(name: 'description')
+  final String name;
+  @JsonKey(name: 'image')
+  final String imgUrl;
+  @JsonKey(name: 'seating')
+  final int maxHeadcount;
+  final List<TableType> tableOptionsList;
+
+  TableDescriptionModel({
+    required this.id,
+    required this.name,
+    required this.imgUrl,
+    required this.maxHeadcount,
+    required this.tableOptionsList,
+  });
+
+  factory TableDescriptionModel.fromJson(Map<String, dynamic> json) =>
+      _$TableDescriptionModelFromJson(json);
 }
