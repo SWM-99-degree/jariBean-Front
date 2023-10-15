@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/cafe/component/cafe_description.dart';
 import 'package:jari_bean/cafe/component/cafe_description_with_time.dart';
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
@@ -18,6 +19,8 @@ class DefaultCardLayout extends StatelessWidget {
   final Widget child;
   final Color borderColor;
   final bool isShadowVisible;
+  final VoidCallback? onTap;
+  final String? routerPath;
   const DefaultCardLayout({
     required this.id,
     required this.name,
@@ -25,6 +28,8 @@ class DefaultCardLayout extends StatelessWidget {
     required this.child,
     this.borderColor = PRIMARY_ORANGE,
     this.isShadowVisible = false,
+    this.onTap,
+    this.routerPath,
     super.key,
   });
 
@@ -36,6 +41,7 @@ class DefaultCardLayout extends StatelessWidget {
         id: model.id,
         name: model.title,
         imgUrl: model.imgUrl,
+        routerPath: '/cafe/${model.id}',
         child: CafeDescriptionWithTimeLeft.fromModel(
           model: model,
         ),
@@ -45,6 +51,7 @@ class DefaultCardLayout extends StatelessWidget {
       id: model.id,
       name: model.title,
       imgUrl: model.imgUrl,
+      routerPath: '/cafe/${model.id}',
       child: CafeDescription.fromModel(
         model: model,
       ),
@@ -61,6 +68,7 @@ class DefaultCardLayout extends StatelessWidget {
         imgUrl: model.model.imgUrl,
         borderColor: Colors.transparent,
         isShadowVisible: true,
+        routerPath: '/cafe/${model.model.id}',
         child: buildCafeInfo(
           cafeModel: model.model,
           bookedModel: BookedDetailsModel.fromReservationModel(model: model),
@@ -95,6 +103,7 @@ class DefaultCardLayout extends StatelessWidget {
       imgUrl: model.model.imgUrl,
       borderColor: Colors.transparent,
       isShadowVisible: true,
+      routerPath: '/cafe/${model.model.id}',
       child: buildCafeInfo(
         cafeModel: model.model,
         bookedModel: BookedDetailsModel.fromHistoryModel(model: model),
@@ -115,69 +124,78 @@ class DefaultCardLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final Function() onTap;
+    if (routerPath == null) {
+      onTap = this.onTap ?? () => {};
+    } else {
+      onTap = () => {context.push(routerPath!)};
+    }
     return Center(
-      child: Padding(
-        padding: EdgeInsets.only(top: 8.h),
-        child: Container(
-          padding: EdgeInsets.all(16.w),
-          width: 335.w,
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.w, color: borderColor),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            color: Colors.white,
-            shadows: [
-              if (isShadowVisible)
-                BoxShadow(
-                  color: Color(0x14000000),
-                  blurRadius: 10,
-                  offset: Offset(3, 3),
-                  spreadRadius: 0,
-                )
-            ],
-          ),
-          child: Row(
-            children: [
-              ClipRRect(
+      child: GestureDetector(
+        onTap: this.onTap ?? onTap,
+        child: Padding(
+          padding: EdgeInsets.only(top: 8.h),
+          child: Container(
+            padding: EdgeInsets.all(16.w),
+            width: 335.w,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.w, color: borderColor),
                 borderRadius: BorderRadius.circular(8),
-                child: Skeleton(
-                  isLoading: id == 'loading',
-                  skeleton: SkeletonAvatar(
-                    style: SkeletonAvatarStyle(
+              ),
+              color: Colors.white,
+              shadows: [
+                if (isShadowVisible)
+                  BoxShadow(
+                    color: Color(0x14000000),
+                    blurRadius: 10,
+                    offset: Offset(3, 3),
+                    spreadRadius: 0,
+                  )
+              ],
+            ),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Skeleton(
+                    isLoading: id == 'loading',
+                    skeleton: SkeletonAvatar(
+                      style: SkeletonAvatarStyle(
+                        width: 84.w,
+                        height: 84.w,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Image.network(
+                      imgUrl ??
+                          'https://picsum.photos/200/300', // Todo: change to default image
                       width: 84.w,
                       height: 84.w,
-                      borderRadius: BorderRadius.circular(8),
+                      fit: BoxFit.cover,
+                      frameBuilder:
+                          (context, child, frame, wasSynchronouslyLoaded) {
+                        return Skeleton(
+                          isLoading: frame == null,
+                          skeleton: SkeletonAvatar(
+                            style: SkeletonAvatarStyle(
+                              width: 84.w,
+                              height: 84.w,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: child,
+                        );
+                      },
                     ),
                   ),
-                  child: Image.network(
-                    imgUrl ??
-                        'https://picsum.photos/200/300', // Todo: change to default image
-                    width: 84.w,
-                    height: 84.w,
-                    fit: BoxFit.cover,
-                    frameBuilder:
-                        (context, child, frame, wasSynchronouslyLoaded) {
-                      return Skeleton(
-                        isLoading: frame == null,
-                        skeleton: SkeletonAvatar(
-                          style: SkeletonAvatarStyle(
-                            width: 84.w,
-                            height: 84.w,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: child,
-                      );
-                    },
-                  ),
                 ),
-              ),
-              SizedBox(
-                width: 16.w,
-              ),
-              child,
-            ],
+                SizedBox(
+                  width: 16.w,
+                ),
+                child,
+              ],
+            ),
           ),
         ),
       ),
