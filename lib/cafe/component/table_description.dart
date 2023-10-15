@@ -10,7 +10,7 @@ import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 
-class TableDescription extends ConsumerWidget {
+class TableDescriptionCard extends ConsumerWidget {
   final String tableId;
   final String tableName;
   final int maxHeadcount;
@@ -23,8 +23,8 @@ class TableDescription extends ConsumerWidget {
   final List<AvaliableTimeRange> alternativeAvaliableTimeRangeList;
   final List<TableDisplayStatus> displayUnitList;
 
-  factory TableDescription.fromModel({
-    required TableModel model,
+  factory TableDescriptionCard.fromModel({
+    required TableDetailModel model,
     required DateTime startTime,
     required DateTime endTime,
   }) {
@@ -33,12 +33,12 @@ class TableDescription extends ConsumerWidget {
       queryStartTime: startTime,
       queryEndTime: endTime,
     );
-    return TableDescription(
-      tableId: model.id,
-      tableName: model.name,
-      maxHeadcount: model.maxHeadcount,
-      imgUrl: model.imgUrl,
-      tableOptionsList: model.tableOptionsList,
+    return TableDescriptionCard(
+      tableId: model.tableModel.id,
+      tableName: model.tableModel.name,
+      maxHeadcount: model.tableModel.maxHeadcount,
+      imgUrl: model.tableModel.imgUrl,
+      tableOptionsList: model.tableModel.tableOptionsList,
       avaliableTimeRangeList: model.avaliableTimeRangeList,
       displayStartTime: tableDisplay.displayStartTime,
       displayEndTime: tableDisplay.displayEndTime,
@@ -49,7 +49,7 @@ class TableDescription extends ConsumerWidget {
     );
   }
 
-  const TableDescription({
+  const TableDescriptionCard({
     super.key,
     required this.tableId,
     required this.tableName,

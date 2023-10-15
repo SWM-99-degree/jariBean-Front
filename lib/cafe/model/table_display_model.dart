@@ -8,7 +8,7 @@ enum TableDisplayStatus {
   unavailableInScope,
 }
 
-class TableDisplayModel extends TableModel {
+class TableDisplayModel extends TableDetailModel {
   final DateTime displayStartTime;
   final DateTime displayEndTime;
   final bool isAvaliable;
@@ -16,28 +16,17 @@ class TableDisplayModel extends TableModel {
   final List<TableDisplayStatus> displayUnitList;
 
   TableDisplayModel({
-    required String id,
-    required String name,
-    required int maxHeadcount,
-    required String imgUrl,
-    required List<TableType> tableOptionsList,
-    required List<AvaliableTimeRange> avaliableTimeRangeList,
     required this.displayStartTime,
     required this.displayEndTime,
     required this.isAvaliable,
     required this.alternativeAvaliableTimeRangeList,
     required this.displayUnitList,
-  }) : super(
-          id: id,
-          name: name,
-          maxHeadcount: maxHeadcount,
-          imgUrl: imgUrl,
-          tableOptionsList: tableOptionsList,
-          avaliableTimeRangeList: avaliableTimeRangeList,
-        );
+    required super.tableModel,
+    required super.avaliableTimeRangeList,
+  }) : super();
 
   factory TableDisplayModel.calculateAvailablityFromTableModel({
-    required TableModel model,
+    required TableDetailModel model,
     required DateTime queryStartTime,
     required DateTime queryEndTime,
   }) {
@@ -157,17 +146,13 @@ class TableDisplayModel extends TableModel {
     }
 
     return TableDisplayModel(
-      id: model.id,
-      name: model.name,
-      maxHeadcount: model.maxHeadcount,
-      imgUrl: model.imgUrl,
-      tableOptionsList: model.tableOptionsList,
-      avaliableTimeRangeList: model.avaliableTimeRangeList,
       displayStartTime: displayStartTime,
       displayEndTime: displayEndTime,
       isAvaliable: isAvaliable,
       displayUnitList: displayUnitList,
       alternativeAvaliableTimeRangeList: alternativeAvaliableTimeRangeList,
+      tableModel: model.tableModel,
+      avaliableTimeRangeList: model.avaliableTimeRangeList,
     );
   }
 }

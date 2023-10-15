@@ -18,28 +18,42 @@ Map<String, dynamic> _$AvaliableTimeRangeToJson(AvaliableTimeRange instance) =>
       'endTime': instance.endTime.toIso8601String(),
     };
 
-TableModel _$TableModelFromJson(Map<String, dynamic> json) => TableModel(
-      id: json['tableId'] as String,
-      name: json['tableName'] as String,
-      maxHeadcount: json['tableSeating'] as int,
-      imgUrl: json['tableImageUrl'] as String,
-      tableOptionsList: (json['tableOptionsList'] as List<dynamic>)
-          .map((e) => $enumDecode(_$TableTypeEnumMap, e))
-          .toList(),
+TableDetailModel _$TableDetailModelFromJson(Map<String, dynamic> json) =>
+    TableDetailModel(
+      tableModel: TableDescriptionModel.fromJson(
+          json['tableDetailDto'] as Map<String, dynamic>),
       avaliableTimeRangeList: (json['availableTimeList'] as List<dynamic>)
           .map((e) => AvaliableTimeRange.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$TableModelToJson(TableModel instance) =>
+Map<String, dynamic> _$TableDetailModelToJson(TableDetailModel instance) =>
     <String, dynamic>{
-      'tableId': instance.id,
-      'tableName': instance.name,
-      'tableSeating': instance.maxHeadcount,
-      'tableImageUrl': instance.imgUrl,
+      'tableDetailDto': instance.tableModel,
+      'availableTimeList': instance.avaliableTimeRangeList,
+    };
+
+TableDescriptionModel _$TableDescriptionModelFromJson(
+        Map<String, dynamic> json) =>
+    TableDescriptionModel(
+      id: json['id'] as String,
+      name: json['description'] as String,
+      imgUrl: json['image'] as String,
+      maxHeadcount: json['seating'] as int,
+      tableOptionsList: (json['tableOptionsList'] as List<dynamic>)
+          .map((e) => $enumDecode(_$TableTypeEnumMap, e))
+          .toList(),
+    );
+
+Map<String, dynamic> _$TableDescriptionModelToJson(
+        TableDescriptionModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'description': instance.name,
+      'image': instance.imgUrl,
+      'seating': instance.maxHeadcount,
       'tableOptionsList':
           instance.tableOptionsList.map((e) => _$TableTypeEnumMap[e]!).toList(),
-      'availableTimeList': instance.avaliableTimeRangeList,
     };
 
 const _$TableTypeEnumMap = {

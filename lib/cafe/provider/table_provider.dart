@@ -5,9 +5,8 @@ import 'package:jari_bean/cafe/repository/table_repository.dart';
 import 'package:jari_bean/reservation/model/search_query_model.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 
-final tableProvider =
-    StateNotifierProvider.family<TableStateNotifier, List<TableModel>, String>(
-        (ref, id) {
+final tableProvider = StateNotifierProvider.family<TableStateNotifier,
+    List<TableDetailModel>, String>((ref, id) {
   final tableRepository = ref.watch(tableRepositoryProvider);
   return TableStateNotifier(
     cafeId: id,
@@ -15,7 +14,7 @@ final tableProvider =
   );
 });
 
-class TableStateNotifier extends StateNotifier<List<TableModel>> {
+class TableStateNotifier extends StateNotifier<List<TableDetailModel>> {
   final String cafeId;
   final TableRepository repository;
   TableStateNotifier({
@@ -44,7 +43,7 @@ final tableDisplayProvider = StateNotifierProvider.family<
 );
 
 class TableDisplayStateNotifier extends StateNotifier<List<TableDisplayModel>> {
-  final List<TableModel> tableModels;
+  final List<TableDetailModel> tableModels;
   final SearchQueryModel queryFilter;
   TableDisplayStateNotifier({
     required this.tableModels,
@@ -68,9 +67,9 @@ class TableDisplayStateNotifier extends StateNotifier<List<TableDisplayModel>> {
   void applyFilter() {
     final filteredList = state.where((element) {
       // if (!element.isAvaliable) return false;
-      if (element.maxHeadcount < queryFilter.headCount) return false;
+      if (element.tableModel.maxHeadcount < queryFilter.headCount) return false;
       if (queryFilter.tableOptionList
-          .every((e) => element.tableOptionsList.contains(e))) {
+          .every((e) => element.tableModel.tableOptionsList.contains(e))) {
         return true;
       }
       return false;
