@@ -12,7 +12,6 @@ import 'package:jari_bean/common/provider/location_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
-import 'package:jari_bean/reservation/provider/search_result_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 enum FilterType {
@@ -72,8 +71,7 @@ class QueryFilterScreen extends ConsumerWidget {
               CustomButton(
                 text: '검색하기',
                 onPressed: () {
-                  ref.read(searchResultProvider.notifier).search();
-                  context.push('/result');
+                  context.push('/search/result');
                 },
               ),
             ],
@@ -127,7 +125,7 @@ class LocationFilter extends ConsumerWidget {
                     }
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),

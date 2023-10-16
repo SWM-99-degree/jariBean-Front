@@ -55,7 +55,7 @@ class CustomCheckboxTile extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }
