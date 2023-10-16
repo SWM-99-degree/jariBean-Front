@@ -133,7 +133,7 @@ class TableDescriptionCard extends ConsumerWidget {
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -173,7 +173,7 @@ class TableDescriptionCard extends ConsumerWidget {
                 fontWeight: FontWeight.w500,
                 color: TEXT_SUBTITLE_COLOR,
               ),
-            )
+            ),
           ],
         ),
       ],
