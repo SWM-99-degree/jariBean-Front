@@ -12,6 +12,7 @@ import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
+import 'package:skeletons/skeletons.dart';
 
 class IconTitleFunctionModel {
   final IconData iconData;
@@ -44,7 +45,9 @@ class ProfileScreen extends ConsumerWidget {
       IconTitleFunctionModel(
         iconData: JariBeanIconPack.notice,
         title: '알림',
-        onTap: () {},
+        onTap: () {
+          context.push('/profile/alert');
+        },
       ),
       IconTitleFunctionModel(
         iconData: JariBeanIconPack.information,
@@ -120,10 +123,27 @@ class ProfileScreen extends ConsumerWidget {
                   SizedBox(
                     width: 64.w,
                     height: 64.w,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        user.imgUrl,
-                      ),
+                    child: Stack(
+                      children: [
+                        SkeletonAvatar(
+                          style: SkeletonAvatarStyle(
+                            width: 64.w,
+                            height: 64.w,
+                            borderRadius: BorderRadius.circular(32.w),
+                          ),
+                        ),
+                        CircleAvatar(
+                          radius: 32.w,
+                          backgroundImage: NetworkImage(
+                            user.imgUrl,
+                          ),
+                          backgroundColor: Colors.transparent,
+                          onBackgroundImageError: (exception, stackTrace) {
+                            print(exception);
+                            print(stackTrace);
+                          },
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
@@ -242,7 +262,7 @@ class ProfileScreen extends ConsumerWidget {
             width: 12.w,
           ),
           Text(
-            '설정',
+            '소셜 로그인',
             style: defaultFontStyleBlack.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
@@ -259,7 +279,7 @@ class ProfileScreen extends ConsumerWidget {
               fontWeight: FontWeight.w500,
               height: 1,
             ),
-          )
+          ),
         ],
       ),
     );
