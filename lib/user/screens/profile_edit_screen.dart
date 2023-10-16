@@ -134,7 +134,7 @@ class ProfileEditScreen extends ConsumerWidget {
                   blurRadius: 2,
                   offset: Offset(0, 2),
                   spreadRadius: 0,
-                )
+                ),
               ],
             ),
             child: Icon(
