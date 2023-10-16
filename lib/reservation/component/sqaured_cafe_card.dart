@@ -59,11 +59,16 @@ class SquaredCafeCard extends StatelessWidget {
           SizedBox(
             height: 8.h,
           ),
-          Text(
-            title,
-            style: defaultFontStyleBlack.copyWith(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: 40.h,
+            ),
+            child: Text(
+              title,
+              style: defaultFontStyleBlack.copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           ConstrainedBox(
@@ -96,7 +101,7 @@ class SquaredCafeCard extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
