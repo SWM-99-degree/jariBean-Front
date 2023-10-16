@@ -10,6 +10,8 @@ class CafeDetailModel {
   final DateTime openingHour;
   final DateTime closingHour;
   final String description;
+  final String instagram;
+  final String phoneNumber;
   @JsonKey(name: 'image')
   final String imgUrl;
 
@@ -18,6 +20,11 @@ class CafeDetailModel {
     required this.openingHour,
     required this.closingHour,
     required this.description,
+    required this.instagram,
+    required this.phoneNumber,
     required this.imgUrl,
   });
+
+  factory CafeDetailModel.fromJson(Map<String, dynamic> json) =>
+      _$CafeDetailModelFromJson(json);
 }

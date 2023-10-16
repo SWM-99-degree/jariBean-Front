@@ -40,9 +40,8 @@ TableDescriptionModel _$TableDescriptionModelFromJson(
       name: json['description'] as String,
       imgUrl: json['image'] as String,
       maxHeadcount: json['seating'] as int,
-      tableOptionsList: (json['tableOptionsList'] as List<dynamic>)
-          .map((e) => $enumDecode(_$TableTypeEnumMap, e))
-          .toList(),
+      tableOptionsList: TableDescriptionModel.tableTypeFromJson(
+          json['tableOptionList'] as List),
     );
 
 Map<String, dynamic> _$TableDescriptionModelToJson(
@@ -52,7 +51,7 @@ Map<String, dynamic> _$TableDescriptionModelToJson(
       'description': instance.name,
       'image': instance.imgUrl,
       'seating': instance.maxHeadcount,
-      'tableOptionsList':
+      'tableOptionList':
           instance.tableOptionsList.map((e) => _$TableTypeEnumMap[e]!).toList(),
     };
 

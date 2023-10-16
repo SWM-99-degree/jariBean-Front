@@ -4,8 +4,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'cafe_total_information_model.g.dart';
 
+abstract class CafeTotalInformationBase {}
+
+class CafeTotalInformationLoading extends CafeTotalInformationBase {}
+
+class CafeTotalInformationError extends CafeTotalInformationBase {
+  final String message;
+
+  CafeTotalInformationError(this.message);
+}
+
 @JsonSerializable()
-class CafeTotalInformationModel {
+class CafeTotalInformationModel extends CafeTotalInformationBase {
   @JsonKey(name: 'cafeDetailDto')
   final CafeDetailModel cafeDetailModel;
   @JsonKey(name: 'tableReserveResDtoList')

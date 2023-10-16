@@ -12,6 +12,13 @@ enum TableType {
   BACKREST,
 }
 
+final tableTypeDecode = {
+  'HEIGHT': TableType.HIGH,
+  'RECTANGLE': TableType.RECTANGLE,
+  'PLUG': TableType.PLUG,
+  'BACKREST': TableType.BACKREST,
+};
+
 final tableTypeButtonName = {
   TableType.HIGH: '높은의자',
   TableType.RECTANGLE: '직사각형',
@@ -59,6 +66,7 @@ class TableDescriptionModel implements IModelWithId {
   final String imgUrl;
   @JsonKey(name: 'seating')
   final int maxHeadcount;
+  @JsonKey(fromJson: tableTypeFromJson, name: 'tableOptionList')
   final List<TableType> tableOptionsList;
 
   TableDescriptionModel({
@@ -71,4 +79,16 @@ class TableDescriptionModel implements IModelWithId {
 
   factory TableDescriptionModel.fromJson(Map<String, dynamic> json) =>
       _$TableDescriptionModelFromJson(json);
+
+  static List<TableType> tableTypeFromJson(List<dynamic> json) {
+    return json.map((e) {
+      final type = tableTypeDecode[e];
+      if (type == null) {
+        throw Exception(
+          'TableType is not defined',
+        ); // if there is no type in tableTypeDecode, throw exception
+      }
+      return type;
+    }).toList();
+  }
 }
