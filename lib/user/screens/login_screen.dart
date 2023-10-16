@@ -52,7 +52,9 @@ class LoginScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 OauthLoginButton(
                   imagePath: 'assets/images/google_login_large_wide.png',
-                  onPressed: () async {},
+                  onPressed: () async {
+                    await ref.read(authProvider).login(type: 'google');
+                  },
                 ),
                 const SizedBox(height: 12),
               ],
