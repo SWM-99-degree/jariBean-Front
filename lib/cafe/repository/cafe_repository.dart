@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
+import 'package:jari_bean/cafe/model/cafe_total_information_model.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
@@ -11,7 +12,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'cafe_repository.g.dart';
 
-final cafeRepositoryProvider = Provider<CafeSearchResultRepository>(
+final cafeSearchResultRepositoryProvider = Provider<CafeSearchResultRepository>(
   (ref) {
     final dio = ref.watch(dioProvider);
     return CafeSearchResultRepository(dio, baseUrl: '$ip/api/cafe');
@@ -31,7 +32,6 @@ abstract class CafeSearchResultRepository
   })
   Future<OffsetPagination<CafeDescriptionModel>> paginate({
     required PaginationParams paginationParams,
-    @Body() Map<String, dynamic> body = const {},
   });
 
   @POST('/')
@@ -42,4 +42,22 @@ abstract class CafeSearchResultRepository
     required PaginationParams paginationParams,
     @Body() required SearchQueryModel body,
   });
+}
+
+final cafeRepositoryProvider = Provider<CafeRepository>(
+  (ref) {
+    final dio = ref.watch(dioProvider);
+    return CafeRepository(dio, baseUrl: '$ip/api/cafe');
+  },
+);
+
+@RestApi()
+abstract class CafeRepository {
+  factory CafeRepository(Dio dio, {String baseUrl}) = _CafeRepository;
+
+  @GET('/{id}')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<CafeTotalInformationModel> getCafeInfo(@Path('id') String id);
 }
