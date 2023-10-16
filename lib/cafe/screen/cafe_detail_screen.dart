@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/cafe/model/cafe_total_information_model.dart';
+import 'package:jari_bean/cafe/provider/cafe_provider.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_info_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_table_screen.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 
-class CafeDetailScreen extends StatefulWidget {
+class CafeDetailScreen extends ConsumerStatefulWidget {
   final String cafeId;
 
   const CafeDetailScreen({
@@ -15,10 +18,10 @@ class CafeDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<CafeDetailScreen> createState() => _CafeDetailScreenState();
+  ConsumerState<CafeDetailScreen> createState() => _CafeDetailScreenState();
 }
 
-class _CafeDetailScreenState extends State<CafeDetailScreen>
+class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final ScrollController _scrollController = ScrollController();
@@ -51,8 +54,24 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cafeInfoStatus = ref.watch(cafeInformationProvider(widget.cafeId));
+    if (cafeInfoStatus is CafeTotalInformationLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (cafeInfoStatus is CafeTotalInformationError) {
+      return Scaffold(
+        body: Center(
+          child: Text(cafeInfoStatus.message),
+        ),
+      );
+    }
+    final cafeInfo = cafeInfoStatus as CafeTotalInformationModel;
     return DefaultLayout(
-      title: 'GRAZ Coffee 강남',
+      title: cafeInfo.cafeDetailModel.cafeModel.title,
       child: DefaultTabController(
         length: 2,
         child: CustomScrollView(
@@ -65,7 +84,7 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
               backgroundColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 background: Image.network(
-                  'https://picsum.photos/400/600',
+                  cafeInfo.cafeDetailModel.cafeModel.imgUrl ?? '',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -103,17 +122,11 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
                 controller: _tabController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  CafeDetailInfoScreen(
-                    cafeId: '123',
-                    cafeAddress: '서울 성동구 고산자로 234(우) 04744',
-                    cafePhoneNumber: '1522-3232',
-                    cafeRunTime: '월~목 07:00 ~ 22:00',
-                    cafeUrl: 'www.starbucks.co.kr',
-                  ),
-                  CafeDetailTableScreen(cafeId: widget.cafeId)
+                  CafeDetailInfoScreen.fromModel(cafeInfo.cafeDetailModel),
+                  CafeDetailTableScreen(cafeId: widget.cafeId),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

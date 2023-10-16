@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
@@ -18,6 +19,16 @@ class CafeDetailInfoScreen extends StatelessWidget {
     required this.cafePhoneNumber,
     super.key,
   });
+
+  factory CafeDetailInfoScreen.fromModel(CafeDetailModel model) {
+    return CafeDetailInfoScreen(
+      cafeId: model.cafeModel.id,
+      cafeAddress: model.cafeModel.cafeAddress,
+      cafeRunTime: '${model.openingHour.hour}시 ~ ${model.closingHour.hour}시',
+      cafeUrl: model.instagram,
+      cafePhoneNumber: model.phoneNumber,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
