@@ -11,12 +11,13 @@ import 'package:jari_bean/history/provider/hisotry_selection_provider.dart';
 import 'package:jari_bean/history/screens/history_screen.dart';
 import 'package:jari_bean/matching/screen/matching_proceeding_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
-import 'package:jari_bean/reservation/screen/result_screen.dart';
+import 'package:jari_bean/reservation/screen/search_result_screen.dart';
 import 'package:jari_bean/reservation/screen/search_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/screens/login_screen.dart';
 import 'package:jari_bean/common/screens/root_screen.dart';
 import 'package:jari_bean/common/screens/splash_screen.dart';
+import 'package:jari_bean/user/screens/profile_alert_screen.dart';
 import 'package:jari_bean/user/screens/profile_edit_screen.dart';
 import 'package:jari_bean/user/screens/profile_screen.dart';
 import 'package:jari_bean/user/screens/register_screen.dart';
@@ -138,6 +139,15 @@ final goRouterProvider = Provider<GoRouter>(
                     child: ProfileEditScreen(),
                   ),
                 ),
+                GoRoute(
+                  path: 'alert',
+                  name: ProfileAlertScreen.routerName,
+                  pageBuilder: (_, __) => NoTransitionPage(
+                    child: RootScreen(
+                      child: ProfileAlertScreen(),
+                    ),
+                  ),
+                ),
               ],
             ),
             GoRoute(
@@ -158,13 +168,13 @@ final goRouterProvider = Provider<GoRouter>(
               builder: (_, state) => SearchScreen(
                 serviceAreaId: state.queryParameters['serviceAreaId'],
               ),
-            ),
-            GoRoute(
-              path: 'result',
-              name: ResultScreen.routerName,
-              builder: (_, __) => const ResultScreen(
-                cafeId: '1',
-              ),
+              routes: [
+                GoRoute(
+                  path: 'result',
+                  name: SearchResultScreen.routerName,
+                  builder: (_, state) => SearchResultScreen(),
+                ),
+              ],
             ),
             GoRoute(
               path: 'matching/proceeding',
