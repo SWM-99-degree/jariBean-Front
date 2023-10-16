@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -107,8 +109,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         headerSliverBuilder: (_, __) => [
           SliverAppBar(
             leading: SizedBox(),
-            expandedHeight: 228.h,
-            collapsedHeight: 228.h,
+            expandedHeight: max(228.h, 228),
+            collapsedHeight: 228,
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 children: [
@@ -150,7 +152,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                           ),
                         ),
                       ),
-                      padding: EdgeInsets.only(top: 20.h, left: 16.h),
+                      padding: EdgeInsets.only(
+                        top: 20,
+                        left: 16,
+                      ),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -163,7 +168,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
