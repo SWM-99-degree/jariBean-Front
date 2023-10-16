@@ -79,7 +79,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -166,7 +166,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

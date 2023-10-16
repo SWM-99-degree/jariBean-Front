@@ -151,7 +151,7 @@ class DefaultCardLayout extends StatelessWidget {
                     blurRadius: 10,
                     offset: Offset(3, 3),
                     spreadRadius: 0,
-                  )
+                  ),
               ],
             ),
             child: Row(
@@ -228,7 +228,7 @@ Widget buildCafeInfo({
       ),
       BookedDetails.fromModel(
         model: bookedModel,
-      )
+      ),
     ],
   );
 }
