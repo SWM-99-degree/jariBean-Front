@@ -63,7 +63,7 @@ class BookedDetails extends StatelessWidget {
               text: '$headCount명',
               onPressed: null,
               isDisabled: isExpired,
-            )
+            ),
           ],
         ),
       ),

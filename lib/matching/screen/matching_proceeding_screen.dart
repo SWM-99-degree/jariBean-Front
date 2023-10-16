@@ -86,7 +86,7 @@ class _MatchingProceedingScreenState
                     blurRadius: 10,
                     offset: Offset(0, -6),
                     spreadRadius: 0,
-                  )
+                  ),
                 ],
               ),
               child: Column(
