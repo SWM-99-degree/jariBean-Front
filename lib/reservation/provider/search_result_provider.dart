@@ -11,7 +11,7 @@ import 'package:jari_bean/reservation/provider/search_text_provider.dart';
 final searchResultProvider =
     StateNotifierProvider<SearchResultStateNotifier, OffsetPaginationBase>(
   (ref) {
-    final repository = ref.watch(cafeRepositoryProvider);
+    final repository = ref.watch(cafeSearchResultRepositoryProvider);
     final searchQuery = ref.watch(searchQueryProvider);
     final searchQueryText = ref.watch(searchTextProvider);
     return SearchResultStateNotifier(
