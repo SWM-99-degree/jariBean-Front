@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/cafe/component/table_description.dart';
-import 'package:jari_bean/cafe/provider/table_provider.dart';
+import 'package:jari_bean/reservation/provider/table_provider.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 import 'package:jari_bean/reservation/screen/simplified_filter_screen.dart';
 
