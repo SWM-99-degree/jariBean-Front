@@ -3,8 +3,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'cafe_detail_model.g.dart';
 
+abstract class CafeDetailModelBase {}
+
+class CafeDetailModelLoading extends CafeDetailModelBase {}
+
+class CafeDetailModelError extends CafeDetailModelBase {
+  final String message;
+
+  CafeDetailModelError(this.message);
+}
+
 @JsonSerializable()
-class CafeDetailModel {
+class CafeDetailModel extends CafeDetailModelBase {
   @JsonKey(name: 'cafeSummaryDto')
   final CafeDescriptionModel cafeModel;
   final DateTime openingHour;
