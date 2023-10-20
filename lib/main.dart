@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
+import 'package:datadog_tracking_http_client/datadog_tracking_http_client.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:logger/logger.dart' as log;
@@ -102,14 +105,27 @@ void main() async {
     ),
   );
 
-  initializeDateFormatting().then(
-    (_) => runApp(
-      UncontrolledProviderScope(
-        container: container,
-        child: _App(),
+  final configuration = DdSdkConfiguration(
+    clientToken: 'pub642bb368634fff972d75bddd501e856b',
+    env: 'prod',
+    site: DatadogSite.us1,
+    trackingConsent: TrackingConsent.granted,
+    nativeCrashReportEnabled: true,
+    loggingConfiguration: LoggingConfiguration(),
+    rumConfiguration:
+        RumConfiguration(applicationId: 'fc1ee587-2f3a-4d7c-9dcc-d8be79f1a182'),
+    firstPartyHosts: [ip],
+  )..enableHttpTracking();
+  await DatadogSdk.runApp(configuration, () async {
+    initializeDateFormatting().then(
+      (_) => runApp(
+        UncontrolledProviderScope(
+          container: container,
+          child: _App(),
+        ),
       ),
-    ),
-  );
+    );
+  });
 }
 
 class _App extends ConsumerWidget {
