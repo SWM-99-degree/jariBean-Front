@@ -19,6 +19,13 @@ final tableTypeDecode = {
   'BACKREST': TableType.BACKREST,
 };
 
+final tableTypeEncode = {
+  TableType.HIGH: 'HEIGHT',
+  TableType.RECTANGLE: 'RECTANGLE',
+  TableType.PLUG: 'PLUG',
+  TableType.BACKREST: 'BACKREST',
+};
+
 final tableTypeButtonName = {
   TableType.HIGH: '높은의자',
   TableType.RECTANGLE: '직사각형',
@@ -66,7 +73,11 @@ class TableDescriptionModel implements IModelWithId {
   final String imgUrl;
   @JsonKey(name: 'seating')
   final int maxHeadcount;
-  @JsonKey(fromJson: tableTypeFromJson, name: 'tableOptionList')
+  @JsonKey(
+    fromJson: tableTypeFromJson,
+    toJson: tableTypeToJson,
+    name: 'tableOptionList',
+  )
   final List<TableType> tableOptionsList;
 
   TableDescriptionModel({
@@ -90,5 +101,9 @@ class TableDescriptionModel implements IModelWithId {
       }
       return type;
     }).toList();
+  }
+
+  static List<dynamic> tableTypeToJson(List<TableType> tableTypeList) {
+    return tableTypeList.map((e) => tableTypeEncode[e]).toList();
   }
 }
