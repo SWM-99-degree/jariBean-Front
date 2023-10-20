@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:jari_bean/cafe/model/cafe_total_information_model.dart';
+import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
 import 'package:jari_bean/cafe/repository/cafe_repository.dart';
 
-final cafeInformationProvider = StateNotifierProvider.family.autoDispose<
-    CafeInformationStateNotifier, CafeTotalInformationBase, String>(
+final cafeInformationProvider = StateNotifierProvider.family
+    .autoDispose<CafeInformationStateNotifier, CafeDetailModelBase, String>(
   (ref, cafeId) {
     final repository = ref.watch(cafeRepositoryProvider);
     return CafeInformationStateNotifier(
@@ -13,14 +13,13 @@ final cafeInformationProvider = StateNotifierProvider.family.autoDispose<
   },
 );
 
-class CafeInformationStateNotifier
-    extends StateNotifier<CafeTotalInformationBase> {
+class CafeInformationStateNotifier extends StateNotifier<CafeDetailModelBase> {
   final CafeRepository repository;
   final String cafeId;
   CafeInformationStateNotifier({
     required this.repository,
     required this.cafeId,
-  }) : super(CafeTotalInformationLoading()) {
+  }) : super(CafeDetailModelLoading()) {
     getCafeInfo();
   }
 
@@ -29,7 +28,7 @@ class CafeInformationStateNotifier
       final cafeInfo = await repository.getCafeInfo(cafeId);
       state = cafeInfo;
     } catch (e) {
-      state = CafeTotalInformationError(e.toString());
+      state = CafeDetailModelError(e.toString());
     }
   }
 }
