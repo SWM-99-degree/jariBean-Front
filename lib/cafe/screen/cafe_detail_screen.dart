@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jari_bean/cafe/model/cafe_total_information_model.dart';
+import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
 import 'package:jari_bean/cafe/provider/cafe_provider.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_info_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_table_screen.dart';
@@ -55,23 +55,23 @@ class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen>
   @override
   Widget build(BuildContext context) {
     final cafeInfoStatus = ref.watch(cafeInformationProvider(widget.cafeId));
-    if (cafeInfoStatus is CafeTotalInformationLoading) {
+    if (cafeInfoStatus is CafeDetailModelLoading) {
       return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
     }
-    if (cafeInfoStatus is CafeTotalInformationError) {
+    if (cafeInfoStatus is CafeDetailModelError) {
       return Scaffold(
         body: Center(
           child: Text(cafeInfoStatus.message),
         ),
       );
     }
-    final cafeInfo = cafeInfoStatus as CafeTotalInformationModel;
+    final cafeDetailModel = cafeInfoStatus as CafeDetailModel;
     return DefaultLayout(
-      title: cafeInfo.cafeDetailModel.cafeModel.title,
+      title: cafeDetailModel.cafeModel.title,
       child: DefaultTabController(
         length: 2,
         child: CustomScrollView(
@@ -84,7 +84,7 @@ class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen>
               backgroundColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 background: Image.network(
-                  cafeInfo.cafeDetailModel.cafeModel.imgUrl ?? '',
+                  cafeDetailModel.cafeModel.imgUrl ?? '',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -122,7 +122,7 @@ class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen>
                 controller: _tabController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  CafeDetailInfoScreen.fromModel(cafeInfo.cafeDetailModel),
+                  CafeDetailInfoScreen.fromModel(cafeDetailModel),
                   CafeDetailTableScreen(cafeId: widget.cafeId),
                 ],
               ),
