@@ -52,12 +52,5 @@ Map<String, dynamic> _$TableDescriptionModelToJson(
       'image': instance.imgUrl,
       'seating': instance.maxHeadcount,
       'tableOptionList':
-          instance.tableOptionsList.map((e) => _$TableTypeEnumMap[e]!).toList(),
+          TableDescriptionModel.tableTypeToJson(instance.tableOptionsList),
     };
-
-const _$TableTypeEnumMap = {
-  TableType.HIGH: 'HIGH',
-  TableType.RECTANGLE: 'RECTANGLE',
-  TableType.PLUG: 'PLUG',
-  TableType.BACKREST: 'BACKREST',
-};
