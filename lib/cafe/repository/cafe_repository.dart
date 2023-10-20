@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
-import 'package:jari_bean/cafe/model/cafe_total_information_model.dart';
+import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
@@ -59,5 +59,5 @@ abstract class CafeRepository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<CafeTotalInformationModel> getCafeInfo(@Path('id') String id);
+  Future<CafeDetailModel> getCafeInfo(@Path('id') String id);
 }
