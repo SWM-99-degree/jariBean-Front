@@ -1,4 +1,14 @@
 PODS:
+  - datadog_flutter_plugin (0.0.1):
+    - DatadogSDK (= 1.23.0)
+    - DatadogSDKCrashReporting (= 1.23.0)
+    - DictionaryCoder (= 1.0.8)
+    - Flutter
+  - DatadogSDK (1.23.0)
+  - DatadogSDKCrashReporting (1.23.0):
+    - DatadogSDK (= 1.23.0)
+    - PLCrashReporter (~> 1.11.0)
+  - DictionaryCoder (1.0.8)
   - DKImagePickerController/Core (4.3.4):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -103,6 +113,7 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
+  - PLCrashReporter (1.11.1)
   - PromisesObjC (2.3.1)
   - SDWebImage (5.18.3):
     - SDWebImage/Core (= 5.18.3)
@@ -115,6 +126,7 @@ PODS:
   - SwiftyGif (5.4.4)
 
 DEPENDENCIES:
+  - datadog_flutter_plugin (from `.symlinks/plugins/datadog_flutter_plugin/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -128,6 +140,9 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - DatadogSDK
+    - DatadogSDKCrashReporting
+    - DictionaryCoder
     - DKImagePickerController
     - DKPhotoGallery
     - Firebase
@@ -139,11 +154,14 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - nanopb
+    - PLCrashReporter
     - PromisesObjC
     - SDWebImage
     - SwiftyGif
 
 EXTERNAL SOURCES:
+  datadog_flutter_plugin:
+    :path: ".symlinks/plugins/datadog_flutter_plugin/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
   firebase_core:
@@ -166,6 +184,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
+  datadog_flutter_plugin: 8f47e24d1953bd48658d44bb557e173534f26ac2
+  DatadogSDK: c2519eea53cc46c17d28a90b9784c3b265afdb52
+  DatadogSDKCrashReporting: c3d443bad91788a9c4f781e079fa0a43564bedd7
+  DictionaryCoder: 5f84fff69f54cb806071538430bdafe04a89d658
   DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: ce3938a0df3cc1ef404671531facef740d03f920
@@ -185,6 +207,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: f0308f5905a745f94fb91fea9c6cbaf3831cb1bd
   GoogleUtilities: c63691989bf362ba0505507da00eeb326192e83e
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  PLCrashReporter: 5d2d3967afe0efad61b3048d617e2199a5d1b787
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   SDWebImage: 96e0c18ef14010b7485210e92fac888587ebb958
   sign_in_with_apple: f3bf75217ea4c2c8b91823f225d70230119b8440
