@@ -23,6 +23,12 @@ class Utils {
     return map[enumValue] ?? '';
   }
 
+  static bool isDifferentDay(DateTime formerDate, DateTime latterDate) {
+    return formerDate.year != latterDate.year ||
+        formerDate.month != latterDate.month ||
+        formerDate.day != latterDate.day;
+  }
+
   static String getYYYYMMDDfromDateTime(DateTime dateTime) {
     return "${dateTime.year}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.day.toString().padLeft(2, '0')}";
   }
