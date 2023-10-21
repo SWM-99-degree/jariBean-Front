@@ -1,3 +1,4 @@
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,7 @@ final goRouterProvider = Provider<GoRouter>(
       debugLogDiagnostics: true,
       refreshListenable: provider,
       redirect: provider.redirectAuthLogic,
+      observers: [DatadogNavigationObserver(datadogSdk: DatadogSdk.instance)],
       routes: [
         GoRoute(
           path: '/',
