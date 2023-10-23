@@ -17,7 +17,10 @@ class SearchQueryModel {
   final DateTime endTime;
   @JsonKey(name: 'peopleNumber')
   final int headCount;
-  @JsonKey(name: 'tableOptionList')
+  @JsonKey(
+    name: 'tableOptionList',
+    toJson: TableDescriptionModel.tableTypeToJson,
+  )
   final List<TableType> tableOptionList;
 
   SearchQueryModel({
