@@ -6,13 +6,13 @@ class Utils {
     return '$ip/$path';
   }
 
-  static DateTime truncateToQuaterHour(DateTime date) {
+  static DateTime truncateToTimeUnit(DateTime date) {
     return DateTime(
       date.year,
       date.month,
       date.day,
       date.hour,
-      (date.minute / 15).round() * 15,
+      (date.minute / RESERVATION_TIME_UNIT).round() * RESERVATION_TIME_UNIT,
     );
   }
 
@@ -41,12 +41,15 @@ class Utils {
   }
 
   static String getHHMMfromDateTime(DateTime dateTime) {
-    return "${dateTime.hour}시 ${dateTime.minute == 0 ? '00' : dateTime.minute}분";
+    return "${dateTime.hour}시${dateTime.minute == 0 ? '' : ' ${dateTime.minute}분'}";
   }
 
   static String getHHMMAmountfromDuration(Duration duration) {
     final minute = duration.inMinutes % 60;
-    return "${duration.inHours}시간 ${minute == 0 ? '' : '$minute분'}";
+    if (duration.inHours == 0) {
+      return "$minute분";
+    }
+    return "${duration.inHours}시간${minute == 0 ? '' : ' $minute분'}";
   }
 
   static String getMMSSfromDateSeconds(int timeLeftInSeconds) {

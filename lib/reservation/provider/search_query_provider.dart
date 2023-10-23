@@ -18,10 +18,10 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
             searchText: '',
             serviceAreaId: null,
             location: null,
-            startTime: Utils.truncateToQuaterHour(
+            startTime: Utils.truncateToTimeUnit(
               DateTime.now(),
             ),
-            endTime: Utils.truncateToQuaterHour(
+            endTime: Utils.truncateToTimeUnit(
               DateTime.now().add(
                 Duration(hours: 1),
               ),
@@ -47,6 +47,23 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
     state = state.copyWith(endTime: endTime);
   }
 
+  bool setStartTime(DateTime startTime) {
+    if (!startTime.isBefore(state.endTime) ||
+        startTime.isBefore(DateTime.now())) {
+      return false;
+    }
+    state = state.copyWith(startTime: startTime);
+    return true;
+  }
+
+  bool setEndTime(DateTime endTime) {
+    if (!endTime.isAfter(state.startTime)) {
+      return false;
+    }
+    state = state.copyWith(endTime: endTime);
+    return true;
+  }
+
   set headCount(int headCount) {
     state = state.copyWith(headCount: headCount);
   }
@@ -57,7 +74,7 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
 
   set dateFromDateTime(DateTime date) {
     state = state.copyWith(
-      startTime: Utils.truncateToQuaterHour(
+      startTime: Utils.truncateToTimeUnit(
         DateTime(
           date.year,
           date.month,
@@ -66,7 +83,7 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
           state.startTime.minute,
         ),
       ),
-      endTime: Utils.truncateToQuaterHour(
+      endTime: Utils.truncateToTimeUnit(
         DateTime(
           date.year,
           date.month,
