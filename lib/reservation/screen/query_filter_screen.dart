@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import 'package:jari_bean/cafe/model/table_model.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_outlined_button.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/models/location_model.dart';
 import 'package:jari_bean/common/provider/location_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
@@ -243,9 +246,18 @@ class TimeFilter extends ConsumerWidget {
                     context: context,
                     initialDateTime: startTime,
                     onDateTimeChanged: (value) {
-                      ref
+                      final isSet = ref
                           .read(searchQueryProvider.notifier)
-                          .startTimeFromDateTime = value;
+                          .setStartTime(value);
+                      if (!isSet) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(bottom: 700.h),
+                            content: Text('시작 시간은 종료 시간보다 빨라야 합니다.'),
+                          ),
+                        );
+                      }
                     },
                   );
                 },
@@ -264,9 +276,18 @@ class TimeFilter extends ConsumerWidget {
                     context: context,
                     initialDateTime: endTime,
                     onDateTimeChanged: (value) {
-                      ref
+                      final isSet = ref
                           .read(searchQueryProvider.notifier)
-                          .endTimeFromDateTime = value;
+                          .setEndTime(value);
+                      if (!isSet) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(bottom: 700.h),
+                            content: Text('종료 시간은 시작 시간보다 늦어야 합니다.'),
+                          ),
+                        );
+                      }
                     },
                   );
                 },
@@ -326,6 +347,7 @@ class TimeFilter extends ConsumerWidget {
     required DateTime initialDateTime,
     required Function(DateTime) onDateTimeChanged,
   }) async {
+    Timer? debounce;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Align(
@@ -338,10 +360,15 @@ class TimeFilter extends ConsumerWidget {
               SizedBox(
                 height: 200.h,
                 child: CupertinoDatePicker(
-                  minuteInterval: 15,
+                  minuteInterval: RESERVATION_TIME_UNIT,
                   mode: CupertinoDatePickerMode.time,
                   initialDateTime: initialDateTime,
-                  onDateTimeChanged: onDateTimeChanged,
+                  onDateTimeChanged: (DateTime dateTime) {
+                    if (debounce?.isActive ?? false) debounce?.cancel();
+                    debounce = Timer(const Duration(milliseconds: 500), () {
+                      onDateTimeChanged(dateTime);
+                    });
+                  },
                 ),
               ),
             ],
