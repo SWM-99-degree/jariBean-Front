@@ -21,6 +21,7 @@ class DefaultCardLayout extends StatelessWidget {
   final bool isShadowVisible;
   final VoidCallback? onTap;
   final String? routerPath;
+  final bool isDisabled;
   const DefaultCardLayout({
     required this.id,
     required this.name,
@@ -30,6 +31,7 @@ class DefaultCardLayout extends StatelessWidget {
     this.isShadowVisible = false,
     this.onTap,
     this.routerPath,
+    this.isDisabled = false,
     super.key,
   });
 
@@ -122,6 +124,30 @@ class DefaultCardLayout extends StatelessWidget {
     );
   }
 
+  copyWith({
+    String? id,
+    String? name,
+    String? imgUrl,
+    Widget? child,
+    Color? borderColor,
+    bool? isShadowVisible,
+    VoidCallback? onTap,
+    String? routerPath,
+    bool? isDisabled,
+  }) {
+    return DefaultCardLayout(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imgUrl: imgUrl ?? this.imgUrl,
+      borderColor: borderColor ?? this.borderColor,
+      isShadowVisible: isShadowVisible ?? this.isShadowVisible,
+      onTap: onTap ?? this.onTap,
+      routerPath: routerPath ?? this.routerPath,
+      isDisabled: isDisabled ?? this.isDisabled,
+      child: child ?? this.child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     late final Function() onTap;
@@ -138,6 +164,12 @@ class DefaultCardLayout extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.all(16.w),
             width: 335.w,
+            foregroundDecoration: isDisabled
+                ? BoxDecoration(
+                    color: Colors.black.withOpacity(0.7),
+                    backgroundBlendMode: BlendMode.saturation,
+                  )
+                : null,
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 side: BorderSide(width: 1.w, color: borderColor),
