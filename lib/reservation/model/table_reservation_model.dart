@@ -1,4 +1,5 @@
 import 'package:jari_bean/cafe/model/table_display_model.dart';
+import 'package:jari_bean/common/utils/utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'table_reservation_model.g.dart';
@@ -68,4 +69,8 @@ class TableReservationModel {
   });
 
   Map<String, dynamic> toJson() => _$TableReservationModelToJson(this);
+
+  String toConfirmString() {
+    return '${Utils.getYYYYMMDDfromDateTime(startTime)} ${Utils.getHHMMfromDateTime(startTime)} ~ ${Utils.getHHMMfromDateTime(endTime)}';
+  }
 }
