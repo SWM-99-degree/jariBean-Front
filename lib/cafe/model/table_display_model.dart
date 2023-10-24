@@ -36,8 +36,8 @@ class TableDisplayModel extends TableDetailModel {
     final displayStartTime = queryStartTime.subtract(displayTimeExpander);
     final displayEndTime = queryEndTime.add(displayTimeExpander);
     final isAvaliable = model.avaliableTimeRangeList.any((element) {
-      return element.startTime.isBefore(queryStartTime) &&
-          element.endTime.isAfter(queryEndTime);
+      return !element.startTime.isAfter(queryStartTime) &&
+          !element.endTime.isBefore(queryEndTime);
     });
     final duration = Duration(minutes: 30);
     final List<AvaliableTimeRange> alternativeAvaliableTimeRangeListCandidates =
@@ -60,14 +60,18 @@ class TableDisplayModel extends TableDetailModel {
       ),
     ];
     final List<AvaliableTimeRange> alternativeAvaliableTimeRangeList = [];
-    for (var element in alternativeAvaliableTimeRangeListCandidates) {
-      if (model.avaliableTimeRangeList.any((e) {
-        return e.startTime.isBefore(element.startTime) &&
-            e.endTime.isAfter(element.endTime);
-      })) {
-        alternativeAvaliableTimeRangeList.remove(element);
+
+    if (!isAvaliable) {
+      for (var element in alternativeAvaliableTimeRangeListCandidates) {
+        if (model.avaliableTimeRangeList.any((e) {
+          return !e.startTime.isAfter(element.startTime) &&
+              !e.endTime.isBefore(element.endTime);
+        })) {
+          alternativeAvaliableTimeRangeList.add(element);
+        }
       }
     }
+
     final List<TableDisplayStatus> displayUnitList = [];
 
     List<TableDisplayStatus> getReplaceUnit(
