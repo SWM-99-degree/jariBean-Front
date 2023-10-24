@@ -103,12 +103,52 @@ class TableDisplayStateNotifier extends StateNotifier<List<TableDisplayModel>> {
 
   void setToTableDisplay() {
     final filteredTable = applyFilter();
-    state = filteredTable.map((model) {
+    final beforeSorted = filteredTable.map((model) {
       return TableDisplayModel.calculateAvailablityFromTableModel(
         model: model,
         queryStartTime: queryFilter.startTime,
         queryEndTime: queryFilter.endTime,
       );
     }).toList();
+    final sorted = beforeSorted
+      ..sort((a, b) {
+        if (a.isAvaliable && !b.isAvaliable) {
+          return -1;
+        }
+        if (!a.isAvaliable && b.isAvaliable) {
+          return 1;
+        }
+        if (a.isAvaliable && b.isAvaliable) {
+          return 0;
+        }
+        if (!a.isAvaliable && !b.isAvaliable) {
+          if (a.alternativeAvaliableTimeRangeList.length >
+              b.alternativeAvaliableTimeRangeList.length) {
+            return -1;
+          }
+          if (a.alternativeAvaliableTimeRangeList.length <
+              b.alternativeAvaliableTimeRangeList.length) {
+            return 1;
+          }
+          a.displayUnitList.retainWhere(
+            (element) =>
+                element == TableDisplayStatus.unavailableInScope ||
+                element == TableDisplayStatus.unavailable,
+          );
+          b.displayUnitList.retainWhere(
+            (element) =>
+                element == TableDisplayStatus.unavailableInScope ||
+                element == TableDisplayStatus.unavailable,
+          );
+          if (a.displayUnitList.length > b.displayUnitList.length) {
+            return 1;
+          }
+          if (a.displayUnitList.length < b.displayUnitList.length) {
+            return -1;
+          }
+        }
+        return 0;
+      });
+    state = sorted;
   }
 }
