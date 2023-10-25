@@ -6,7 +6,7 @@ import 'package:jari_bean/reservation/provider/table_provider.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 import 'package:jari_bean/reservation/screen/simplified_filter_screen.dart';
 
-class CafeDetailTableScreen extends ConsumerWidget {
+class CafeDetailTableScreen extends ConsumerStatefulWidget {
   final String cafeId;
   const CafeDetailTableScreen({
     required this.cafeId,
@@ -14,14 +14,36 @@ class CafeDetailTableScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tableDisplayList = ref.watch(tableDisplayProvider(cafeId));
+  ConsumerState<CafeDetailTableScreen> createState() =>
+      _CafeDetailTableScreenState();
+}
+
+class _CafeDetailTableScreenState extends ConsumerState<CafeDetailTableScreen> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.offset <
+          _scrollController.position.minScrollExtent - 150) {
+        ref.read(tableProvider(widget.cafeId).notifier).getTables(
+              queryFilter: ref.read(searchQueryProvider),
+            );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tableDisplayList = ref.watch(tableDisplayProvider(widget.cafeId));
     final param = ref.watch(searchQueryProvider);
     return Column(
       children: [
         SimplifiedFilterScreen(),
         Expanded(
           child: ListView.builder(
+            controller: _scrollController,
             itemCount: tableDisplayList.length,
             padding: EdgeInsets.only(
               bottom: 10.h,
@@ -29,7 +51,7 @@ class CafeDetailTableScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final tableDisplay = tableDisplayList[index];
               return DefaultCardLayout.fromTableDisplayModel(
-                cafeId: cafeId,
+                cafeId: widget.cafeId,
                 model: tableDisplay,
                 startTime: param.startTime,
                 endTime: param.endTime,
