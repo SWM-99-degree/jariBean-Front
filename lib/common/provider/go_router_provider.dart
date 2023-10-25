@@ -14,6 +14,7 @@ import 'package:jari_bean/matching/screen/matching_proceeding_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/search_result_screen.dart';
 import 'package:jari_bean/reservation/screen/search_screen.dart';
+import 'package:jari_bean/reservation/screen/table_reservation_confirm_screen.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/screens/login_screen.dart';
 import 'package:jari_bean/common/screens/root_screen.dart';
@@ -187,6 +188,14 @@ final goRouterProvider = Provider<GoRouter>(
               path: 'matching/success',
               name: 'matching/success',
               builder: (_, __) => MatchingSuccessScreen(),
+            ),
+            GoRoute(
+              path: 'reservation/confirm',
+              builder: (_, __) => TableReservationConfirmScreen(),
+            ),
+            GoRoute(
+              path: 'reservation/completed',
+              builder: (_, __) => TableReservationConfirmScreen(),
             ),
           ],
         ),
