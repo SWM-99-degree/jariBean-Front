@@ -40,7 +40,7 @@ final matchingRepositoryProvider = Provider<MatchingRepository>(
     final dio = ref.watch(dioProvider);
     return MatchingRepository(
       dio,
-      baseUrl: '$ip/api/matching',
+      baseUrl: '$ip/api/match',
     );
   },
 );
