@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jari_bean/cafe/component/table_description.dart';
+import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/reservation/provider/table_provider.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 import 'package:jari_bean/reservation/screen/simplified_filter_screen.dart';
@@ -28,10 +28,12 @@ class CafeDetailTableScreen extends ConsumerWidget {
             ),
             itemBuilder: (context, index) {
               final tableDisplay = tableDisplayList[index];
-              return TableDescriptionCard.fromModel(
+              return DefaultCardLayout.fromTableDisplayModel(
+                cafeId: cafeId,
                 model: tableDisplay,
                 startTime: param.startTime,
                 endTime: param.endTime,
+                context: context,
               );
             },
           ),

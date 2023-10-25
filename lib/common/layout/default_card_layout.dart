@@ -3,13 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jari_bean/cafe/component/cafe_description.dart';
 import 'package:jari_bean/cafe/component/cafe_description_with_time.dart';
+import 'package:jari_bean/cafe/component/table_description.dart';
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
+import 'package:jari_bean/cafe/model/table_display_model.dart';
+import 'package:jari_bean/common/component/custom_bottom_sheet.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/history/component/booked_details.dart';
 import 'package:jari_bean/history/model/booked_details_model.dart';
 import 'package:jari_bean/history/model/history_model.dart';
+import 'package:jari_bean/reservation/model/table_reservation_model.dart';
 import 'package:skeletons/skeletons.dart';
 
 class DefaultCardLayout extends StatelessWidget {
@@ -111,6 +115,62 @@ class DefaultCardLayout extends StatelessWidget {
         bookedModel: BookedDetailsModel.fromHistoryModel(model: model),
       ),
     );
+  }
+
+  factory DefaultCardLayout.fromTableDisplayModel({
+    required String cafeId,
+    required TableDisplayModel model,
+    required DateTime startTime,
+    required DateTime endTime,
+    required BuildContext context,
+  }) {
+    late final Function() onTap;
+    final DefaultCardLayout tableWidget = DefaultCardLayout(
+      id: model.tableModel.id,
+      name: model.tableModel.name,
+      imgUrl: model.tableModel.imgUrl,
+      borderColor: PRIMARY_YELLOW,
+      isShadowVisible: true,
+      isDisabled: !model.isAvaliable,
+      child: TableDescriptionCard.fromModel(
+        model: model,
+        startTime: startTime,
+        endTime: endTime,
+      ),
+    );
+
+    final TableReservationInfo tableReservationInfo =
+        TableReservationInfo.fromTableDisplayModel(
+      cafeId: cafeId,
+      model: model,
+      startTime: startTime,
+      endTime: endTime,
+    );
+    if (model.isAvaliable) {
+      onTap = () {
+        showCustomBottomSheetTableTimeReservationConfirmer(
+          context: context,
+          tableWidget: tableWidget,
+          tableReservationInfo: tableReservationInfo,
+        );
+      };
+      return tableWidget.copyWith(
+        onTap: onTap,
+      );
+    }
+    if (model.alternativeAvaliableTimeRangeList.isNotEmpty) {
+      onTap = () {
+        showCustomBottomSheetTableTimeReservationModerator(
+          context: context,
+          tableReservationInfo: tableReservationInfo,
+        );
+      };
+      return tableWidget.copyWith(
+        onTap: onTap,
+        isDisabled: false,
+      );
+    }
+    return tableWidget;
   }
 
   factory DefaultCardLayout.preloading() {
