@@ -4,7 +4,7 @@ import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
 import 'package:jari_bean/history/repository/history_repository.dart';
 import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
 
-final urgentReservationProvider = StateNotifierProvider<
+final urgentReservationProvider = StateNotifierProvider.autoDispose<
     UrgentReservationStateNotifier, CafeDescriptionModelBase>(
   (ref) {
     return UrgentReservationStateNotifier(
