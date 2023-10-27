@@ -30,7 +30,7 @@ abstract class TodayReservationRespository {
   @Headers({
     'accessToken': 'true',
   })
-  Future<ReservationModel> getTodayReservation({
+  Future<ReservationModel?> getTodayReservation({
     @Queries() PaginationParams? paginationParams = const PaginationParams(),
   });
 }

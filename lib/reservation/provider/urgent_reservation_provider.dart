@@ -1,42 +1,48 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
-import 'package:jari_bean/history/repository/history_repository.dart';
+import 'package:jari_bean/history/model/history_model.dart';
+import 'package:jari_bean/history/provider/history_provider.dart';
 import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
 
 final urgentReservationProvider = StateNotifierProvider.autoDispose<
-    UrgentReservationStateNotifier, CafeDescriptionModelBase>(
+    UrgentReservationStateNotifier, CafeDescriptionModelBase?>(
   (ref) {
     return UrgentReservationStateNotifier(
-      repository: ref.watch(todayReservationRepositoryProvider),
+      reservation: ref.watch(todayReservationProvider),
       initTimerFunction: ref.watch(reservationTimerProvider.notifier).initTimer,
     );
   },
 );
 
 class UrgentReservationStateNotifier
-    extends StateNotifier<CafeDescriptionModelBase> {
-  final TodayReservationRespository repository;
+    extends StateNotifier<CafeDescriptionModelBase?> {
+  final ReservationModelBase? reservation;
   final Future<void> Function({required int initTimeLeft}) initTimerFunction;
   UrgentReservationStateNotifier({
-    required this.repository,
+    required this.reservation,
     required this.initTimerFunction,
   }) : super(CafeDescriptionModelLoading()) {
-    fetch();
+    initTimer();
   }
 
-  fetch() async {
-    final resp = await repository.getTodayReservation();
-    int initTimeLeft = resp.startTime.difference(DateTime.now()).inSeconds;
+  initTimer() async {
+    if (reservation == null || reservation is! ReservationModel) {
+      state = null;
+      return;
+    }
+    final pReservation = reservation as ReservationModel;
+    int initTimeLeft =
+        pReservation.startTime.difference(DateTime.now()).inSeconds;
     initTimeLeft = initTimeLeft < 0 ? 0 : initTimeLeft;
     initTimerFunction(
       initTimeLeft: initTimeLeft,
     );
     state = CafeDescriptionWithTimeLeftModel(
-      id: resp.model.id,
-      title: resp.model.title,
-      imgUrl: resp.model.imgUrl,
-      cafeAddress: resp.model.cafeAddress,
+      id: pReservation.model.id,
+      title: pReservation.model.title,
+      imgUrl: pReservation.model.imgUrl,
+      cafeAddress: pReservation.model.cafeAddress,
     );
   }
 }
