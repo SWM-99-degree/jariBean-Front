@@ -5,7 +5,7 @@ import 'package:jari_bean/history/model/history_model.dart';
 import 'package:jari_bean/history/repository/history_repository.dart';
 
 final todayReservationProvider =
-    StateNotifierProvider<TodayReservationProvider, ReservationModelBase>(
+    StateNotifierProvider.autoDispose<TodayReservationProvider, ReservationModelBase>(
   (ref) {
     final repository = ref.watch(todayReservationRepositoryProvider);
     return TodayReservationProvider(
