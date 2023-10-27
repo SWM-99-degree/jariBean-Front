@@ -100,7 +100,7 @@ class TableReservationConfirmScreen extends ConsumerWidget {
                       ),
                     ),
                     if (cafeModel is! CafeDetailModel)
-                      DefaultCardLayout.preloading(),
+                      DefaultCardLayout.loading(),
                     if (cafeModel is CafeDetailModel)
                       DefaultCardLayout.fromModel(model: cafeModel.cafeModel),
                   ],

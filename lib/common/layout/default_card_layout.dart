@@ -9,6 +9,7 @@ import 'package:jari_bean/cafe/model/cafe_descripton_with_time_left_model.dart';
 import 'package:jari_bean/cafe/model/table_display_model.dart';
 import 'package:jari_bean/common/component/custom_bottom_sheet.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/history/component/booked_details.dart';
 import 'package:jari_bean/history/model/booked_details_model.dart';
@@ -40,7 +41,7 @@ class DefaultCardLayout extends StatelessWidget {
   });
 
   factory DefaultCardLayout.fromModel({
-    required CafeDescriptionModel model,
+    required CafeDescriptionModelBase? model,
   }) {
     if (model is CafeDescriptionWithTimeLeftModel) {
       return DefaultCardLayout(
@@ -53,19 +54,25 @@ class DefaultCardLayout extends StatelessWidget {
         ),
       );
     }
-    return DefaultCardLayout(
-      id: model.id,
-      name: model.title,
-      imgUrl: model.imgUrl,
-      routerPath: '/cafe/${model.id}',
-      child: CafeDescription.fromModel(
-        model: model,
-      ),
-    );
+    if (model is CafeDescriptionModel) {
+      return DefaultCardLayout(
+        id: model.id,
+        name: model.title,
+        imgUrl: model.imgUrl,
+        routerPath: '/cafe/${model.id}',
+        child: CafeDescription.fromModel(
+          model: model,
+        ),
+      );
+    }
+    if (model is CafeDescriptionModelLoading) {
+      return DefaultCardLayout.loading();
+    }
+    return DefaultCardLayout.basic();
   }
 
   factory DefaultCardLayout.fromTodayReservationModel({
-    required ReservationModelBase model,
+    required ReservationModelBase? model,
   }) {
     if (model is ReservationModel) {
       return DefaultCardLayout(
@@ -89,15 +96,11 @@ class DefaultCardLayout extends StatelessWidget {
         isShadowVisible: true,
         child: Text(model.message),
       );
+    } else if (model is ResrevationModelLoading) {
+      return DefaultCardLayout.loading();
+    } else {
+      return DefaultCardLayout.basic();
     }
-    return DefaultCardLayout(
-      id: 'loading',
-      name: 'loading',
-      imgUrl: 'loading',
-      borderColor: Colors.transparent,
-      isShadowVisible: true,
-      child: buildSkeleton(),
-    );
   }
 
   factory DefaultCardLayout.fromHistoryModel({
@@ -173,14 +176,25 @@ class DefaultCardLayout extends StatelessWidget {
     return tableWidget;
   }
 
-  factory DefaultCardLayout.preloading() {
+  factory DefaultCardLayout.loading() {
     return DefaultCardLayout(
       id: 'loading',
       name: 'loading',
-      imgUrl: 'loading',
+      imgUrl: null,
       borderColor: Colors.transparent,
       isShadowVisible: true,
       child: buildSkeleton(),
+    );
+  }
+
+  factory DefaultCardLayout.basic() {
+    return DefaultCardLayout(
+      id: 'basic',
+      name: 'basic',
+      imgUrl: null,
+      borderColor: Colors.transparent,
+      isShadowVisible: true,
+      child: buildBasic(),
     );
   }
 
@@ -249,37 +263,26 @@ class DefaultCardLayout extends StatelessWidget {
             child: Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Skeleton(
-                    isLoading: id == 'loading',
-                    skeleton: SkeletonAvatar(
-                      style: SkeletonAvatarStyle(
-                        width: 84.w,
-                        height: 84.w,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Image.network(
-                      imgUrl ??
-                          'https://picsum.photos/200/300', // Todo: change to default image
-                      width: 84.w,
-                      height: 84.w,
-                      fit: BoxFit.cover,
-                      frameBuilder:
-                          (context, child, frame, wasSynchronouslyLoaded) {
-                        return Skeleton(
-                          isLoading: frame == null,
-                          skeleton: SkeletonAvatar(
-                            style: SkeletonAvatarStyle(
-                              width: 84.w,
-                              height: 84.w,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                  borderRadius: BorderRadius.circular(imgUrl != null ? 8 : 20),
+                  child: Image.network(
+                    imgUrl ?? defaultImg, // Todo: change to default image
+                    width: 84.w,
+                    height: 84.w,
+                    fit: BoxFit.cover,
+                    frameBuilder:
+                        (context, child, frame, wasSynchronouslyLoaded) {
+                      return Skeleton(
+                        isLoading: frame == null,
+                        skeleton: SkeletonAvatar(
+                          style: SkeletonAvatarStyle(
+                            width: 84.w,
+                            height: 84.w,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: child,
-                        );
-                      },
-                    ),
+                        ),
+                        child: child,
+                      );
+                    },
                   ),
                 ),
                 SizedBox(
@@ -354,6 +357,41 @@ Widget buildSkeleton() {
           height: 24.h,
           width: 100.w,
           borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget buildBasic() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        '다가오는 예약이 없어요 :(',
+        style: defaultFontStyleBlack.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      SizedBox(
+        height: 16.h,
+      ),
+      FilledButton(
+        onPressed: () {},
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+            PRIMARY_YELLOW,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.w,
+            vertical: 6.h,
+          ),
+          child: Text(
+            '예약하러 가기!',
+            style: defaultFontStyleWhite,
+          ),
         ),
       ),
     ],
