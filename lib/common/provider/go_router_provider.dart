@@ -24,13 +24,13 @@ import 'package:jari_bean/user/screens/profile_edit_screen.dart';
 import 'package:jari_bean/user/screens/profile_screen.dart';
 import 'package:jari_bean/user/screens/register_screen.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final goRouterProvider = Provider<GoRouter>(
   (ref) {
     final provider = ref.read(authProvider);
     return GoRouter(
-      navigatorKey: _rootNavigatorKey,
+      navigatorKey: rootNavigatorKey,
       initialLocation: '/splash',
       debugLogDiagnostics: true,
       refreshListenable: provider,
