@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:datadog_tracking_http_client/datadog_tracking_http_client.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/exception/custom_exception_handler.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
@@ -118,8 +120,28 @@ void main() async {
     rumConfiguration: RumConfiguration(applicationId: datadogApplicationId),
     firstPartyHosts: [ip],
   )..enableHttpTracking();
-await DatadogSdk.runApp(configuration, () async {
-    initializeDateFormatting().then(
+
+  WidgetsFlutterBinding.ensureInitialized();
+  final originalOnError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    DatadogSdk.instance.rum?.handleFlutterError(details);
+    originalOnError?.call(details);
+    CustomExceptionHandler.hanldeException(details.exception);
+  };
+  await DatadogSdk.instance.initialize(configuration);
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    DatadogSdk.instance.rum?.addErrorInfo(
+      error.toString(),
+      RumErrorSource.source,
+      stackTrace: stack,
+    );
+    CustomExceptionHandler.hanldeException(error);
+    return true;
+  };
+
+  await initializeDateFormatting().then(
     (_) => runApp(
       UncontrolledProviderScope(
         container: container,
@@ -127,7 +149,6 @@ await DatadogSdk.runApp(configuration, () async {
       ),
     ),
   );
-});
 }
 
 class _App extends ConsumerWidget {
