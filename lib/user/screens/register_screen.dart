@@ -66,7 +66,8 @@ class RegisterScreen extends ConsumerWidget {
                       padding: EdgeInsets.only(bottom: 10.h),
                       child: CustomCheckboxTile(
                         title: '약관 전체 동의',
-                        description: '약관 전체 동의',
+                        url:
+                            'https://lineno2.notion.site/9fc7c093871843d6a6659d6feadd3581',
                         isChecked: ref
                             .watch(totalAgreementProvider.notifier)
                             .isAllAgreed,
@@ -92,7 +93,7 @@ class RegisterScreen extends ConsumerWidget {
                         padding: EdgeInsets.only(bottom: 10.h),
                         child: CustomCheckboxTile(
                           title: agreements[i].title,
-                          description: agreements[i].description,
+                          url: agreements[i].url,
                           isChecked: agreements[i].isAgreed,
                           onChanged: (value) {
                             ref

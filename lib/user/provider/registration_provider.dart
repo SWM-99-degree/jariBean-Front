@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/user/models/agreement_model.dart';
 
-final totalAgreementProvider =
-    StateNotifierProvider<TotalAgreementStateNotifier, List<AgreementModel>>(
-        (ref) {
+final totalAgreementProvider = StateNotifierProvider.autoDispose<
+    TotalAgreementStateNotifier, List<AgreementModel>>((ref) {
   return TotalAgreementStateNotifier();
 });
 
@@ -17,36 +16,23 @@ class TotalAgreementStateNotifier extends StateNotifier<List<AgreementModel>> {
       AgreementModel(
         id: '0',
         title: '[필수] 이용약관 동의',
-        description: '이용약관 동의',
+        url: 'https://lineno2.notion.site/9fc7c093871843d6a6659d6feadd3581',
         isMandatory: true,
         isAgreed: false,
       ),
       AgreementModel(
         id: '1',
         title: '[필수] 개인정보 수집 및 이용 동의',
-        description: '개인정보 수집 및 이용 동의',
+        url: 'https://lineno2.notion.site/9ffb641a6b234b4da5baf917a9f12f4a',
         isMandatory: true,
         isAgreed: false,
       ),
       AgreementModel(
         id: '2',
         title: '[필수] 개인정보 제3자 제공 동의',
-        description: '개인정보 제3자 제공 동의',
+        url: 'https://lineno2.notion.site/9ffb641a6b234b4da5baf917a9f12f4a',
         isMandatory: true,
         isAgreed: false,
-      ),
-      // AgreementModel(
-      //   id: '3',
-      //   title: '개인정보 처리 위탁 동의',
-      //   description: '개인정보 처리 위탁 동의',
-      //   isAgreed: false,
-      // ),
-      AgreementModel(
-        id: '3',
-        title: '[선택] 마케팅 정보 수신 동의',
-        description: '[선택] 마케팅 정보 수신 동의',
-        isAgreed: false,
-        isMandatory: false,
       ),
     ];
   }
