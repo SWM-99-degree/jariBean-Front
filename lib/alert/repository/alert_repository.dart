@@ -91,7 +91,6 @@ class AlertRepository implements IPaginationBaseRepository<AlertModel> {
   Future<OffsetPagination<AlertModel>> paginate({
     required PaginationParams paginationParams,
   }) async {
-    await Future.delayed(Duration(seconds: 1));
     final limit = paginationParams.size ?? 20;
     final offset =
         (paginationParams.page ?? 0) * (paginationParams.size ?? 20) +

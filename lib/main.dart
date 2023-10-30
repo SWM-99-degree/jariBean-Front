@@ -10,6 +10,7 @@ import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
+import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -38,6 +39,10 @@ class Logger extends ProviderObserver {
     Object? newValue,
     ProviderContainer container,
   ) {
+    if (provider.runtimeType ==
+        StateNotifierProvider<TimerStateNotifier, int>) {
+      return;
+    }
     print('''
 {
   "provider": "${provider.name ?? provider.runtimeType}",
