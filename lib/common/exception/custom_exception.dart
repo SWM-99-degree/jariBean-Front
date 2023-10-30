@@ -25,7 +25,6 @@ class AccountDeleteException extends CustomException {
             description: '계정 삭제 중 오류가 발생했습니다.',
             customButtonModel: CustomButtonModel(
               title: '확인',
-              onPressed: () {},
             ),
           ),
         );
@@ -40,7 +39,20 @@ class NoInternetException extends CustomException {
             description: '인터넷 연결이 끊겼습니다.',
             customButtonModel: CustomButtonModel(
               title: '확인',
-              onPressed: () {},
+            ),
+          ),
+        );
+}
+
+class AppleSocialLoginException extends CustomException {
+  AppleSocialLoginException()
+      : super(
+          message: 'Apple 로그인 중 오류가 발생했습니다.',
+          dialogModel: CustomDialogModel(
+            title: 'Apple 로그인 오류',
+            description: 'Apple 로그인 중 오류가 발생했습니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
             ),
           ),
         );

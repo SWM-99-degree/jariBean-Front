@@ -19,7 +19,6 @@ class CustomExceptionHandler {
           description: error.toString(),
           customButtonModel: CustomButtonModel(
             title: '확인',
-            onPressed: () {},
           ),
         ),
       )();
