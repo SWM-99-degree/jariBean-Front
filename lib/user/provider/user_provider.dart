@@ -107,9 +107,7 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
   }
 
   bool checkRegistered() {
-    if (state == null || state is UserModelLoading) {
-      return false;
-    }
-    return true;
+    if (state is! UserModel) return false;
+    return (state as UserModel).role == Role.UNREGISTERED;
   }
 }
