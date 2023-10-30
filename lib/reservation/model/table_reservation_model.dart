@@ -56,9 +56,9 @@ class TableReservationInfo {
 class TableReservationModel {
   final String cafeId;
   final String tableId;
-  @JsonKey(name: 'reservedStartTime')
+  @JsonKey(name: 'startTime')
   final DateTime startTime;
-  @JsonKey(name: 'reservedEndTime')
+  @JsonKey(name: 'endTime')
   final DateTime endTime;
 
   TableReservationModel({
