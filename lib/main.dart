@@ -52,8 +52,6 @@ class Logger extends ProviderObserver {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
   final container = ProviderContainer(observers: [Logger()]);
 
   await dotenv.load(fileName: "lib/common/config/.env");
@@ -111,26 +109,25 @@ void main() async {
   );
 
   final configuration = DdSdkConfiguration(
-    clientToken: 'pub642bb368634fff972d75bddd501e856b',
-    env: 'prod',
+    clientToken: datadogClientToken,
+    env: datadogEnv,
     site: DatadogSite.us1,
     trackingConsent: TrackingConsent.granted,
     nativeCrashReportEnabled: true,
     loggingConfiguration: LoggingConfiguration(),
-    rumConfiguration:
-        RumConfiguration(applicationId: 'fc1ee587-2f3a-4d7c-9dcc-d8be79f1a182'),
+    rumConfiguration: RumConfiguration(applicationId: datadogApplicationId),
     firstPartyHosts: [ip],
   )..enableHttpTracking();
-  await DatadogSdk.runApp(configuration, () async {
+await DatadogSdk.runApp(configuration, () async {
     initializeDateFormatting().then(
-      (_) => runApp(
-        UncontrolledProviderScope(
-          container: container,
-          child: _App(),
-        ),
+    (_) => runApp(
+      UncontrolledProviderScope(
+        container: container,
+        child: _App(),
       ),
-    );
-  });
+    ),
+  );
+});
 }
 
 class _App extends ConsumerWidget {
