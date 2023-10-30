@@ -4,13 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
+import 'package:jari_bean/common/component/custom_dialog.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
+import 'package:jari_bean/common/models/custom_button_model.dart';
+import 'package:jari_bean/common/models/custom_dialog_model.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/user/models/user_model.dart';
+import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
 import 'package:skeletons/skeletons.dart';
 
@@ -33,7 +37,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userModel = ref.watch(userProvider);
-    if (userModel == null) {
+    if (userModel == null || userModel is UserModelLoading) {
       return Center(
         child: CircularProgressIndicator(),
       );
@@ -56,10 +60,24 @@ class ProfileScreen extends ConsumerWidget {
       ),
       IconTitleFunctionModel(
         iconData: Icons.logout,
-        title: 'Logout',
-        onTap: () {
-          ref.read(userProvider.notifier).logout();
-        },
+        title: '로그아웃',
+        onTap: showCustomDialog(
+          context: context,
+          model: CustomDialogWithTwoButtonsModel(
+            title: '로그아웃',
+            description: '로그아웃 할까요?',
+            customButtonModelSecond: CustomButtonModel(
+              title: '로그아웃',
+              onPressed: () async {
+                ref.read(userProvider.notifier).logout();
+              },
+            ),
+            customButtonModel: CustomButtonModel(
+              title: '취소',
+              isDismiss: true,
+            ),
+          ),
+        ),
       ),
       IconTitleFunctionModel(
         iconData: Icons.token_outlined,
@@ -105,7 +123,25 @@ class ProfileScreen extends ConsumerWidget {
       IconTitleFunctionModel(
         iconData: Icons.exit_to_app,
         title: '회원탈퇴',
-        onTap: () {},
+        onTap: showCustomDialog(
+          context: context,
+          model: CustomDialogWithTwoButtonsModel(
+            title: '회원탈퇴',
+            description: '정말 탈퇴하시겠습니까?',
+            customButtonModelSecond: CustomButtonModel(
+              title: '탈퇴하기',
+              onPressed: () async {
+                await ref.read(authProvider.notifier).deleteAccount(
+                      type: user.socialLoginType.toString().split('.').last,
+                    );
+              },
+            ),
+            customButtonModel: CustomButtonModel(
+              title: '취소',
+              isDismiss: true,
+            ),
+          ),
+        ),
       ),
     ];
 
@@ -138,10 +174,6 @@ class ProfileScreen extends ConsumerWidget {
                             user.imgUrl,
                           ),
                           backgroundColor: Colors.transparent,
-                          onBackgroundImageError: (exception, stackTrace) {
-                            print(exception);
-                            print(stackTrace);
-                          },
                         ),
                       ],
                     ),
