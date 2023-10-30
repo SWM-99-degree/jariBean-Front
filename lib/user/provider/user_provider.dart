@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/secure_storage/secure_storage.dart';
 import 'package:jari_bean/user/models/social_login_response_model.dart';
@@ -11,13 +12,11 @@ import 'package:jari_bean/user/repository/user_repository.dart';
 
 final userProvider =
     StateNotifierProvider<UserStateNotifier, UserModelBase?>((ref) {
-  final userRepository = ref.watch(userRepositoryProvider);
-  final loginRepository = ref.watch(loginRepositoryProvider);
+  final userRepository = ref.read(userRepositoryProvider);
   final socialLoginResponse = ref.watch(socialLoginProvider);
-  final storage = ref.watch(secureStorageProvider);
-  final fcm = ref.watch(fcmTokenProvider.notifier);
+  final storage = ref.read(secureStorageProvider);
+  final fcm = ref.read(fcmTokenProvider.notifier);
   return UserStateNotifier(
-    loginRepository: loginRepository,
     userRepository: userRepository,
     storage: storage,
     socialLoginResponse: socialLoginResponse,
@@ -26,13 +25,11 @@ final userProvider =
 });
 
 class UserStateNotifier extends StateNotifier<UserModelBase?> {
-  final LoginRepository loginRepository;
   final UserRepository userRepository;
   final FlutterSecureStorage storage;
   final SocialLoginResponseModelBase socialLoginResponse;
   final FcmTokenStateNotifier fcm;
   UserStateNotifier({
-    required this.loginRepository,
     required this.userRepository,
     required this.storage,
     required this.socialLoginResponse,
@@ -59,8 +56,9 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
       final socialLoginResp = socialLoginResponse as SocialLoginResponseModel;
 
       final resp =
-          await loginRepository.login(type: type, body: socialLoginResp);
+          await userRepository.login(type: type, body: socialLoginResp);
 
+      print(resp.accessToken);
       await storage.write(key: REFRESH_TOKEN_KEY, value: resp.refreshToken);
       await storage.write(key: ACCESS_TOKEN_KEY, value: resp.accessToken);
 
@@ -85,13 +83,22 @@ class UserStateNotifier extends StateNotifier<UserModelBase?> {
   register() async {
     try {
       state = UserModelLoading();
-
       final resp = await userRepository.register();
-
       state = resp;
     } catch (e) {
       print(e);
       state = UserModelError(e, '회원가입 중 오류가 발생했습니다.');
+    }
+  }
+
+  Future<bool> deleteAccount({SocialLoginResponseModel? code}) async {
+    try {
+      await userRepository.deleteAccount(
+        code: code,
+      );
+      return true;
+    } on DioException {
+      throw AccountDeleteException();
     }
   }
 

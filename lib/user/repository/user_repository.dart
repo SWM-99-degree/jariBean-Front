@@ -33,21 +33,14 @@ abstract class UserRepository {
   Future updateProfile({
     @Body() required FormData body,
   });
-}
 
-final loginRepositoryProvider = Provider<LoginRepository>((ref) {
-  final dio = ref.watch(dioProvider);
-  return LoginRepository(
-    dio,
-    baseUrl: '$ip/login',
-  );
-});
+  @DELETE('/')
+  @Headers({'accessToken': 'true'})
+  Future deleteAccount({
+    @Body() SocialLoginResponseModel? code,
+  });
 
-@RestApi()
-abstract class LoginRepository {
-  factory LoginRepository(Dio dio, {String baseUrl}) = _LoginRepository;
-
-  @POST('/{type}')
+  @POST('/login/{type}')
   Future<LoginResponseModel> login({
     @Path('type') required String type,
     @Body() required SocialLoginResponseModel body,
