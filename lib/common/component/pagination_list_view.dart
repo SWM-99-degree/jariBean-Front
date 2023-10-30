@@ -64,6 +64,7 @@ class _PaginationListViewState<T extends IModelWithId>
       print('dispose');
       ref.invalidate(searchResultProvider);
     }
+    ref.invalidate(widget.provider);
   }
 
   @override

@@ -75,7 +75,7 @@ class CustomInterceptor extends Interceptor {
       );
     } catch (e) {
       print(
-        '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : 500 Internal Server Error',
+        '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} :  ',
       );
     }
 
