@@ -22,6 +22,11 @@ class AlertScreen extends ConsumerWidget {
         horizontal: 8.w,
         vertical: 8.h,
       ),
+      margin: EdgeInsets.only(
+        left: 16.w,
+        right: 16.w,
+        top: 16.h,
+      ),
       decoration: ShapeDecoration(
         color: GRAY_1,
         shape: RoundedRectangleBorder(
@@ -35,38 +40,40 @@ class AlertScreen extends ConsumerWidget {
         },
       ),
     );
-    return PaginationListView<AlertModel>(
-      provider: alertPaginationProvider,
-      itemBuilder: (context, ref, index, model) {
-        final Widget main = Dismissible(
-          key: Key(model.id),
-          direction: DismissDirection.endToStart,
-          onDismissed: (direction) {
-            final provider = ref.read(alertProvider.notifier);
-            provider.delete(model);
-          },
-          background: Container(
-            color: Colors.red,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Icon(
-                  Icons.delete,
-                  color: Colors.white,
+    return Column(
+      children: [
+        top,
+        Expanded(
+          child: PaginationListView<AlertModel>(
+            provider: alertPaginationProvider,
+            itemBuilder: (context, ref, index, model) {
+              final Widget main = Dismissible(
+                key: Key(model.id),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  final provider = ref.read(alertProvider.notifier);
+                  provider.delete(model);
+                },
+                background: Container(
+                  color: Colors.red,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+                child: AlertCard.fromAlertModel(model: model),
+              );
+              return main;
+            },
           ),
-          child: AlertCard.fromAlertModel(model: model),
-        );
-        return Column(
-          children: [
-            if (index == 0) top,
-            main,
-          ],
-        );
-      },
+        ),
+      ],
     );
   }
 }
