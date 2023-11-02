@@ -42,7 +42,8 @@ class LocationStateNotifier extends StateNotifier<LocationModelBase> {
   }
 }
 
-final geocodeProvider = StateNotifierProvider<GeocodeStateNotifier, String>(
+final geocodeProvider =
+    StateNotifierProvider.autoDispose<GeocodeStateNotifier, String>(
   (ref) {
     return GeocodeStateNotifier(
       geocodeRepository: ref.read(geocodeRepositoryProvider),

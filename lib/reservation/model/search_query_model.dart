@@ -53,6 +53,30 @@ class SearchQueryModel {
     );
   }
 
+  SearchQueryModel copyWithLocation(LocationModel? location) {
+    return SearchQueryModel(
+      searchText: searchText,
+      serviceAreaId: serviceAreaId,
+      location: location,
+      startTime: startTime,
+      endTime: endTime,
+      headCount: headCount,
+      tableOptionList: tableOptionList,
+    );
+  }
+
+  SearchQueryModel copyWithServiceAreaId(String? serviceAreaId) {
+    return SearchQueryModel(
+      searchText: searchText,
+      serviceAreaId: serviceAreaId,
+      location: location,
+      startTime: startTime,
+      endTime: endTime,
+      headCount: headCount,
+      tableOptionList: tableOptionList,
+    );
+  }
+
   Map<String, dynamic> toJson() => _$SearchQueryModelToJson(this);
 
   static Map<String, dynamic>? locationModelToJson(LocationModel? location) {
