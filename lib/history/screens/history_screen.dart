@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -109,37 +107,39 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         headerSliverBuilder: (_, __) => [
           SliverAppBar(
             leading: SizedBox(),
-            expandedHeight: max(228.h, 228),
-            collapsedHeight: 228,
+            expandedHeight: 230,
+            collapsedHeight: 235,
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 children: [
                   Container(
-                    padding:
-                        EdgeInsets.only(top: 20.w, left: 16.h, right: 16.h),
+                    padding: EdgeInsets.only(
+                      top: 20,
+                      left: 16.w,
+                      right: 16.w,
+                    ),
                     color: PRIMARY_YELLOW,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 16.h),
                         Text(
                           '오늘 나의 자리',
                           style: defaultFontStyleWhite.copyWith(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
-                            height: 0.09.h,
+                            height: 1.0,
                           ),
                         ),
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 8),
                         DefaultCardLayout.fromTodayReservationModel(
                           model: todayModel,
                         ),
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 16),
                       ],
                     ),
                   ),
                   Container(
-                    height: 40.h,
+                    height: 40,
                     width: 375.w,
                     color: PRIMARY_YELLOW,
                     child: Container(
@@ -163,7 +163,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                           style: defaultFontStyleBlack.copyWith(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w700,
-                            height: 0.09.h,
+                            height: 1.0,
                           ),
                         ),
                       ),
