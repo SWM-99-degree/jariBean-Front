@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/auth_provider.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
 import 'package:skeletons/skeletons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class IconTitleFunctionModel {
   final IconData iconData;
@@ -56,7 +58,12 @@ class ProfileScreen extends ConsumerWidget {
       IconTitleFunctionModel(
         iconData: JariBeanIconPack.information,
         title: '정보',
-        onTap: () {},
+        onTap: () async {
+          Uri url = Uri.parse(linkInfo);
+          if (!await launchUrl(url)) {
+            throw Exception('Could not launch $url');
+          }
+        },
       ),
       IconTitleFunctionModel(
         iconData: Icons.logout,
@@ -79,46 +86,74 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
       ),
-      IconTitleFunctionModel(
-        iconData: Icons.token_outlined,
-        title: 'Get Access Token',
-        onTap: () async {
-          print(
-            await ref.read(secureStorageProvider).read(key: ACCESS_TOKEN_KEY),
-          );
-        },
-      ),
-      IconTitleFunctionModel(
-        iconData: Icons.token_outlined,
-        title: 'Get Fcm Token',
-        onTap: () {
-          Clipboard.setData(
-            ClipboardData(text: ref.read(fcmTokenProvider)),
-          );
-        },
-      ),
+      if (kDebugMode)
+        IconTitleFunctionModel(
+          iconData: Icons.token_outlined,
+          title: 'Get Access Token',
+          onTap: () async {
+            print(
+              await ref.read(secureStorageProvider).read(key: ACCESS_TOKEN_KEY),
+            );
+          },
+        ),
+      if (kDebugMode)
+        IconTitleFunctionModel(
+          iconData: Icons.token_outlined,
+          title: 'Get Fcm Token',
+          onTap: () {
+            Clipboard.setData(
+              ClipboardData(text: ref.read(fcmTokenProvider)),
+            );
+          },
+        ),
     ];
     //copy footerList contents into infoList
     final List<IconTitleFunctionModel> infoList = [
       IconTitleFunctionModel(
         iconData: Icons.receipt,
         title: '이용약관',
-        onTap: () {},
+        onTap: () async {
+          Uri url = Uri.parse(linkTermsOfUse);
+          if (!await launchUrl(url)) {
+            throw Exception('Could not launch $url');
+          }
+        },
       ),
       IconTitleFunctionModel(
         iconData: Icons.receipt,
         title: '개인정보 처리방침',
-        onTap: () {},
+        onTap: () async {
+          Uri url = Uri.parse(linkPrivacy);
+          if (!await launchUrl(url)) {
+            throw Exception('Could not launch $url');
+          }
+        },
       ),
       IconTitleFunctionModel(
         iconData: Icons.phone,
         title: '고객센터',
-        onTap: () {},
+        onTap: () async {
+          Uri url = Uri(
+            scheme: 'mailto',
+            path: mailAddress,
+          );
+          if (!await launchUrl(url)) {
+            throw Exception('Could not launch $url');
+          }
+        },
       ),
       IconTitleFunctionModel(
         iconData: Icons.handshake,
         title: '제휴문의',
-        onTap: () {},
+        onTap: () async {
+          Uri url = Uri(
+            scheme: 'mailto',
+            path: mailAddress,
+          );
+          if (!await launchUrl(url)) {
+            throw Exception('Could not launch $url');
+          }
+        },
       ),
       IconTitleFunctionModel(
         iconData: Icons.exit_to_app,
@@ -288,7 +323,6 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           Icon(
             JariBeanIconPack.profile,
-            size: 20.w,
           ),
           SizedBox(
             width: 12.w,
@@ -322,36 +356,42 @@ class ProfileScreen extends ConsumerWidget {
     required String title,
     required Function onTap,
   }) {
-    return Container(
-      height: 48.h,
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: ListTile(
-        horizontalTitleGap: 12.w,
-        contentPadding: EdgeInsets.zero,
-        minLeadingWidth: 0,
-        leading: SizedBox(
-          height: double.infinity,
-          child: Icon(
-            color: Colors.black,
-            iconData,
-          ),
-        ),
-        title: Padding(
-          padding: EdgeInsets.zero,
-          child: Text(
-            title,
-            style: defaultFontStyleBlack.copyWith(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-              height: 1,
+    return GestureDetector(
+      onTap: () => onTap(),
+      child: Container(
+        height: 48.h,
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  color: Colors.black,
+                  iconData,
+                ),
+                SizedBox(
+                  width: 12.w,
+                ),
+                Text(
+                  title,
+                  style: defaultFontStyleBlack.copyWith(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    height: 1,
+                  ),
+                ),
+              ],
             ),
-          ),
+            SizedBox(
+              width: 12.w,
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16.w,
+            ),
+          ],
         ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16.w,
-        ),
-        onTap: () => onTap(),
       ),
     );
   }
