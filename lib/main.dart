@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
 import 'package:datadog_tracking_http_client/datadog_tracking_http_client.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -125,13 +126,14 @@ void main() async {
   final originalOnError = FlutterError.onError;
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
-    DatadogSdk.instance.rum?.handleFlutterError(details);
+    if (!kDebugMode) DatadogSdk.instance.rum?.handleFlutterError(details);
     originalOnError?.call(details);
     CustomExceptionHandler.hanldeException(details.exception);
   };
   await DatadogSdk.instance.initialize(configuration);
 
   PlatformDispatcher.instance.onError = (error, stack) {
+    if (kDebugMode) return false;
     DatadogSdk.instance.rum?.addErrorInfo(
       error.toString(),
       RumErrorSource.source,
@@ -157,7 +159,12 @@ class _App extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
     return ScreenUtilInit(
-      designSize: const Size(375, 812),
+      designSize: MediaQuery.of(context).size.height > 700
+          ? const Size(375, 812)
+          : MediaQuery.of(context).size.height > 550
+              ? const Size(375, 667)
+              : const Size(375, 500),
+      scaleByHeight: MediaQuery.of(context).size.width > 450,
       builder: (context, child) => MaterialApp.router(
         routerConfig: router,
         theme: ThemeData(
