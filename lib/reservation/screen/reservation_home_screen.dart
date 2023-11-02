@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
+import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/reservation/component/circled_location_button.dart';
 import 'package:jari_bean/reservation/component/search_box_button.dart';
 import 'package:jari_bean/reservation/component/sqaured_cafe_card.dart';
-import 'package:jari_bean/reservation/model/cafe_description_with_rating_model.dart';
+import 'package:jari_bean/reservation/provider/hotplace_cafes_provider.dart';
 import 'package:jari_bean/reservation/provider/service_area_provider.dart';
 import 'package:jari_bean/reservation/provider/urgent_reservation_provider.dart';
 import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
+import 'package:skeletons/skeletons.dart';
 
 class ReservationHomeScreen extends ConsumerWidget {
   static const routerName = '/home/reservation';
@@ -31,29 +34,7 @@ class ReservationHomeScreen extends ConsumerWidget {
 
     final serviceAreas = ref.watch(serviceAreaProvider);
     final urgentReservation = ref.watch(urgentReservationProvider);
-    final hotplaceCafes = [
-      CafeDescriptionWithRatingModel(
-        id: '234234',
-        title: '트러스트 홍대점',
-        imgUrl: 'https://picsum.photos/250?id=1',
-        cafeAddress: '서울 마포구',
-        rating: 4.5,
-      ),
-      CafeDescriptionWithRatingModel(
-        id: '234234',
-        title: '트러스트 홍대점',
-        imgUrl: 'https://picsum.photos/250?id=2',
-        cafeAddress: '서울 마포구',
-        rating: 4.5,
-      ),
-      CafeDescriptionWithRatingModel(
-        id: '234234',
-        title: '트러스트 홍대점',
-        imgUrl: 'https://picsum.photos/250?id=3',
-        cafeAddress: '서울 마포구',
-        rating: 4.5,
-      ),
-    ];
+    final hotplaceCafes = ref.watch(hotplaceCafesPreviewProvider);
 
     return ListView(
       children: [
@@ -130,27 +111,72 @@ class ReservationHomeScreen extends ConsumerWidget {
           description: '지금 핫한 카페를 볼 수 있어요',
           infoTitle: '전체보기',
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 12.h),
-          child: SizedBox(
-            height: 120.w + 8.h + 40.h + 36.h + 8.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.only(left: 20.w),
-              shrinkWrap: true,
-              itemCount: hotplaceCafes.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(right: 12.w),
-                  child: SquaredCafeCard.fromModel(
-                    model: hotplaceCafes[index],
-                  ),
-                );
-              },
-            ),
+        _buildHotplaceCafes(hotplaceCafes),
+      ],
+    );
+  }
+
+  Padding _buildHotplaceCafes(OffsetPaginationBase hotplaceCafes) {
+    if (hotplaceCafes is OffsetPaginationLoading) {
+      return Padding(
+        padding: EdgeInsets.only(top: 12.h, left: 20.w),
+        child: SizedBox(
+          height: 120.w + 8.h + 40.h + 36.h + 8.h,
+          child: Column(
+            children: [
+              SkeletonLine(
+                style: SkeletonLineStyle(
+                  height: 120.w,
+                  width: 120.w,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              SizedBox(
+                height: 8.h,
+              ),
+              SkeletonLine(
+                style: SkeletonLineStyle(
+                  height: 16.h,
+                  width: 120.w,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              SizedBox(
+                height: 12.h,
+              ),
+              SkeletonLine(
+                style: SkeletonLineStyle(
+                  height: 24.h,
+                  width: 120.w,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      );
+    }
+    final pCafe =
+        (hotplaceCafes as OffsetPagination<CafeDescriptionModel>).content;
+    return Padding(
+      padding: EdgeInsets.only(top: 12.h),
+      child: SizedBox(
+        height: 120.w + 8.h + 40.h + 36.h + 8.h,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.only(left: 20.w),
+          shrinkWrap: true,
+          itemCount: pCafe.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: EdgeInsets.only(right: 12.w),
+              child: SquaredCafeCard.fromModel(
+                model: pCafe[index],
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 
