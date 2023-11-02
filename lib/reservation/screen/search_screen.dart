@@ -41,7 +41,9 @@ class SearchScreen extends ConsumerWidget {
           hintText: '카페를 검색해주세요',
         ),
       ),
-      child: QueryFilterScreen(),
+      child: QueryFilterScreen(
+        isFromServiceArea: serviceArea != null,
+      ),
     );
   }
 }

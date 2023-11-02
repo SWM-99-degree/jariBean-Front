@@ -35,7 +35,7 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
     state = state.copyWith(serviceAreaId: serviceAreaId);
   }
 
-  set location(LocationModel location) {
+  set location(LocationModel? location) {
     state = state.copyWith(location: location);
   }
 
