@@ -25,7 +25,11 @@ enum FilterType {
 }
 
 class QueryFilterScreen extends ConsumerWidget {
-  const QueryFilterScreen({super.key});
+  final bool isFromServiceArea;
+  const QueryFilterScreen({
+    this.isFromServiceArea = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,7 +55,7 @@ class QueryFilterScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LocationFilter(),
+              if (!isFromServiceArea) LocationFilter(),
               SizedBox(
                 height: 16.h,
               ),
@@ -96,6 +100,8 @@ class LocationFilter extends ConsumerWidget {
       height: 1.5,
     );
     final geocode = ref.watch(geocodeProvider);
+    final location = ref.watch(locationProvider);
+    final bool isSet = location is LocationModel;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -118,13 +124,19 @@ class LocationFilter extends ConsumerWidget {
                 width: 100.w,
                 height: 40.h,
                 child: CustomButton(
-                  text: '현재 위치',
-                  onPressed: () {
-                    ref.read(geocodeProvider.notifier).getGeocode();
-                    final location = ref.read(locationProvider);
-                    if (location is LocationModel) {
-                      ref.read(searchQueryProvider.notifier).location =
-                          location;
+                  text: isSet ? '초기화' : '현재 위치',
+                  onPressed: () async {
+                    if (isSet) {
+                      ref.read(searchQueryProvider.notifier).location = null;
+                      ref.read(geocodeProvider.notifier).resetGeocode();
+                    } else {
+                      await ref.read(locationProvider.notifier).getLocation();
+                      final location = ref.read(locationProvider);
+                      if (location is LocationModel) {
+                        ref.read(searchQueryProvider.notifier).location =
+                            location;
+                        await ref.read(geocodeProvider.notifier).getGeocode();
+                      }
                     }
                   },
                 ),

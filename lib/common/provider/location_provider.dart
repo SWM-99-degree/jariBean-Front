@@ -30,6 +30,10 @@ class LocationStateNotifier extends StateNotifier<LocationModelBase> {
     }
   }
 
+  void resetLocation() {
+    state = LocationModelLoading();
+  }
+
   requestGeolocationPermission() async {
     final geolocationStatus = await Geolocator.checkPermission();
     if (geolocationStatus == LocationPermission.denied) {
@@ -53,12 +57,14 @@ class GeocodeStateNotifier extends StateNotifier<String> {
   GeocodeStateNotifier({
     required this.geocodeRepository,
     required this.locationProvider,
-  }) : super(defaultGeocodeString);
+  }) : super(defaultGeocodeString) {
+    getGeocode();
+  }
 
   Future<void> getGeocode() async {
     try {
       if (locationProvider.state is! LocationModel) {
-        await locationProvider.getLocation();
+        return;
       }
       final location = locationProvider.state as LocationModel;
       final geocodeModel = await geocodeRepository.getGeocode(
@@ -79,6 +85,15 @@ class GeocodeStateNotifier extends StateNotifier<String> {
       }
       state = errorGeocodeString;
     }
+  }
+
+  void setGeocodeFromServiceAreaName(String serviceAreaName) {
+    state = serviceAreaName;
+  }
+
+  void resetGeocode() {
+    state = defaultGeocodeString;
+    locationProvider.resetLocation();
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/common/models/location_model.dart';
 import 'package:jari_bean/reservation/model/service_area_model.dart';
 
 final serviceAreaProvider =
@@ -16,34 +17,13 @@ class ServiceAreaStateNotifier extends StateNotifier<List<ServiceAreaModel>> {
   void init() {
     state = [
       ServiceAreaModel(
-        id: '234234',
+        id: '고려대',
         name: '고려대',
-        imgUrl: 'https://picsum.photos/250?id=0',
-      ),
-      ServiceAreaModel(
-        id: '234234',
-        name: '고려대',
-        imgUrl: 'https://picsum.photos/250?id=1',
-      ),
-      ServiceAreaModel(
-        id: '234234',
-        name: '고려대',
-        imgUrl: 'https://picsum.photos/250?id=2',
-      ),
-      ServiceAreaModel(
-        id: '234234',
-        name: '고려대',
-        imgUrl: 'https://picsum.photos/250?id=3',
-      ),
-      ServiceAreaModel(
-        id: '234234',
-        name: '고려대',
-        imgUrl: 'https://picsum.photos/250?id=4',
-      ),
-      ServiceAreaModel(
-        id: '234234',
-        name: '고려대',
-        imgUrl: 'https://picsum.photos/250?id=5',
+        imgUrl: 'https://img.jari-bean.com/koreauniversity.jpeg',
+        location: LocationModel(
+          latitude: 37.586830986,
+          longitude: 127.025999896,
+        ),
       ),
     ];
   }
