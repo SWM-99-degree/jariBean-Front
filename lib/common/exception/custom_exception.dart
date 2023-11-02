@@ -57,3 +57,17 @@ class AppleSocialLoginException extends CustomException {
           ),
         );
 }
+
+class UnimplementedException extends CustomException {
+  UnimplementedException()
+      : super(
+          message: '아직 준비중인 기능입니다.',
+          dialogModel: CustomDialogModel(
+            title: '알림',
+            description: '아직 준비중인 기능이에요',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}

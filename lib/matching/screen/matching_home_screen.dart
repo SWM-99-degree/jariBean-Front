@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+// import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_provider.dart';
@@ -116,7 +117,8 @@ class MatchingHomeScreen extends ConsumerWidget {
         CustomButton(
           text: '매칭하기',
           onPressed: () {
-            context.push('/matching/proceeding');
+            throw UnimplementedException();
+            // context.push('/matching/proceeding');
           },
         ),
       ],
