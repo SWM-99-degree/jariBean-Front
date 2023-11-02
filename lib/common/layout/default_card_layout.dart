@@ -265,7 +265,7 @@ class DefaultCardLayout extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(imgUrl != null ? 8 : 20),
                   child: Image.network(
-                    imgUrl ?? defaultImg, // Todo: change to default image
+                    imgUrl ?? defaultImg,
                     width: 84.w,
                     height: 84.w,
                     fit: BoxFit.cover,
