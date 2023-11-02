@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/cafe/model/cafe_description_model.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
@@ -10,28 +11,37 @@ import 'package:retrofit/retrofit.dart';
 
 part 'history_repository.g.dart';
 
-final todayReservationRepositoryProvider =
-    Provider<TodayReservationRespository>(
+final homeRepositoryProvider = Provider<HomeRepository>(
   (ref) {
     final dio = ref.watch(dioProvider);
-    return TodayReservationRespository(
+    return HomeRepository(
       dio,
-      baseUrl: '$ip/api/home/reserve',
+      baseUrl: '$ip/api/home',
     );
   },
 );
 
 @RestApi()
-abstract class TodayReservationRespository {
-  factory TodayReservationRespository(Dio dio, {String baseUrl}) =
-      _TodayReservationRespository;
+abstract class HomeRepository {
+  factory HomeRepository(Dio dio, {String baseUrl}) = _HomeRepository;
 
-  @GET('/')
+  @GET('/reserve')
   @Headers({
     'accessToken': 'true',
   })
   Future<ReservationModel?> getTodayReservation({
     @Queries() PaginationParams? paginationParams = const PaginationParams(),
+  });
+
+  @GET('/best')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<OffsetPagination<CafeDescriptionModel>> getHotplaceCafesPreview({
+    @Queries() PaginationParams? paginationParams = const PaginationParams(
+      page: 0,
+      size: 3,
+    ),
   });
 }
 

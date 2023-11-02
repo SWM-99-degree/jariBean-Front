@@ -4,10 +4,10 @@ import 'package:jari_bean/common/provider/pagination_base_provider.dart';
 import 'package:jari_bean/history/model/history_model.dart';
 import 'package:jari_bean/history/repository/history_repository.dart';
 
-final todayReservationProvider =
-    StateNotifierProvider.autoDispose<TodayReservationProvider, ReservationModelBase?>(
+final todayReservationProvider = StateNotifierProvider.autoDispose<
+    TodayReservationProvider, ReservationModelBase?>(
   (ref) {
-    final repository = ref.watch(todayReservationRepositoryProvider);
+    final repository = ref.watch(homeRepositoryProvider);
     return TodayReservationProvider(
       repository: repository,
     );
@@ -15,7 +15,7 @@ final todayReservationProvider =
 );
 
 class TodayReservationProvider extends StateNotifier<ReservationModelBase?> {
-  final TodayReservationRespository repository;
+  final HomeRepository repository;
   TodayReservationProvider({
     required this.repository,
   }) : super(ResrevationModelLoading()) {
