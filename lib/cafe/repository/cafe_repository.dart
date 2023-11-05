@@ -26,7 +26,7 @@ abstract class CafeSearchResultRepository
       _CafeSearchResultRepository;
 
   @override
-  @POST('/')
+  @POST('')
   @Headers({
     'accessToken': 'true',
   })
@@ -34,7 +34,7 @@ abstract class CafeSearchResultRepository
     required PaginationParams paginationParams,
   });
 
-  @POST('/')
+  @POST('')
   @Headers({
     'accessToken': 'true',
   })

@@ -92,7 +92,7 @@ class _UserRepository implements UserRepository {
     )
         .compose(
           _dio.options,
-          '/',
+          '',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -121,7 +121,7 @@ class _UserRepository implements UserRepository {
     )
         .compose(
           _dio.options,
-          '/',
+          '',
           queryParameters: queryParameters,
           data: _data,
         )

@@ -61,7 +61,7 @@ abstract class MatchingRepository
   factory MatchingRepository(Dio dio, {String baseUrl}) = _MatchingRepository;
 
   @override
-  @GET('/')
+  @GET('')
   @Headers({
     'accessToken': 'true',
   })
@@ -87,7 +87,7 @@ abstract class ReservationRepository
       _ReservationRepository;
 
   @override
-  @GET('/')
+  @GET('')
   @Headers({
     'accessToken': 'true',
   })

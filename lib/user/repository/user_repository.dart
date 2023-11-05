@@ -28,13 +28,13 @@ abstract class UserRepository {
   @Headers({'accessToken': 'true'})
   Future<UserModel> register();
 
-  @PATCH('/')
+  @PATCH('')
   @Headers({'accessToken': 'true', 'Content-Type': 'multipart/form-data'})
   Future updateProfile({
     @Body() required FormData body,
   });
 
-  @DELETE('/')
+  @DELETE('')
   @Headers({'accessToken': 'true'})
   Future deleteAccount({
     @Body() SocialLoginResponseModel? code,
