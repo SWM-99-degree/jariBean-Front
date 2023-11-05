@@ -26,7 +26,7 @@ abstract class HotplaceCafesRepository
   factory HotplaceCafesRepository(Dio dio, {String baseUrl}) =
       _HotplaceCafesRepository;
   @override
-  @GET('/')
+  @GET('')
   @Headers({
     'accessToken': 'true',
   })
