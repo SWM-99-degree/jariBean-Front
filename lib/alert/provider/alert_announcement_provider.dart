@@ -16,6 +16,15 @@ class AlertAnnouncementProvider extends PaginationBaseStateNotifier<
   AlertAnnouncementProvider({
     required super.repository,
   });
+
+  AlertAnnouncementModel getAnnouncementById(String id) {
+    if (state is! OffsetPagination<AlertAnnouncementModel>) {
+      throw Exception('state is not OffsetPagination<AlertAnnouncementModel>');
+    }
+    return (state as OffsetPagination<AlertAnnouncementModel>)
+        .content
+        .firstWhere((element) => element.id == id);
+  }
 }
 
 final topAnnouncementProvider =

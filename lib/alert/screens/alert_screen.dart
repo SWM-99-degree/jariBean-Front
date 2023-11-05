@@ -47,27 +47,30 @@ class AlertScreen extends ConsumerWidget {
           child: PaginationListView<AlertModel>(
             provider: alertPaginationProvider,
             itemBuilder: (context, ref, index, model) {
-              final Widget main = Dismissible(
-                key: Key(model.id),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  final provider = ref.read(alertProvider.notifier);
-                  provider.delete(model);
-                },
-                background: Container(
-                  color: Colors.red,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
+              final Widget main = GestureDetector(
+                onTap: () => context.go('/alert/${model.id}'),
+                child: Dismissible(
+                  key: Key(model.id),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    final provider = ref.read(alertProvider.notifier);
+                    provider.delete(model);
+                  },
+                  background: Container(
+                    color: Colors.red,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
+                  child: AlertCard.fromAlertModel(model: model),
                 ),
-                child: AlertCard.fromAlertModel(model: model),
               );
               return main;
             },
