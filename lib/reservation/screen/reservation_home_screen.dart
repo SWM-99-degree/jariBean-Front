@@ -96,6 +96,9 @@ class ReservationHomeScreen extends ConsumerWidget {
           title: '예약 내역',
           description: '${userModel.nickname}님의 예약 내역을 볼 수 있어요',
           infoTitle: '전체보기',
+          onTap: () {
+            context.push('/history?selection=reservation');
+          },
         ),
         SizedBox(
           height: 8.h,
@@ -110,6 +113,9 @@ class ReservationHomeScreen extends ConsumerWidget {
           title: '예약 핫플레이스 BEST',
           description: '지금 핫한 카페를 볼 수 있어요',
           infoTitle: '전체보기',
+          onTap: () {
+            context.push('/hotplaces');
+          },
         ),
         _buildHotplaceCafes(hotplaceCafes),
       ],
@@ -184,53 +190,57 @@ class ReservationHomeScreen extends ConsumerWidget {
     required String title,
     required String description,
     String? infoTitle,
+    VoidCallback? onTap,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                textAlign: TextAlign.left,
-                style: defaultFontStyleBlack.copyWith(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              Text(
-                description,
-                textAlign: TextAlign.left,
-                style: defaultFontStyleBlack.copyWith(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: TEXT_SUBTITLE_COLOR,
-                ),
-              ),
-            ],
-          ),
-          if (infoTitle != null)
-            Row(
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.only(left: 20.w, right: 20.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  infoTitle,
+                  title,
+                  textAlign: TextAlign.left,
                   style: defaultFontStyleBlack.copyWith(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -0.24,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Text(
+                  description,
+                  textAlign: TextAlign.left,
+                  style: defaultFontStyleBlack.copyWith(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
                     color: TEXT_SUBTITLE_COLOR,
                   ),
                 ),
-                Icon(
-                  JariBeanIconPack.arrow_right,
-                  size: 16.sp,
-                ),
               ],
             ),
-        ],
+            if (infoTitle != null)
+              Row(
+                children: [
+                  Text(
+                    infoTitle,
+                    style: defaultFontStyleBlack.copyWith(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -0.24,
+                      color: TEXT_SUBTITLE_COLOR,
+                    ),
+                  ),
+                  Icon(
+                    JariBeanIconPack.arrow_right,
+                    size: 16.sp,
+                  ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }
