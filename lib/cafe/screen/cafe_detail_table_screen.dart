@@ -40,6 +40,7 @@ class _CafeDetailTableScreenState extends ConsumerState<CafeDetailTableScreen> {
     final param = ref.watch(searchQueryProvider);
     return Column(
       children: [
+        SizedBox(height: 40.h),
         SimplifiedFilterScreen(),
         Expanded(
           child: ListView.builder(
