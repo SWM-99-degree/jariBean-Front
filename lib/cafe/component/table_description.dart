@@ -5,12 +5,11 @@ import 'package:jari_bean/cafe/model/table_display_model.dart';
 import 'package:jari_bean/cafe/model/table_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
-import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 
-class TableDescription extends ConsumerWidget {
+class TableDescriptionCard extends ConsumerWidget {
   final String tableId;
   final String tableName;
   final int maxHeadcount;
@@ -23,8 +22,8 @@ class TableDescription extends ConsumerWidget {
   final List<AvaliableTimeRange> alternativeAvaliableTimeRangeList;
   final List<TableDisplayStatus> displayUnitList;
 
-  factory TableDescription.fromModel({
-    required TableModel model,
+  factory TableDescriptionCard.fromModel({
+    required TableDetailModel model,
     required DateTime startTime,
     required DateTime endTime,
   }) {
@@ -33,12 +32,12 @@ class TableDescription extends ConsumerWidget {
       queryStartTime: startTime,
       queryEndTime: endTime,
     );
-    return TableDescription(
-      tableId: model.id,
-      tableName: model.name,
-      maxHeadcount: model.maxHeadcount,
-      imgUrl: model.imgUrl,
-      tableOptionsList: model.tableOptionsList,
+    return TableDescriptionCard(
+      tableId: model.tableModel.id,
+      tableName: model.tableModel.name,
+      maxHeadcount: model.tableModel.maxHeadcount,
+      imgUrl: model.tableModel.imgUrl,
+      tableOptionsList: model.tableModel.tableOptionsList,
       avaliableTimeRangeList: model.avaliableTimeRangeList,
       displayStartTime: tableDisplay.displayStartTime,
       displayEndTime: tableDisplay.displayEndTime,
@@ -49,7 +48,7 @@ class TableDescription extends ConsumerWidget {
     );
   }
 
-  const TableDescription({
+  const TableDescriptionCard({
     super.key,
     required this.tableId,
     required this.tableName,
@@ -60,82 +59,77 @@ class TableDescription extends ConsumerWidget {
     required this.displayStartTime,
     required this.displayEndTime,
     required this.isAvaliable,
-    required this.alternativeAvaliableTimeRangeList,
+    this.alternativeAvaliableTimeRangeList = const [],
     required this.displayUnitList,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultCardLayout(
-      id: tableId,
-      imgUrl: imgUrl,
-      name: tableName,
-      child: Expanded(
-        child: Column(
-          children: [
-            _buildTableTitle(),
-            SizedBox(
-              height: 4.h,
-            ),
-            _buildTableOptions(),
-            SizedBox(
-              height: 8.h,
-            ),
-            Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: GRAY_1,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  height: 16.h,
+    return Expanded(
+      child: Column(
+        children: [
+          _buildTableTitle(),
+          SizedBox(
+            height: 4.h,
+          ),
+          _buildTableOptions(),
+          SizedBox(
+            height: 8.h,
+          ),
+          Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: GRAY_1,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                _buildTimeDisplay(),
-              ],
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      Utils.getHHMMfromDateTime(
-                        ref.watch(searchQueryProvider).startTime,
-                      ),
-                      style: defaultFontStyleBlack.copyWith(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: -0.2,
-                        color: TEXT_SUBTITLE_COLOR,
-                      ),
+                height: 16.h,
+              ),
+              _buildTimeDisplay(),
+            ],
+          ),
+          SizedBox(
+            height: 2.h,
+          ),
+          Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    Utils.getHHMMfromDateTime(
+                      ref.watch(searchQueryProvider).startTime,
+                    ),
+                    style: defaultFontStyleBlack.copyWith(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.2,
+                      color: TEXT_SUBTITLE_COLOR,
                     ),
                   ),
                 ),
-                Flexible(
-                  flex: 1,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      Utils.getHHMMfromDateTime(
-                        ref.watch(searchQueryProvider).endTime,
-                      ),
-                      style: defaultFontStyleBlack.copyWith(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: -0.2,
-                        color: TEXT_SUBTITLE_COLOR,
-                      ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    Utils.getHHMMfromDateTime(
+                      ref.watch(searchQueryProvider).endTime,
+                    ),
+                    style: defaultFontStyleBlack.copyWith(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: -0.2,
+                      color: TEXT_SUBTITLE_COLOR,
                     ),
                   ),
                 ),
-              ],
-            )
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -173,7 +167,7 @@ class TableDescription extends ConsumerWidget {
                 fontWeight: FontWeight.w500,
                 color: TEXT_SUBTITLE_COLOR,
               ),
-            )
+            ),
           ],
         ),
       ],

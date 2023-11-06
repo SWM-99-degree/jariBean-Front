@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -70,87 +71,89 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         }
       });
 
-      final alert = await ref.read(alertRepositoryProvider);
-      for (int i = 0; i < 300; i++) {
-        if (i % 3 == 0) {
-          AlertModel alertModel = AlertModel(
-            id: i.toString(),
-            title: '[Matching Success] 자리빈에 오신것을 환영합니다]',
-            isRead: false,
-            body: '메뚜기 월드에 오신걸 환영합니다~',
-            type: PushMessageType.matchingSuccess,
-            receivedAt: DateTime.now().subtract(Duration(days: 1)),
-            data: MatchingSuccessModel(
-              cafeId: '123',
-              matchingId: '123',
-            ),
-          );
-          await alert.insertAlert(alertModel);
-        } else if (i % 3 == 1) {
-          AlertModel alertModel = AlertModel(
-            id: i.toString(),
-            title: '[Matching Fail] 자리빈에 오신것을 환영합니다]',
-            isRead: false,
-            body: '메뚜기 월드에 오신걸 환영합니다~',
-            type: PushMessageType.matchingFail,
-            receivedAt: DateTime.now().subtract(Duration(days: 1)),
-            data: MatchingFailModel(
-              matchingId: '123',
-            ),
-          );
-          await alert.insertAlert(alertModel);
-        } else {
-          AlertModel alertModel = AlertModel(
-            id: i.toString(),
-            title: '[Reservation Complete] 자리빈에 오신것을 환영합니다]',
-            isRead: false,
-            body: '메뚜기 월드에 오신걸 환영합니다~',
-            type: PushMessageType.reservationComplete,
-            receivedAt: DateTime.now().subtract(Duration(days: 1)),
-            data: ReservationDataModel(
-              reservationId: '123',
-            ),
-          );
-          await alert.insertAlert(alertModel);
+      if (kDebugMode) {
+        final alert = await ref.read(alertRepositoryProvider);
+        for (int i = 0; i < 300; i++) {
+          if (i % 3 == 0) {
+            AlertModel alertModel = AlertModel(
+              id: i.toString(),
+              title: '[Matching Success] 자리빈에 오신것을 환영합니다]',
+              isRead: false,
+              body: '메뚜기 월드에 오신걸 환영합니다~',
+              type: PushMessageType.matchingSuccess,
+              receivedAt: DateTime.now().subtract(Duration(days: 1)),
+              data: MatchingSuccessModel(
+                cafeId: '123',
+                matchingId: '123',
+              ),
+            );
+            await alert.insertAlert(alertModel);
+          } else if (i % 3 == 1) {
+            AlertModel alertModel = AlertModel(
+              id: i.toString(),
+              title: '[Matching Fail] 자리빈에 오신것을 환영합니다]',
+              isRead: false,
+              body: '메뚜기 월드에 오신걸 환영합니다~',
+              type: PushMessageType.matchingFail,
+              receivedAt: DateTime.now().subtract(Duration(days: 1)),
+              data: MatchingFailModel(
+                matchingId: '123',
+              ),
+            );
+            await alert.insertAlert(alertModel);
+          } else {
+            AlertModel alertModel = AlertModel(
+              id: i.toString(),
+              title: '[Reservation Complete] 자리빈에 오신것을 환영합니다]',
+              isRead: false,
+              body: '메뚜기 월드에 오신걸 환영합니다~',
+              type: PushMessageType.reservationComplete,
+              receivedAt: DateTime.now().subtract(Duration(days: 1)),
+              data: ReservationDataModel(
+                reservationId: '123',
+              ),
+            );
+            await alert.insertAlert(alertModel);
+          }
         }
-      }
 
-      // get alert with data test
-      print('get alert with data test');
-      final alert199 = await alert.getAlert('199');
-      print('alert 199 : ${alert199.toJson()}');
-      final alertData = await alert.getAlertWithData(alert199);
-      print('alert 199 with data : ${alertData.toJson()}');
+        // get alert with data test
+        print('get alert with data test');
+        final alert199 = await alert.getAlert('199');
+        print('alert 199 : ${alert199.toJson()}');
+        final alertData = await alert.getAlertWithData(alert199);
+        print('alert 199 with data : ${alertData.toJson()}');
 
-      // marking alert as read
-      print('marking alert as read');
+        // marking alert as read
+        print('marking alert as read');
 
-      print('before : ${(await alert.getAlert('299')).toJson()}');
-      await alert.markAsRead('299');
-      final alert299 = await alert.getAlert('299');
+        print('before : ${(await alert.getAlert('299')).toJson()}');
+        await alert.markAsRead('299');
+        final alert299 = await alert.getAlert('299');
 
-      print('after : ${alert299.toJson()}');
+        print('after : ${alert299.toJson()}');
 
-      final alertData1 = await alert.getAlertWithData(alert299);
-      print(alertData1);
+        final alertData1 = await alert.getAlertWithData(alert299);
+        print(alertData1);
 
-      // delete test
-      print('delete test');
+        // delete test
+        print('delete test');
 
-      print('delete alert 299');
-      await alert.deleteAlert('299');
-      try {
-        print('try to get alert 299');
-        print(await alert.getAlert('299'));
-      } catch (e) {
-        print(e);
-      }
+        print('delete alert 299');
+        await alert.deleteAlert('299');
+        try {
+          print('try to get alert 299');
+          print(await alert.getAlert('299'));
+        } catch (e) {
+          print(e);
+        }
 
-      try {
-        print('try to get alert 299 with data : foreign key constraint');
-        print('${(await alert.getAlertWithData(alert299)).toJson()}');
-      } catch (e) {
-        print(e);
+        try {
+          print('try to get alert 299 with data : foreign key constraint');
+          print('${(await alert.getAlertWithData(alert299)).toJson()}');
+        } catch (e) {
+          print(e);
+        }
       }
     });
   }

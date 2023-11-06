@@ -27,21 +27,20 @@ abstract class UserRepository {
   @PUT('/register')
   @Headers({'accessToken': 'true'})
   Future<UserModel> register();
-}
 
-final loginRepositoryProvider = Provider<LoginRepository>((ref) {
-  final dio = ref.watch(dioProvider);
-  return LoginRepository(
-    dio,
-    baseUrl: '$ip/login',
-  );
-});
+  @PATCH('')
+  @Headers({'accessToken': 'true', 'Content-Type': 'multipart/form-data'})
+  Future updateProfile({
+    @Body() required FormData body,
+  });
 
-@RestApi()
-abstract class LoginRepository {
-  factory LoginRepository(Dio dio, {String baseUrl}) = _LoginRepository;
+  @DELETE('')
+  @Headers({'accessToken': 'true'})
+  Future deleteAccount({
+    @Body() SocialLoginResponseModel? code,
+  });
 
-  @POST('/{type}')
+  @POST('/login/{type}')
   Future<LoginResponseModel> login({
     @Path('type') required String type,
     @Body() required SocialLoginResponseModel body,

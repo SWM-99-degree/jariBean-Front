@@ -7,24 +7,27 @@ import 'package:jari_bean/reservation/model/search_query_model.dart';
 final searchQueryProvider =
     StateNotifierProvider<SearchQueryStateNotifier, SearchQueryModel>(
   (ref) {
-    return SearchQueryStateNotifier();
+    final errorText = ref.watch(errorTextProvider.notifier);
+
+    return SearchQueryStateNotifier(
+      errorTextProvider: errorText,
+    );
   },
 );
 
 class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
-  SearchQueryStateNotifier()
-      : super(
+  final StateController<String> errorTextProvider;
+  SearchQueryStateNotifier({
+    required this.errorTextProvider,
+  }) : super(
           SearchQueryModel(
             searchText: '',
             serviceAreaId: null,
-            location: LocationModel(
-              latitude: 0,
-              longitude: 0,
-            ),
-            startTime: Utils.truncateToQuaterHour(
+            location: null,
+            startTime: Utils.truncateToTimeUnit(
               DateTime.now(),
             ),
-            endTime: Utils.truncateToQuaterHour(
+            endTime: Utils.truncateToTimeUnit(
               DateTime.now().add(
                 Duration(hours: 1),
               ),
@@ -35,11 +38,11 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
         );
 
   set serviceAreaId(String? serviceAreaId) {
-    state = state.copyWith(serviceAreaId: serviceAreaId);
+    state = state.copyWithServiceAreaId(serviceAreaId);
   }
 
-  set location(LocationModel location) {
-    state = state.copyWith(location: location);
+  set location(LocationModel? location) {
+    state = state.copyWithLocation(location);
   }
 
   set startTime(DateTime startTime) {
@@ -48,6 +51,30 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
 
   set endTime(DateTime endTime) {
     state = state.copyWith(endTime: endTime);
+  }
+
+  bool setStartTime(DateTime startTime) {
+    if (!startTime.isBefore(state.endTime)) {
+      errorTextProvider.state = '시작 시간은 종료 시간보다 빨라야 합니다.';
+      return false;
+    }
+    if (startTime.isBefore(DateTime.now())) {
+      errorTextProvider.state = '시작 시간은 현재 시간보다 빨라야 합니다.';
+      return false;
+    }
+    errorTextProvider.state = '';
+    state = state.copyWith(startTime: startTime);
+    return true;
+  }
+
+  bool setEndTime(DateTime endTime) {
+    if (!endTime.isAfter(state.startTime)) {
+      errorTextProvider.state = '종료 시간은 시작 시간보다 늦어야 합니다.';
+      return false;
+    }
+    errorTextProvider.state = '';
+    state = state.copyWith(endTime: endTime);
+    return true;
   }
 
   set headCount(int headCount) {
@@ -60,7 +87,7 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
 
   set dateFromDateTime(DateTime date) {
     state = state.copyWith(
-      startTime: Utils.truncateToQuaterHour(
+      startTime: Utils.truncateToTimeUnit(
         DateTime(
           date.year,
           date.month,
@@ -69,7 +96,7 @@ class SearchQueryStateNotifier extends StateNotifier<SearchQueryModel> {
           state.startTime.minute,
         ),
       ),
-      endTime: Utils.truncateToQuaterHour(
+      endTime: Utils.truncateToTimeUnit(
         DateTime(
           date.year,
           date.month,
@@ -175,3 +202,7 @@ class TableUsageStateNotifier extends StateNotifier<TableUsage?> {
     }
   }
 }
+
+final errorTextProvider = StateProvider<String>((ref) {
+  return '';
+});

@@ -7,6 +7,7 @@ final defaultFontStyleBlack = TextStyle(
   fontWeight: FontWeight.w500,
   height: 1.5,
   fontFamily: 'Pretendard',
+  overflow: TextOverflow.ellipsis,
 );
 
 final defaultFontStyleWhite = defaultFontStyleBlack.copyWith(

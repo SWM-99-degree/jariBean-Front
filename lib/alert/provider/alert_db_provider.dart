@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -5,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 final alertDBProvider = Provider<Future<Database>>((ref) async {
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'alert_db.db');
-  deleteDatabase(path);
+  if (kDebugMode) deleteDatabase(path); // Todo: remove this line in production
   final db = await openDatabase(
     path,
     version: 1,

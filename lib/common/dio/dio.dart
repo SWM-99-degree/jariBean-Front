@@ -69,14 +69,13 @@ class CustomInterceptor extends Interceptor {
     -> 새로운 토큰으로 요청 */
     late final DefualtTransferModel pResponse;
     try {
-      print(err.response?.data);
       pResponse = DefualtTransferModel.fromJson(err.response?.data);
       print(
         '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : ${pResponse.code} - ${pResponse.msg}',
       );
     } catch (e) {
       print(
-        '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} : 500 Internal Server Error',
+        '[ERR] [${err.requestOptions.method}] ${err.requestOptions.uri} :  ',
       );
     }
 

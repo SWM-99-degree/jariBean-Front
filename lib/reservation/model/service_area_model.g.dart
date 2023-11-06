@@ -11,6 +11,8 @@ ServiceAreaModel _$ServiceAreaModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       imgUrl: Utils.pathToUrl(json['imgUrl'] as String),
+      location:
+          LocationModel.fromJson(json['location'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ServiceAreaModelToJson(ServiceAreaModel instance) =>
@@ -18,4 +20,5 @@ Map<String, dynamic> _$ServiceAreaModelToJson(ServiceAreaModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'imgUrl': instance.imgUrl,
+      'location': instance.location,
     };

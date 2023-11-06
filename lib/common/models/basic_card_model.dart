@@ -4,7 +4,7 @@ class BasicCardModel implements IModelWithId {
   @override
   final String id;
   final String title;
-  final String imgUrl;
+  final String? imgUrl;
 
   BasicCardModel({
     required this.id,
