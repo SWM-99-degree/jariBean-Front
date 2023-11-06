@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/screens/alert_announcement_screen.dart';
+import 'package:jari_bean/alert/screens/alert_details_screen.dart';
 import 'package:jari_bean/alert/screens/alert_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_screen.dart';
+import 'package:jari_bean/cafe/screen/hotpalces_screen.dart';
 import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/screens/home_screen.dart';
 import 'package:jari_bean/history/provider/hisotry_selection_provider.dart';
@@ -123,6 +125,21 @@ final goRouterProvider = Provider<GoRouter>(
                       child: AlertAnnouncementScreen(),
                     ),
                   ),
+                  routes: [
+                    GoRoute(
+                      path: ':id',
+                      builder: (_, state) => AlertDetailsScreen(
+                        isAnnouncement: true,
+                        alertId: state.pathParameters['id']!,
+                      ),
+                    ),
+                  ],
+                ),
+                GoRoute(
+                  path: ':id',
+                  builder: (_, state) => AlertDetailsScreen(
+                    alertId: state.pathParameters['id']!,
+                  ),
                 ),
               ],
             ),
@@ -196,6 +213,11 @@ final goRouterProvider = Provider<GoRouter>(
             GoRoute(
               path: 'reservation/completed',
               builder: (_, __) => TableReservationConfirmScreen(),
+            ),
+            GoRoute(
+              path: 'hotplaces',
+              name: 'hotplaces',
+              builder: (_, __) => HotplacesScreen(),
             ),
           ],
         ),
