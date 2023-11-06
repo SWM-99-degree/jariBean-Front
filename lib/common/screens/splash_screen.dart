@@ -7,29 +7,31 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment(0.86, -0.52),
-          end: Alignment(-0.86, 0.52),
-          colors: [PRIMARY_YELLOW, PRIMARY_ORANGE],
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment(0.86, -0.52),
+            end: Alignment(-0.86, 0.52),
+            colors: [PRIMARY_YELLOW, PRIMARY_ORANGE],
+          ),
         ),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Text(
-              '자리:Bean',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 40,
-                fontFamily: 'Gmarket Sans TTF',
-                fontWeight: FontWeight.w700,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Text(
+                '자리:Bean',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 40,
+                  fontFamily: 'Gmarket Sans TTF',
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
