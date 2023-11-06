@@ -1,76 +1,29 @@
-import 'dart:io';
+import 'dart:async';
+import 'dart:ui';
+import 'package:datadog_flutter_plugin/datadog_flutter_plugin.dart';
+import 'package:datadog_tracking_http_client/datadog_tracking_http_client.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:jari_bean/kakao_login.dart';
-import 'package:jari_bean/screens/future_build.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk_template.dart';
-import 'package:logger/logger.dart';
-import 'firebase_options.dart';
-import 'package:jari_bean/screens/future_build.dart';
-import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart' as kakao;
-import 'package:jari_bean/main_view_model.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jari_bean/alert/provider/alert_provider.dart';
+import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/exception/custom_exception_handler.dart';
+import 'package:jari_bean/common/firebase/fcm.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
+import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
+import 'package:logger/logger.dart' as log;
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-
-var logger = Logger();
-
-class dialogString {
-  String? title;
-  String? content;
-  dialogString(this.title, this.content);
-}
-
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
-  print('Handling a background message ${message.messageId}');
-  print('And the MESSAGE was : ${message.notification!.title} + ${message.notification!.body}');
-}
-
-Future fbMsgForegroundHandler(
-    RemoteMessage message,
-    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
-    AndroidNotificationChannel? channel) async {
-  print('[FCM - Foreground] MESSAGE : ${message.data}');
-
-  if (message.notification != null) {
-    print('Message also contained a notification: ${message.notification}');
-    flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        message.notification?.title,
-        message.notification?.body,
-        NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel!.id,
-              channel.name,
-              channelDescription: channel.description,
-              icon: '@mipmap/ic_launcher',
-            ),
-            iOS: const DarwinNotificationDetails(
-              badgeNumber: 1,
-              subtitle: 'the subtitle',
-              sound: 'slow_spring_board.aiff',
-            )));
-  }
-}
-
-Future<void> setupInteractedMessage(FirebaseMessaging fbMsg) async {
-  RemoteMessage? initialMessage = await fbMsg.getInitialMessage();
-  // 종료상태에서 클릭한 푸시 알림 메세지 핸들링
-  if (initialMessage != null) clickMessageEvent(initialMessage);
-  // 앱이 백그라운드 상태에서 푸시 알림 클릭 하여 열릴 경우 메세지 스트림을 통해 처리
-  FirebaseMessaging.onMessageOpenedApp.listen(clickMessageEvent);
-}
-
-void clickMessageEvent(RemoteMessage message) {
-  print('message : ${message.notification!.title}');
-  Get.toNamed('/');
-}
+var logger = log.Logger();
 
 Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
-  NotificationSettings settings = await fbMsg.requestPermission(
+  // NotificationSettings settings =
+  await fbMsg.requestPermission(
     alert: true,
     announcement: false,
     badge: true,
@@ -81,289 +34,150 @@ Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
   );
 }
 
+class Logger extends ProviderObserver {
+  @override
+  void didUpdateProvider(
+    ProviderBase<Object?> provider,
+    Object? previousValue,
+    Object? newValue,
+    ProviderContainer container,
+  ) {
+    if (provider.runtimeType ==
+        StateNotifierProvider<TimerStateNotifier, int>) {
+      return;
+    }
+    print('''
+{
+  "provider": "${provider.name ?? provider.runtimeType}",
+  "newValue": "$newValue"
+}''');
+  }
+}
+
 void main() async {
-  await dotenv.load(fileName: "lib/config/.env");
-  print(dotenv.env['KAKAO_NATIVE_APP_KEY']);
-  WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  final container = ProviderContainer(observers: [Logger()]);
+
+  await dotenv.load(fileName: "lib/common/config/.env");
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  KakaoSdk.init(nativeAppKey: dotenv.env['KAKAO_NATIVE_APP_KEY']);
-  FirebaseMessaging fbMsg = FirebaseMessaging.instance;
-
-  var fcmToken = await FirebaseMessaging.instance.getToken();
-  fbMsg.onTokenRefresh.listen((event) {
-    print('onTokenRefresh : $event');
-  });
-
-  runApp(MaterialApp(home: Scaffold(body: Screen())));
-
-   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  AndroidNotificationChannel? androidNotificationChannel;
-  if (Platform.isIOS) {
-    await requestPermissionIOS(fbMsg);
-  } else if (Platform.isAndroid) {
-    //Android 8 (API 26) 이상부터는 채널설정이 필수.
-    androidNotificationChannel = const AndroidNotificationChannel(
-      'important_channel', // id
-      'Important_Notifications', // name
-      description: '중요도가 높은 알림을 위한 채널.',
-      // description
-      importance: Importance.high,
-    );
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(androidNotificationChannel);
-  }
-  //Background Handling 백그라운드 메세지 핸들링
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  //Foreground Handling 포어그라운드 메세지 핸들링
-  FirebaseMessaging.onMessage.listen((message) {
-    fbMsgForegroundHandler(message, flutterLocalNotificationsPlugin, androidNotificationChannel);
-  });
-  
-  await setupInteractedMessage(fbMsg);
-}
-class Screen extends StatefulWidget{
-  const Screen({Key? key}) : super(key: key);
-
-  @override
-  State<Screen> createState() => _ScreenState();
-}
-
-
-class _ScreenState extends State<Screen>{
-  final myControllerEmail = TextEditingController();
-  final myControllerPW = TextEditingController();
-  final viewModel = MainViewModel(KakaoLogin());
-  late Future<dialogString> resultString;
-  Future<void> setupInteractedMessage() async{
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-
-    FirebaseMessaging.onMessageOpenedApp.listen(clickMessageEvent);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-            margin: const EdgeInsets.all(8),
-            child: TextField(
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'Email'),
-              controller: myControllerEmail,
-            )),
-        Container(
-            margin: const EdgeInsets.all(8),
-            child: TextField(
-              obscureText: true,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), labelText: 'Password'),
-              controller: myControllerPW,
-            )),
-        FloatingActionButton(
-            child: Icon(Icons.app_registration_rounded),
-            onPressed: () => showDialog(
-                context: context,
-                builder: (context) {
-                  resultString = AuthManage()
-                      .createUser(myControllerEmail.text, myControllerPW.text);
-                  return FutureBuilder(
-                      future: resultString,
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dialogString> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.red,
-                          ));
-                        }
-                        return AlertDialog(
-                            title: DefaultTextStyle(
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  color: Colors.black),
-                              child: Text(snapshot.data?.title ?? 'null'),
-                            ),
-                            content: DefaultTextStyle(
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 20,
-                                  color: Colors.black),
-                              child: Text(snapshot.data?.content ?? 'null'),
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ]);
-                      });
-                })),
-        Image.network(
-            viewModel.user?.kakaoAccount?.profile?.thumbnailImageUrl ?? 'null'),
-        Text('${viewModel.isLogined}',
-            style: Theme.of(context).textTheme.headline4),
-        Text('현재 로그인한 유저 : ${viewModel.user == null ? '없음' : viewModel.user!.id}',
-            style: Theme.of(context).textTheme.headline4),
-        Text('현재 로그인한 유저 : ${viewModel.token == null ? '없음' : viewModel.token!}',
-            style: Theme.of(context).textTheme.headline4),
-        FloatingActionButton(
-          child: Icon(Icons.login_rounded),
-          onPressed: () async {
-            await viewModel.login();
-            setState(() {});
-          },
-        ),
-        FloatingActionButton(
-          child: Icon(Icons.logout_rounded),
-          onPressed: () async {
-            await viewModel.logout();
-            setState(() {});
-          },
-        ),
-        FloatingActionButton(
-          child: Text('FCM토큰'),
-          onPressed: () async {
-            await viewModel.getFcmToken();
-            setState(() {});
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class AuthManage {
-  /// 회원가입
-  Future<dialogString> createUser(String email, String pw) async {
-    dialogString resultString = dialogString('회원가입 성공!', '회원가입에 성공했어요!');
-    try {
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: pw,
+      // options: DefaultFirebaseOptions.currentPlatform,
       );
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        logger.w('The password provided is too weak.');
-        resultString.title = '회원가입 실패!';
-        resultString.content = '비밀번호가 너무 약합니다.';
-      } else if (e.code == 'email-already-in-use') {
-        logger.w('The account already exists for that email.');
-        resultString.title = '회원가입 실패!';
-        resultString.content = '이미 존재하는 이메일입니다.';
-      }
-    } catch (e) {
-      logger.e(e);
-      resultString.title = '회원가입 실패!';
-      resultString.content = '예상치 못한 에러가 발생하였습니다 : $e';
-      return resultString;
-    }
-    // authPersistence(); // 인증 영속
-    return resultString;
-  }
 
-  /// 로그인
-  Future<bool> signIn(String email, String pw) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: pw);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        logger.w('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        logger.w('Wrong password provided for that user.');
-      }
-    } catch (e) {
-      logger.e(e);
-      return false;
-    }
-    // authPersistence(); // 인증 영속
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: true,
+    badge: true,
+    carPlay: true,
+    criticalAlert: true,
+    provisional: true,
+    sound: true,
+  );
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true, // Required to display a heads up notification
+    badge: true,
+    sound: true,
+  );
+
+  FirebaseMessaging.instance.onTokenRefresh.listen(
+    (token) => fcmTokenRefreshHandler(
+      token,
+      container.read(fcmTokenProvider.notifier),
+    ),
+  );
+
+  FirebaseMessaging.onMessage
+      .listen((message) => fcmMessageHandler(message, container));
+  FirebaseMessaging.onBackgroundMessage(
+    (message) => fcmMessageHandler(message, container),
+  );
+
+  FirebaseMessaging.onMessageOpenedApp.listen(
+    (message) => fcmOnOpenedAppHandler(
+      message: message,
+      goRouter: container.read(goRouterProvider),
+      alertProvider: container.read(alertProvider.notifier),
+    ),
+  );
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.grey[50],
+    ),
+  );
+
+  final configuration = DdSdkConfiguration(
+    clientToken: datadogClientToken,
+    env: datadogEnv,
+    site: DatadogSite.us1,
+    trackingConsent: TrackingConsent.granted,
+    nativeCrashReportEnabled: true,
+    loggingConfiguration: LoggingConfiguration(),
+    rumConfiguration: RumConfiguration(applicationId: datadogApplicationId),
+    firstPartyHosts: [ip],
+  )..enableHttpTracking();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  final originalOnError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+    if (!kDebugMode) DatadogSdk.instance.rum?.handleFlutterError(details);
+    originalOnError?.call(details);
+    CustomExceptionHandler.hanldeException(details.exception);
+  };
+  await DatadogSdk.instance.initialize(configuration);
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (kDebugMode) return false;
+    DatadogSdk.instance.rum?.addErrorInfo(
+      error.toString(),
+      RumErrorSource.source,
+      stackTrace: stack,
+    );
+    CustomExceptionHandler.hanldeException(error);
     return true;
-  }
+  };
 
-  /// 로그아웃
-  void signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
+  await initializeDateFormatting().then(
+    (_) => runApp(
+      UncontrolledProviderScope(
+        container: container,
+        child: _App(),
+      ),
+    ),
+  );
+}
 
-  /// 회원가입, 로그인시 사용자 영속
-  void authPersistence() async {
-    await FirebaseAuth.instance.setPersistence(Persistence.NONE);
-  }
-
-  /// 유저 삭제
-  Future<void> deleteUser(String email) async {
-    final user = FirebaseAuth.instance.currentUser;
-    await user?.delete();
-  }
-
-  /// 현재 유저 정보 조회
-  User? getUser() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // Name, email address, and profile photo URL
-      final name = user.displayName;
-      final email = user.email;
-      final photoUrl = user.photoURL;
-
-      // Check if user's email is verified
-      final emailVerified = user.emailVerified;
-
-      // The user's ID, unique to the Firebase project. Do NOT use this value to
-      // authenticate with your backend server, if you have one. Use
-      // User.getIdToken() instead.
-      final uid = user.uid;
-    }
-    return user;
-  }
-
-  /// 공급자로부터 유저 정보 조회
-  User? getUserFromSocial() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      for (final providerProfile in user.providerData) {
-        // ID of the provider (google.com, apple.cpm, etc.)
-        final provider = providerProfile.providerId;
-
-        // UID specific to the provider
-        final uid = providerProfile.uid;
-
-        // Name, email address, and profile photo URL
-        final name = providerProfile.displayName;
-        final emailAddress = providerProfile.email;
-        final profilePhoto = providerProfile.photoURL;
-      }
-    }
-    return user;
-  }
-
-  /// 유저 이름 업데이트
-  Future<void> updateProfileName(String name) async {
-    final user = FirebaseAuth.instance.currentUser;
-    await user?.updateDisplayName(name);
-  }
-
-  /// 유저 url 업데이트
-  Future<void> updateProfileUrl(String url) async {
-    final user = FirebaseAuth.instance.currentUser;
-    await user?.updatePhotoURL(url);
-  }
-
-  /// 비밀번호 초기화 메일보내기
-  Future<void> sendPasswordResetEmail(String email) async {
-    await FirebaseAuth.instance.setLanguageCode("kr");
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+class _App extends ConsumerWidget {
+  const _App();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
+    return ScreenUtilInit(
+      designSize: MediaQuery.of(context).size.height > 700
+          ? const Size(375, 812)
+          : MediaQuery.of(context).size.height > 550
+              ? const Size(375, 667)
+              : const Size(375, 500),
+      scaleByHeight: MediaQuery.of(context).size.width > 450,
+      builder: (context, child) => MaterialApp.router(
+        routerConfig: router,
+        theme: ThemeData(
+          primarySwatch: Colors.deepOrange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaleFactor: 1.0,
+          ),
+          child: child!,
+        ),
+      ),
+    );
   }
 }
