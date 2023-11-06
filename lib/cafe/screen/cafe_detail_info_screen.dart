@@ -4,6 +4,7 @@ import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CafeDetailInfoScreen extends StatelessWidget {
   final String cafeId;
@@ -42,6 +43,7 @@ class CafeDetailInfoScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildIconAndText(
+            type: CafeDetailInfoType.address,
             icon: JariBeanIconPack.gps,
             textSpan: TextSpan(
               text: cafeAddress,
@@ -66,6 +68,7 @@ class CafeDetailInfoScreen extends StatelessWidget {
             height: 12.h,
           ),
           _buildIconAndText(
+            type: CafeDetailInfoType.runTime,
             icon: Icons.access_time,
             textSpan: TextSpan(
               text: '영업중',
@@ -90,6 +93,7 @@ class CafeDetailInfoScreen extends StatelessWidget {
             height: 12.h,
           ),
           _buildIconAndText(
+            type: CafeDetailInfoType.url,
             icon: Icons.link,
             textSpan: TextSpan(
               text: cafeUrl,
@@ -104,6 +108,7 @@ class CafeDetailInfoScreen extends StatelessWidget {
             height: 12.h,
           ),
           _buildIconAndText(
+            type: CafeDetailInfoType.phoneNumber,
             icon: Icons.phone,
             textSpan: TextSpan(
               text: cafePhoneNumber,
@@ -122,25 +127,57 @@ class CafeDetailInfoScreen extends StatelessWidget {
   Widget _buildIconAndText({
     required IconData icon,
     required TextSpan textSpan,
+    required CafeDetailInfoType type,
   }) {
-    return Text.rich(
-      TextSpan(
-        children: [
-          WidgetSpan(
-            child: Icon(
-              icon,
-              size: 16.w,
-              color: TEXT_SUBTITLE_COLOR,
+    return GestureDetector(
+      onTap: () {
+        switch (type) {
+          case CafeDetailInfoType.address:
+            break;
+          case CafeDetailInfoType.runTime:
+            break;
+          case CafeDetailInfoType.url:
+            try {
+              launchUrl(Uri.parse(cafeUrl));
+            } catch (e) {
+              throw Exception('잘못된 URL입니다.');
+            }
+            break;
+          case CafeDetailInfoType.phoneNumber:
+            try {
+              launchUrl(Uri.parse('tel:$cafePhoneNumber'));
+            } catch (e) {
+              throw Exception('잘못된 전화번호입니다.');
+            }
+            break;
+        }
+      },
+      child: Text.rich(
+        TextSpan(
+          children: [
+            WidgetSpan(
+              child: Icon(
+                icon,
+                size: 16.w,
+                color: TEXT_SUBTITLE_COLOR,
+              ),
             ),
-          ),
-          WidgetSpan(
-            child: SizedBox(
-              width: 8.w,
+            WidgetSpan(
+              child: SizedBox(
+                width: 8.w,
+              ),
             ),
-          ),
-          textSpan,
-        ],
+            textSpan,
+          ],
+        ),
       ),
     );
   }
+}
+
+enum CafeDetailInfoType {
+  address,
+  runTime,
+  url,
+  phoneNumber,
 }
