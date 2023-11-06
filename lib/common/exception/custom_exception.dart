@@ -71,3 +71,31 @@ class UnimplementedException extends CustomException {
           ),
         );
 }
+
+class UnknownAnnouncementException extends CustomException {
+  UnknownAnnouncementException()
+      : super(
+          message: '알 수 없는 공지사항입니다.',
+          dialogModel: CustomDialogModel(
+            title: '알림',
+            description: '알 수 없는 공지사항입니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
+
+class UnknownCafeException extends CustomException {
+  UnknownCafeException()
+      : super(
+          message: '알 수 없는 카페입니다.',
+          dialogModel: CustomDialogModel(
+            title: '알림',
+            description: '알 수 없는 카페입니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}

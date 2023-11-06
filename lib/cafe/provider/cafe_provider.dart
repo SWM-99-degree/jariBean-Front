@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
 import 'package:jari_bean/cafe/repository/cafe_repository.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 
 final cafeInformationProvider = StateNotifierProvider.family
     .autoDispose<CafeInformationStateNotifier, CafeDetailModelBase, String>(
@@ -29,6 +30,7 @@ class CafeInformationStateNotifier extends StateNotifier<CafeDetailModelBase> {
       state = cafeInfo;
     } catch (e) {
       state = CafeDetailModelError(e.toString());
+      throw UnknownCafeException();
     }
   }
 }
