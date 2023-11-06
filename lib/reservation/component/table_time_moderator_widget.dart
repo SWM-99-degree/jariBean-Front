@@ -93,6 +93,9 @@ class TableReservationSetAndForwardButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(
+      tableReservationProvider,
+    ); // due to autoDispose, this is needed to keep the state alive
     return CustomButton(
       text: '예약하기',
       onPressed: () {
