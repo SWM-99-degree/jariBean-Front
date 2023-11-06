@@ -48,13 +48,13 @@ class ProfileScreen extends ConsumerWidget {
         as UserModel; //must be UserModel since GoRouter redirect logic will kick if not logged in
 
     final List<IconTitleFunctionModel> settingList = [
-      IconTitleFunctionModel(
-        iconData: JariBeanIconPack.notice,
-        title: '알림',
-        onTap: () {
-          context.push('/profile/alert');
-        },
-      ),
+      // IconTitleFunctionModel(
+      //   iconData: JariBeanIconPack.notice,
+      //   title: '알림',
+      //   onTap: () {
+      //     context.push('/profile/alert');
+      //   },
+      // ),
       IconTitleFunctionModel(
         iconData: JariBeanIconPack.information,
         title: '정보',
