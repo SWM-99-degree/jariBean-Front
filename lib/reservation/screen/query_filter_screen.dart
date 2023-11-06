@@ -168,6 +168,7 @@ class CalendarFilter extends ConsumerWidget {
         Duration(days: 365),
       ),
       locale: 'ko-KR',
+      availableGestures: AvailableGestures.none,
       headerStyle: HeaderStyle(
         titleCentered: true,
         formatButtonVisible: false,
@@ -239,12 +240,25 @@ class TimeFilter extends ConsumerWidget {
     );
     final startTime = ref.watch(searchQueryProvider).startTime;
     final endTime = ref.watch(searchQueryProvider).endTime;
+    final errorText = ref.watch(errorTextProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('시간', style: titleTextStyle),
         SizedBox(
           height: 16.h,
+        ),
+        Text(
+          errorText,
+          style: defaultFontStyleBlack.copyWith(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
+            color: Color(0xFFDF2D21),
+          ),
+        ),
+        SizedBox(
+          height: 8.h,
         ),
         Padding(
           padding: EdgeInsets.only(right: 20.w),
@@ -258,18 +272,9 @@ class TimeFilter extends ConsumerWidget {
                     context: context,
                     initialDateTime: startTime,
                     onDateTimeChanged: (value) {
-                      final isSet = ref
+                      ref
                           .read(searchQueryProvider.notifier)
                           .setStartTime(value);
-                      if (!isSet) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.only(bottom: 700.h),
-                            content: Text('시작 시간은 종료 시간보다 빨라야 합니다.'),
-                          ),
-                        );
-                      }
                     },
                   );
                 },
@@ -288,18 +293,7 @@ class TimeFilter extends ConsumerWidget {
                     context: context,
                     initialDateTime: endTime,
                     onDateTimeChanged: (value) {
-                      final isSet = ref
-                          .read(searchQueryProvider.notifier)
-                          .setEndTime(value);
-                      if (!isSet) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.only(bottom: 700.h),
-                            content: Text('종료 시간은 시작 시간보다 늦어야 합니다.'),
-                          ),
-                        );
-                      }
+                      ref.read(searchQueryProvider.notifier).setEndTime(value);
                     },
                   );
                 },
