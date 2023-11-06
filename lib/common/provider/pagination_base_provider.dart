@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/cafe/repository/cafe_repository.dart';
 import 'package:jari_bean/common/models/model_with_id.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/models/pagination_params.dart';
@@ -25,8 +26,13 @@ class PaginationBaseStateNotifier<T extends IModelWithId,
     int page = 0,
     bool fetchMore = false,
     bool forceRefetch = false,
+    Future<OffsetPagination<T>> Function({
+      required PaginationParams paginationParams,
+    })? paginate,
   }) async {
     try {
+      paginate ??= (await repository).paginate;
+
       if (state is OffsetPagination && !forceRefetch) {
         final pState = state as OffsetPagination;
 
@@ -72,7 +78,13 @@ class PaginationBaseStateNotifier<T extends IModelWithId,
         }
       }
 
-      final resp = await (await repository).paginate(
+      if (repository is Future<CafeSearchResultRepository>) {
+        if (paginate == (await repository).paginate) {
+          return [];
+        }
+      }
+
+      final resp = await paginate(
         paginationParams: paginationParams,
       );
 

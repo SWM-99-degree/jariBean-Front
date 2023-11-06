@@ -12,6 +12,20 @@ enum TableType {
   BACKREST,
 }
 
+final tableTypeDecode = {
+  'HEIGHT': TableType.HIGH,
+  'RECTANGLE': TableType.RECTANGLE,
+  'PLUG': TableType.PLUG,
+  'BACKREST': TableType.BACKREST,
+};
+
+final tableTypeEncode = {
+  TableType.HIGH: 'HEIGHT',
+  TableType.RECTANGLE: 'RECTANGLE',
+  TableType.PLUG: 'PLUG',
+  TableType.BACKREST: 'BACKREST',
+};
+
 final tableTypeButtonName = {
   TableType.HIGH: '높은의자',
   TableType.RECTANGLE: '직사각형',
@@ -34,29 +48,62 @@ class AvaliableTimeRange {
 }
 
 @JsonSerializable()
-class TableModel implements IModelWithId {
-  @JsonKey(name: 'tableId')
-  @override
-  final String id;
-  @JsonKey(name: 'tableName')
-  final String name;
-  @JsonKey(name: 'tableSeating')
-  final int maxHeadcount;
-  @JsonKey(name: 'tableImageUrl')
-  final String imgUrl;
-  final List<TableType> tableOptionsList;
+class TableDetailModel {
+  @JsonKey(name: 'tableDetailDto')
+  final TableDescriptionModel tableModel;
   @JsonKey(name: 'availableTimeList')
   final List<AvaliableTimeRange> avaliableTimeRangeList;
 
-  TableModel({
-    required this.id,
-    required this.name,
-    required this.maxHeadcount,
-    required this.imgUrl,
-    required this.tableOptionsList,
+  TableDetailModel({
+    required this.tableModel,
     required this.avaliableTimeRangeList,
   });
 
-  factory TableModel.fromJson(Map<String, dynamic> json) =>
-      _$TableModelFromJson(json);
+  factory TableDetailModel.fromJson(Map<String, dynamic> json) =>
+      _$TableDetailModelFromJson(json);
+}
+
+@JsonSerializable()
+class TableDescriptionModel implements IModelWithId {
+  @override
+  final String id;
+  @JsonKey(name: 'description')
+  final String name;
+  @JsonKey(name: 'image')
+  final String imgUrl;
+  @JsonKey(name: 'seating')
+  final int maxHeadcount;
+  @JsonKey(
+    fromJson: tableTypeFromJson,
+    toJson: tableTypeToJson,
+    name: 'tableOptionList',
+  )
+  final List<TableType> tableOptionsList;
+
+  TableDescriptionModel({
+    required this.id,
+    required this.name,
+    required this.imgUrl,
+    required this.maxHeadcount,
+    required this.tableOptionsList,
+  });
+
+  factory TableDescriptionModel.fromJson(Map<String, dynamic> json) =>
+      _$TableDescriptionModelFromJson(json);
+
+  static List<TableType> tableTypeFromJson(List<dynamic> json) {
+    return json.map((e) {
+      final type = tableTypeDecode[e];
+      if (type == null) {
+        throw Exception(
+          'TableType is not defined',
+        ); // if there is no type in tableTypeDecode, throw exception
+      }
+      return type;
+    }).toList();
+  }
+
+  static List<dynamic> tableTypeToJson(List<TableType> tableTypeList) {
+    return tableTypeList.map((e) => tableTypeEncode[e]).toList();
+  }
 }

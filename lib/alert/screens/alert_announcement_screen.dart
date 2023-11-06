@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/model/alert_announcement_model.dart';
 import 'package:jari_bean/alert/provider/alert_announcement_provider.dart';
 import 'package:jari_bean/common/component/pagination_list_view.dart';
@@ -38,6 +39,7 @@ class AlertAnnouncementScreen extends ConsumerWidget {
             size: 16.sp,
             color: GRAY_4,
           ),
+          onTap: () => context.go('/alert/announcement/${model.id}'),
         );
       },
     );

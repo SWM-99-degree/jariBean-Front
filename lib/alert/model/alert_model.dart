@@ -57,7 +57,7 @@ class AlertModel extends FcmMessageModel {
     final alertJson = Map<String, dynamic>.from(json);
     alertJson.addEntries(
       [
-        MapEntry('data', {'detailedBody': ''})
+        MapEntry('data', {'detailedBody': ''}),
       ],
     );
     return AlertModel.fromJson(alertJson);

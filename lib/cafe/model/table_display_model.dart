@@ -8,7 +8,7 @@ enum TableDisplayStatus {
   unavailableInScope,
 }
 
-class TableDisplayModel extends TableModel {
+class TableDisplayModel extends TableDetailModel {
   final DateTime displayStartTime;
   final DateTime displayEndTime;
   final bool isAvaliable;
@@ -16,28 +16,17 @@ class TableDisplayModel extends TableModel {
   final List<TableDisplayStatus> displayUnitList;
 
   TableDisplayModel({
-    required String id,
-    required String name,
-    required int maxHeadcount,
-    required String imgUrl,
-    required List<TableType> tableOptionsList,
-    required List<AvaliableTimeRange> avaliableTimeRangeList,
     required this.displayStartTime,
     required this.displayEndTime,
     required this.isAvaliable,
     required this.alternativeAvaliableTimeRangeList,
     required this.displayUnitList,
-  }) : super(
-          id: id,
-          name: name,
-          maxHeadcount: maxHeadcount,
-          imgUrl: imgUrl,
-          tableOptionsList: tableOptionsList,
-          avaliableTimeRangeList: avaliableTimeRangeList,
-        );
+    required super.tableModel,
+    required super.avaliableTimeRangeList,
+  }) : super();
 
   factory TableDisplayModel.calculateAvailablityFromTableModel({
-    required TableModel model,
+    required TableDetailModel model,
     required DateTime queryStartTime,
     required DateTime queryEndTime,
   }) {
@@ -47,8 +36,8 @@ class TableDisplayModel extends TableModel {
     final displayStartTime = queryStartTime.subtract(displayTimeExpander);
     final displayEndTime = queryEndTime.add(displayTimeExpander);
     final isAvaliable = model.avaliableTimeRangeList.any((element) {
-      return element.startTime.isBefore(queryStartTime) &&
-          element.endTime.isAfter(queryEndTime);
+      return !element.startTime.isAfter(queryStartTime) &&
+          !element.endTime.isBefore(queryEndTime);
     });
     final duration = Duration(minutes: 30);
     final List<AvaliableTimeRange> alternativeAvaliableTimeRangeListCandidates =
@@ -71,14 +60,18 @@ class TableDisplayModel extends TableModel {
       ),
     ];
     final List<AvaliableTimeRange> alternativeAvaliableTimeRangeList = [];
-    for (var element in alternativeAvaliableTimeRangeListCandidates) {
-      if (model.avaliableTimeRangeList.any((e) {
-        return e.startTime.isBefore(element.startTime) &&
-            e.endTime.isAfter(element.endTime);
-      })) {
-        alternativeAvaliableTimeRangeList.remove(element);
+
+    if (!isAvaliable) {
+      for (var element in alternativeAvaliableTimeRangeListCandidates) {
+        if (model.avaliableTimeRangeList.any((e) {
+          return !e.startTime.isAfter(element.startTime) &&
+              !e.endTime.isBefore(element.endTime);
+        })) {
+          alternativeAvaliableTimeRangeList.add(element);
+        }
       }
     }
+
     final List<TableDisplayStatus> displayUnitList = [];
 
     List<TableDisplayStatus> getReplaceUnit(
@@ -157,17 +150,13 @@ class TableDisplayModel extends TableModel {
     }
 
     return TableDisplayModel(
-      id: model.id,
-      name: model.name,
-      maxHeadcount: model.maxHeadcount,
-      imgUrl: model.imgUrl,
-      tableOptionsList: model.tableOptionsList,
-      avaliableTimeRangeList: model.avaliableTimeRangeList,
       displayStartTime: displayStartTime,
       displayEndTime: displayEndTime,
       isAvaliable: isAvaliable,
       displayUnitList: displayUnitList,
       alternativeAvaliableTimeRangeList: alternativeAvaliableTimeRangeList,
+      tableModel: model.tableModel,
+      avaliableTimeRangeList: model.avaliableTimeRangeList,
     );
   }
 }

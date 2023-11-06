@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,9 @@ import 'package:jari_bean/cafe/model/table_model.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/component/custom_outlined_button.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/models/location_model.dart';
+import 'package:jari_bean/common/provider/location_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
 import 'package:jari_bean/reservation/provider/search_query_provider.dart';
@@ -20,7 +25,11 @@ enum FilterType {
 }
 
 class QueryFilterScreen extends ConsumerWidget {
-  const QueryFilterScreen({super.key});
+  final bool isFromServiceArea;
+  const QueryFilterScreen({
+    this.isFromServiceArea = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,6 +55,10 @@ class QueryFilterScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (!isFromServiceArea) LocationFilter(),
+              SizedBox(
+                height: 16.h,
+              ),
               TimeFilter(),
               SizedBox(
                 height: 16.h,
@@ -65,8 +78,74 @@ class QueryFilterScreen extends ConsumerWidget {
               CustomButton(
                 text: '검색하기',
                 onPressed: () {
-                  context.push('/result');
+                  context.push('/search/result');
                 },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LocationFilter extends ConsumerWidget {
+  const LocationFilter({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final titleTextStyle = defaultFontStyleBlack.copyWith(
+      fontSize: 16.sp,
+      fontWeight: FontWeight.w700,
+      height: 1.5,
+    );
+    final geocode = ref.watch(geocodeProvider);
+    final location = ref.watch(locationProvider);
+    final bool isSet = location is LocationModel;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('위치', style: titleTextStyle),
+        SizedBox(
+          height: 8.h,
+        ),
+        Padding(
+          padding: EdgeInsets.only(right: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                geocode,
+                style: defaultFontStyleBlack.copyWith(
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(
+                width: 100.w,
+                height: 40.h,
+                child: CustomButton(
+                  text: isSet ? '초기화' : '현재 위치',
+                  onPressed: () async {
+                    if (isSet) {
+                      ref.read(searchQueryProvider.notifier).location = null;
+                      ref.read(geocodeProvider.notifier).resetGeocode();
+                    } else {
+                      await ref.read(locationProvider.notifier).getLocation();
+                      final location = ref.read(locationProvider);
+                      if (location is LocationModel) {
+                        ref.read(searchQueryProvider.notifier).location =
+                            location;
+                        final isSuccess = await ref
+                            .read(geocodeProvider.notifier)
+                            .getGeocode();
+                        if (!isSuccess) {
+                          ref.read(searchQueryProvider.notifier).location =
+                              null;
+                        }
+                      }
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -95,6 +174,7 @@ class CalendarFilter extends ConsumerWidget {
         Duration(days: 365),
       ),
       locale: 'ko-KR',
+      availableGestures: AvailableGestures.none,
       headerStyle: HeaderStyle(
         titleCentered: true,
         formatButtonVisible: false,
@@ -166,12 +246,25 @@ class TimeFilter extends ConsumerWidget {
     );
     final startTime = ref.watch(searchQueryProvider).startTime;
     final endTime = ref.watch(searchQueryProvider).endTime;
+    final errorText = ref.watch(errorTextProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('시간', style: titleTextStyle),
         SizedBox(
           height: 16.h,
+        ),
+        Text(
+          errorText,
+          style: defaultFontStyleBlack.copyWith(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            height: 1.5,
+            color: Color(0xFFDF2D21),
+          ),
+        ),
+        SizedBox(
+          height: 8.h,
         ),
         Padding(
           padding: EdgeInsets.only(right: 20.w),
@@ -187,7 +280,7 @@ class TimeFilter extends ConsumerWidget {
                     onDateTimeChanged: (value) {
                       ref
                           .read(searchQueryProvider.notifier)
-                          .startTimeFromDateTime = value;
+                          .setStartTime(value);
                     },
                   );
                 },
@@ -206,9 +299,7 @@ class TimeFilter extends ConsumerWidget {
                     context: context,
                     initialDateTime: endTime,
                     onDateTimeChanged: (value) {
-                      ref
-                          .read(searchQueryProvider.notifier)
-                          .endTimeFromDateTime = value;
+                      ref.read(searchQueryProvider.notifier).setEndTime(value);
                     },
                   );
                 },
@@ -268,6 +359,7 @@ class TimeFilter extends ConsumerWidget {
     required DateTime initialDateTime,
     required Function(DateTime) onDateTimeChanged,
   }) async {
+    Timer? debounce;
     showCupertinoModalPopup(
       context: context,
       builder: (_) => Align(
@@ -280,10 +372,15 @@ class TimeFilter extends ConsumerWidget {
               SizedBox(
                 height: 200.h,
                 child: CupertinoDatePicker(
-                  minuteInterval: 15,
+                  minuteInterval: RESERVATION_TIME_UNIT,
                   mode: CupertinoDatePickerMode.time,
                   initialDateTime: initialDateTime,
-                  onDateTimeChanged: onDateTimeChanged,
+                  onDateTimeChanged: (DateTime dateTime) {
+                    if (debounce?.isActive ?? false) debounce?.cancel();
+                    debounce = Timer(const Duration(milliseconds: 500), () {
+                      onDateTimeChanged(dateTime);
+                    });
+                  },
                 ),
               ),
             ],

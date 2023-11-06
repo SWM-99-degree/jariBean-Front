@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jari_bean/cafe/model/cafe_detail_model.dart';
+import 'package:jari_bean/cafe/provider/cafe_provider.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_info_screen.dart';
 import 'package:jari_bean/cafe/screen/cafe_detail_table_screen.dart';
+import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 
-class CafeDetailScreen extends StatefulWidget {
+class CafeDetailScreen extends ConsumerStatefulWidget {
   final String cafeId;
 
   const CafeDetailScreen({
@@ -15,13 +20,14 @@ class CafeDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<CafeDetailScreen> createState() => _CafeDetailScreenState();
+  ConsumerState<CafeDetailScreen> createState() => _CafeDetailScreenState();
 }
 
-class _CafeDetailScreenState extends State<CafeDetailScreen>
+class _CafeDetailScreenState extends ConsumerState<CafeDetailScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final ScrollController _scrollController = ScrollController();
+  double expandedHeight = 400;
 
   @override
   void initState() {
@@ -29,15 +35,34 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
     _tabController = TabController(length: 2, vsync: this, initialIndex: 0);
     _scrollController.addListener(() {
       if (_scrollController.offset > 400) {
-        if (!_tabController.indexIsChanging) {
+        if (_tabController.index == 0 && !_tabController.indexIsChanging) {
           _tabController.animateTo(1);
-          setState(() {});
+          setState(() {
+            _tabController.index = 1;
+            expandedHeight = 0;
+          });
         }
+      }
+    });
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        return;
+      }
+      if (_tabController.index == 0) {
+        _scrollController.animateTo(
+          0,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        setState(() {
+          expandedHeight = 400;
+        });
       } else {
-        if (!_tabController.indexIsChanging) {
-          _tabController.animateTo(0);
-          setState(() {});
-        }
+        _scrollController.animateTo(
+          400,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
       }
     });
   }
@@ -51,8 +76,38 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cafeInfoStatus = ref.watch(cafeInformationProvider(widget.cafeId));
+    if (cafeInfoStatus is CafeDetailModelLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    if (cafeInfoStatus is CafeDetailModelError) {
+      return Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              '알 수 없는 카페입니다.',
+              style: defaultFontStyleBlack.copyWith(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Center(
+              child: CustomButton(text: '뒤로가기', onPressed: () => context.pop()),
+            ),
+          ],
+        ),
+      );
+    }
+    final cafeDetailModel = cafeInfoStatus as CafeDetailModel;
     return DefaultLayout(
-      title: 'GRAZ Coffee 강남',
+      title: cafeDetailModel.cafeModel.title,
       child: DefaultTabController(
         length: 2,
         child: CustomScrollView(
@@ -60,12 +115,12 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
           slivers: [
             SliverAppBar(
               automaticallyImplyLeading: false,
-              expandedHeight: 400,
+              expandedHeight: expandedHeight,
               toolbarHeight: 0,
               backgroundColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 background: Image.network(
-                  'https://picsum.photos/400/600',
+                  cafeDetailModel.cafeModel.imgUrl ?? '',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -73,47 +128,20 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
             SliverPersistentHeader(
               delegate: TabBarDelegate(
                 controller: _tabController,
-                update: (int index) {
-                  if (!_tabController.indexIsChanging) {
-                    if (index == 0) {
-                      _scrollController.animateTo(
-                        0,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                      _tabController.animateTo(0);
-                    } else {
-                      _scrollController.animateTo(
-                        400,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                      _tabController.animateTo(1);
-                    }
-                  }
-                  setState(() {});
-                },
               ),
               pinned: true,
             ),
             SliverFillRemaining(
-              // 탭바 뷰 내부에는 스크롤이 되는 위젯이 들어옴.
               hasScrollBody: true,
               child: TabBarView(
                 controller: _tabController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  CafeDetailInfoScreen(
-                    cafeId: '123',
-                    cafeAddress: '서울 성동구 고산자로 234(우) 04744',
-                    cafePhoneNumber: '1522-3232',
-                    cafeRunTime: '월~목 07:00 ~ 22:00',
-                    cafeUrl: 'www.starbucks.co.kr',
-                  ),
-                  CafeDetailTableScreen(cafeId: widget.cafeId)
+                  CafeDetailInfoScreen.fromModel(cafeDetailModel),
+                  CafeDetailTableScreen(cafeId: widget.cafeId),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -123,9 +151,7 @@ class _CafeDetailScreenState extends State<CafeDetailScreen>
 
 class TabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabController controller;
-  final Function(int) update;
   const TabBarDelegate({
-    required this.update,
     required this.controller,
   });
 
@@ -146,7 +172,7 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
               color: Colors.white,
               child: TextButton(
                 onPressed: () {
-                  update(0);
+                  controller.animateTo(0);
                 },
                 child: Text(
                   "카페정보",
@@ -167,7 +193,7 @@ class TabBarDelegate extends SliverPersistentHeaderDelegate {
               color: Colors.white,
               child: TextButton(
                 onPressed: () {
-                  update(1);
+                  controller.animateTo(1);
                 },
                 child: Text(
                   "테이블",

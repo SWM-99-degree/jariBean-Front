@@ -28,7 +28,7 @@ abstract class AlertAnnouncementRepository
       _AlertAnnouncementRepository;
 
   @override
-  @GET('/')
+  @GET('')
   @Headers({
     'accessToken': 'true',
   })
@@ -36,7 +36,7 @@ abstract class AlertAnnouncementRepository
     @Queries() PaginationParams? paginationParams = const PaginationParams(),
   });
 
-  @GET('/')
+  @GET('')
   @Headers({
     'accessToken': 'true',
   })
