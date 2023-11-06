@@ -10,6 +10,7 @@ import 'package:jari_bean/cafe/model/table_display_model.dart';
 import 'package:jari_bean/common/component/custom_bottom_sheet.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/const/data.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/history/component/booked_details.dart';
 import 'package:jari_bean/history/model/booked_details_model.dart';
@@ -377,7 +378,9 @@ Widget buildBasic() {
         height: 16.h,
       ),
       FilledButton(
-        onPressed: () {},
+        onPressed: () {
+          rootNavigatorKey.currentContext!.push('/search');
+        },
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(
             PRIMARY_YELLOW,
