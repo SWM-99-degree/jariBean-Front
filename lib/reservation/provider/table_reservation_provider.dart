@@ -4,7 +4,7 @@ import 'package:jari_bean/reservation/repository/table_repository.dart';
 
 final tableReservationProvider = StateNotifierProvider.autoDispose<
     TableReservationStateNotifier, TableReservationModel?>((ref) {
-  final repository = ref.watch(tableReservationRepositoryProvider);
+  final repository = ref.read(tableReservationRepositoryProvider);
   return TableReservationStateNotifier(
     repository: repository,
   );
