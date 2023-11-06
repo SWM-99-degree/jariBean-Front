@@ -9,7 +9,7 @@
 
 
     <application
-        android:label="jari_bean"
+        android:label="자리:Bean"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"

@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Jari Bean</string>
+		<string>자리:Bean</string>
 		<key>NSBonjourServices</key>
 		<array>
 			<string>_dartobservatory._tcp</string>
