@@ -107,8 +107,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         headerSliverBuilder: (_, __) => [
           SliverAppBar(
             leading: SizedBox(),
-            expandedHeight: 230,
-            collapsedHeight: 235,
+            expandedHeight: 220,
+            collapsedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
               background: Column(
                 children: [
@@ -121,11 +121,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                     color: PRIMARY_YELLOW,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
-                          '오늘 나의 자리',
+                          '나의 자리',
                           style: defaultFontStyleWhite.copyWith(
-                            fontSize: 16.sp,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             height: 1.0,
                           ),
