@@ -135,7 +135,13 @@ class LocationFilter extends ConsumerWidget {
                       if (location is LocationModel) {
                         ref.read(searchQueryProvider.notifier).location =
                             location;
-                        await ref.read(geocodeProvider.notifier).getGeocode();
+                        final isSuccess = await ref
+                            .read(geocodeProvider.notifier)
+                            .getGeocode();
+                        if (!isSuccess) {
+                          ref.read(searchQueryProvider.notifier).location =
+                              null;
+                        }
                       }
                     }
                   },

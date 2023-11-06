@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:jari_bean/common/models/location_model.dart';
 import 'package:jari_bean/common/repository/geocode_repository.dart';
+import 'package:jari_bean/reservation/provider/search_query_provider.dart';
 
 final locationProvider =
     StateNotifierProvider<LocationStateNotifier, LocationModelBase>((ref) {
@@ -45,6 +46,10 @@ class LocationStateNotifier extends StateNotifier<LocationModelBase> {
 final geocodeProvider =
     StateNotifierProvider.autoDispose<GeocodeStateNotifier, String>(
   (ref) {
+    ref.onDispose(() {
+      ref.read(searchQueryProvider.notifier).location =
+          null; // for reset location in search query
+    });
     return GeocodeStateNotifier(
       geocodeRepository: ref.read(geocodeRepositoryProvider),
       locationProvider: ref.read(locationProvider.notifier),
@@ -62,10 +67,10 @@ class GeocodeStateNotifier extends StateNotifier<String> {
     getGeocode();
   }
 
-  Future<void> getGeocode() async {
+  Future<bool> getGeocode() async {
     try {
       if (locationProvider.state is! LocationModel) {
-        return;
+        return false;
       }
       final location = locationProvider.state as LocationModel;
       final geocodeModel = await geocodeRepository.getGeocode(
@@ -75,16 +80,18 @@ class GeocodeStateNotifier extends StateNotifier<String> {
         'WGS84',
       );
       state = geocodeModel.documents.last.addressName;
+      return true;
     } catch (e) {
       print(e);
       if (e is DioException) {
         if (e.response?.statusCode == 400) {
           state = errorGeocodeStringNotServiceArea;
-          locationProvider.state = LocationModelLoading();
-          return;
+          locationProvider.resetLocation();
+          return false;
         }
       }
       state = errorGeocodeString;
+      return false;
     }
   }
 
