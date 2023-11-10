@@ -358,6 +358,7 @@ class ProfileScreen extends ConsumerWidget {
   }) {
     return GestureDetector(
       onTap: () => onTap(),
+      behavior: HitTestBehavior.translucent,
       child: Container(
         height: 48.h,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
