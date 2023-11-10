@@ -39,33 +39,29 @@ class CustomCheckboxTile extends StatelessWidget {
             padding: EdgeInsets.zero,
             alignment: Alignment.center,
           ),
+          onPressed: () => onChanged(!isChecked),
+          child: Text(
+            title,
+            style: defaultFontStyleBlack.copyWith(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              height: 1.0,
+            ),
+          ),
+        ),
+        IconButton(
+          alignment: Alignment.centerLeft,
+          icon: Icon(
+            JariBeanIconPack.arrow_right,
+            size: 24.sp,
+            color: PRIMARY_ORANGE,
+          ),
           onPressed: () async {
             Uri url = Uri.parse(this.url);
             if (!await launchUrl(url)) {
               throw Exception('Could not launch $url');
             }
           },
-          child: Text.rich(
-            TextSpan(
-              style: defaultFontStyleBlack.copyWith(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                height: 1.0,
-              ),
-              children: [
-                TextSpan(
-                  text: title,
-                ),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: Icon(
-                    JariBeanIconPack.arrow_right,
-                    size: 14.sp,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ],
     );
