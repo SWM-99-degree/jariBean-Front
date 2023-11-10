@@ -114,7 +114,7 @@ class _PaginationListViewState<T extends IModelWithId>
               child: Center(
                 child: op is OffsetPaginationFetchingMore
                     ? CircularProgressIndicator()
-                    : Text('더이상 데이터가 없습니다'),
+                    : Text('더 이상 데이터가 없습니다'),
               ),
             );
           }
