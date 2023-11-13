@@ -24,7 +24,6 @@ class FcmTokenStateNotifier extends StateNotifier<String> {
     this.dio,
   ) : super('') {
     getToken();
-    uploadToken();
   }
 
   Future<void> getToken() async {
