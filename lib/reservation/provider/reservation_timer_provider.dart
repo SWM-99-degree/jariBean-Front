@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final reservationTimerProvider = StateNotifierProvider<TimerStateNotifier, int>(
   (ref) {
+    ref.onDispose(() {
+      print('timer Disposed');
+    });
     return TimerStateNotifier();
   },
 );

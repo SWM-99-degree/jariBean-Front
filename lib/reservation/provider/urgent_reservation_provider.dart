@@ -10,7 +10,7 @@ final urgentReservationProvider = StateNotifierProvider.autoDispose<
   (ref) {
     return UrgentReservationStateNotifier(
       reservation: ref.watch(todayReservationProvider),
-      initTimerFunction: ref.watch(reservationTimerProvider.notifier).initTimer,
+      initTimerFunction: ref.read(reservationTimerProvider.notifier).initTimer,
     );
   },
 );
@@ -31,6 +31,7 @@ class UrgentReservationStateNotifier
       state = null;
       return;
     }
+    await Future(() {}); // fake future prevent error
     final pReservation = reservation as ReservationModel;
     int initTimeLeft =
         pReservation.startTime.difference(DateTime.now()).inSeconds;
