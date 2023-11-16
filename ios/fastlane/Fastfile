@@ -44,9 +44,9 @@ lane :beta do
   version_number = version.split("+")[0]
   build_number = version.split("+")[1].to_i
   api_key = app_store_connect_api_key(
-    key_id: "5RPD6CNW7P",
-    issuer_id: "fa2b2b2b-b525-42c2-89b2-a473d4189d43",
-    key_filepath: "./fastlane/AuthKey_5RPD6CNW7P.p8",
+    key_id: ENV['APP_STORE_CONNECT_KEY_ID'],
+    issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+    key_filepath: ENV['APP_STORE_CONNECT_KEY_FILEPATH'],
     duration: 1200,
   )
   match(type: "appstore")
