@@ -13,11 +13,69 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:ios)
+# default_platform(:ios)
 
-platform :ios do
-  desc "Description of what the lane does"
-  lane :custom_lane do
-    # add actions here: https://docs.fastlane.tools/actions
-  end
+# platform :ios do
+#   desc "Description of what the lane does"
+#   lane :custom_lane do
+#     # add actions here: https://docs.fastlane.tools/actions
+#   end
+# end
+
+error do |lane, exception, options|
+  discord_notifier(
+   webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Error occurred",
+    description: "Error occurred #{exception}",
+  )
+end
+
+desc "build app and upload to testflight"
+lane :beta do
+  discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Build started",
+    description: "Build started",
+  )
+  yaml_file_path = "../../pubspec.yaml"
+  data = YAML.load_file(yaml_file_path)
+  version = data["version"]
+
+  version_number = version.split("+")[0]
+  build_number = version.split("+")[1].to_i
+  api_key = app_store_connect_api_key(
+    key_id: "5RPD6CNW7P",
+    issuer_id: "fa2b2b2b-b525-42c2-89b2-a473d4189d43",
+    key_filepath: "./fastlane/AuthKey_5RPD6CNW7P.p8",
+    duration: 1200,
+  )
+  match(type: "appstore")
+  increment_version_number(
+      version_number: version_number,
+  )
+  increment_build_number(
+      build_number: build_number,
+  )
+  sh("flutter", "clean")
+  sh("flutter", "pub", "get")
+  sh("pod", "install")
+  build_app(
+    configuration: "Release",
+  )
+  discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Build succeeded",
+    description: "Build succeeded",
+  )
+  upload_to_testflight(
+    api_key: api_key,
+    app_version: version_number,
+    notify_external_testers: false,
+  )
+  discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "New build uploaded to TestFlight",
+    description: "New build uploaded to TestFlight",
+  )
+  
 end

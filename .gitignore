@@ -48,4 +48,10 @@ app.*.map.json
 /lib/common/const/data.dart
 /android/app/google-services.json
 
-**/*.g.dart
+*.g.dart
+
+*.ipa
+*.zip
+
+*.env
+*.p8
