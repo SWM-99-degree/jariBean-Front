@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: discord_notifier" time="0.338849">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: flutter clean" time="3.680288">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: flutter pub get" time="3.053806">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

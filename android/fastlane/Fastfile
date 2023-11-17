@@ -13,26 +13,37 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
-default_platform(:android)
+error do |lane, exception, options|
+  discord_notifier(
+   webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Error occurred",
+    description: "Error occurred #{exception}",
+  )
+end
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
-
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
-
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Android Build started",
+    description: "Android Build started",
+    )
+    sh("flutter", "clean")
+    Dir.chdir("../../") do
+      sh("flutter", "pub", "get")
+    end
+    sh("flutter", "build", "appbundle")
+    upload_to_play_store(
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,  
+      skip_upload_images: true,  
+      skip_upload_screenshots: true,  
+    )
+    discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "New build uploaded to play store",
+    description: "New build uploaded to play store",
+    )
   end
 end

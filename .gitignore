@@ -48,10 +48,16 @@ app.*.map.json
 /lib/common/const/data.dart
 /android/app/google-services.json
 
+/android/fastlane/*.json
+/android/fastlane/metadata/*
+
+
+
 *.g.dart
 
 *.ipa
 *.zip
+*.mobileprovision
 
 *.env
 *.p8
