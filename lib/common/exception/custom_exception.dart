@@ -99,3 +99,31 @@ class UnknownCafeException extends CustomException {
           ),
         );
 }
+
+class GPSException extends CustomException {
+  GPSException()
+      : super(
+          message: 'GPS를 켜주세요.',
+          dialogModel: CustomDialogModel(
+            title: 'GPS 오류',
+            description: 'GPS를 켜주세요.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
+
+class MatchingException extends CustomException {
+  MatchingException()
+      : super(
+          message: '매칭 중 오류가 발생했습니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 오류',
+            description: '매칭 중 오류가 발생했습니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
