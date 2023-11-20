@@ -1,14 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
+import 'package:jari_bean/common/models/location_model.dart';
+import 'package:jari_bean/common/provider/location_provider.dart';
+import 'package:jari_bean/matching/model/matching_body_model.dart';
+import 'package:jari_bean/matching/repository/matching_repository.dart';
 
 final matchingHeadcountProvider =
-    StateNotifierProvider<MatchingStateNotifier, int>(
-  (ref) => MatchingStateNotifier(),
+    StateNotifierProvider<MatchingHeadcountStateNotifier, int>(
+  (ref) => MatchingHeadcountStateNotifier(),
 );
 
-class MatchingStateNotifier extends StateNotifier<int> {
+class MatchingHeadcountStateNotifier extends StateNotifier<int> {
   static const maxHeadcount = 6;
   static const minHeadcount = 1;
-  MatchingStateNotifier() : super(2);
+  MatchingHeadcountStateNotifier() : super(2);
 
   int increment() {
     if (state < maxHeadcount) {
@@ -22,5 +27,45 @@ class MatchingStateNotifier extends StateNotifier<int> {
       state--;
     }
     return state;
+  }
+}
+
+final matchingProvider =
+    StateNotifierProvider<MatchingStateNotifier, MatchingBodyModel>((ref) {
+  final headcount = ref.watch(matchingHeadcountProvider);
+  final location = ref.watch(locationProvider);
+  final repository = ref.read(matchingRepositoryProvider);
+  if (location is! LocationModel) {
+    throw GPSException();
+  }
+  return MatchingStateNotifier(
+    headcount: headcount,
+    location: location,
+    repository: repository,
+  );
+});
+
+class MatchingStateNotifier extends StateNotifier<MatchingBodyModel> {
+  final int headcount;
+  final LocationModel location;
+  final MatchingRepository repository;
+  MatchingStateNotifier({
+    required this.headcount,
+    required this.location,
+    required this.repository,
+  }) : super(
+          MatchingBodyModel(
+            headCount: headcount,
+            location: location,
+          ),
+        );
+
+  Future<void> matching() async {
+    try {
+      await repository.matching(body: state);
+    } catch (e) {
+      print(e);
+      throw MatchingException();
+    }
   }
 }
