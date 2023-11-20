@@ -53,7 +53,7 @@ class FcmMessageModel implements IModelWithId {
       type: Utils.getPushMessageType(message.data['type']),
       data: Utils.getPushMessageData(
         type: message.data['type'],
-        data: message.data['data'],
+        data: message.data,
       ),
     );
   }
