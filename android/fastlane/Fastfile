@@ -22,18 +22,22 @@ error do |lane, exception, options|
 end
 
 platform :android do
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    discord_notifier(
-    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
-    title: "Android Build started",
-    description: "Android Build started",
-    )
+  desc "Build appbundle"
+  lane :build do
     sh("flutter", "clean")
     Dir.chdir("../../") do
       sh("flutter", "pub", "get")
     end
     sh("flutter", "build", "appbundle")
+  end
+
+  lane :deploy do
+    discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Android Deploy Build started",
+    description: "Android Deploy Build started",
+    )
+    build
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       skip_upload_metadata: true,  
@@ -46,4 +50,26 @@ platform :android do
     description: "New build uploaded to play store",
     )
   end
+
+  lane :deploy_beta do
+    discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "Android Beta Build started",
+    description: "Android Beta Build started",
+    )
+    build
+    upload_to_play_store(
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      track: "alpha",
+      skip_upload_metadata: true,  
+      skip_upload_images: true,  
+      skip_upload_screenshots: true,  
+    )
+    discord_notifier(
+    webhook_url: ENV['DISCORD_WEBHOOK_URL'],
+    title: "New build uploaded to play store",
+    description: "New build uploaded to play store",
+    )
+  end
+  
 end
