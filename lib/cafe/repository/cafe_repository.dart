@@ -60,4 +60,10 @@ abstract class CafeRepository {
     'accessToken': 'true',
   })
   Future<CafeDetailModel> getCafeInfo(@Path('id') String id);
+
+  @GET('/{id}/summary')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<CafeDescriptionModel> getCafeSummary(@Path('id') String id);
 }
