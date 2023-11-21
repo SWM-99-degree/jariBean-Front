@@ -8,7 +8,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/exception/custom_exception_handler.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
@@ -22,7 +21,6 @@ import 'package:intl/date_symbol_data_local.dart';
 var logger = log.Logger();
 
 Future requestPermissionIOS(FirebaseMessaging fbMsg) async {
-  // NotificationSettings settings =
   await fbMsg.requestPermission(
     alert: true,
     announcement: false,
@@ -58,9 +56,7 @@ void main() async {
   final container = ProviderContainer(observers: [Logger()]);
 
   await dotenv.load(fileName: "lib/common/config/.env");
-  await Firebase.initializeApp(
-      // options: DefaultFirebaseOptions.currentPlatform,
-      );
+  await Firebase.initializeApp();
 
   await FirebaseMessaging.instance.requestPermission(
     alert: true,
@@ -73,7 +69,7 @@ void main() async {
   );
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
+    alert: true,
     badge: true,
     sound: true,
   );
@@ -94,8 +90,7 @@ void main() async {
   FirebaseMessaging.onMessageOpenedApp.listen(
     (message) => fcmOnOpenedAppHandler(
       message: message,
-      goRouter: container.read(goRouterProvider),
-      alertProvider: container.read(alertProvider.notifier),
+      container: container,
     ),
   );
 
