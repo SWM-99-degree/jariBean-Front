@@ -74,30 +74,14 @@ class FcmDataModelBase {
 }
 
 @JsonSerializable()
-class MatchingBaseDataModel extends FcmDataModelBase {
+class MatchingSuccessModel extends FcmDataModelBase {
+  final String cafeId;
   final String matchingId;
 
-  MatchingBaseDataModel({
-    required this.matchingId,
-  });
-
-  factory MatchingBaseDataModel.fromJson(Map<String, dynamic> json) =>
-      _$MatchingBaseDataModelFromJson(json);
-
-  @override
-  Map<String, dynamic> toJson() => _$MatchingBaseDataModelToJson(this);
-}
-
-@JsonSerializable()
-class MatchingSuccessModel extends MatchingBaseDataModel {
-  final String cafeId;
-
   MatchingSuccessModel({
-    required String matchingId,
     required this.cafeId,
-  }) : super(
-          matchingId: matchingId,
-        );
+    required this.matchingId,
+  }) : super();
 
   factory MatchingSuccessModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingSuccessModelFromJson(json);
@@ -107,12 +91,8 @@ class MatchingSuccessModel extends MatchingBaseDataModel {
 }
 
 @JsonSerializable()
-class MatchingFailModel extends MatchingBaseDataModel {
-  MatchingFailModel({
-    required String matchingId,
-  }) : super(
-          matchingId: matchingId,
-        );
+class MatchingFailModel extends FcmDataModelBase {
+  MatchingFailModel() : super();
 
   factory MatchingFailModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingFailModelFromJson(json);
@@ -122,12 +102,8 @@ class MatchingFailModel extends MatchingBaseDataModel {
 }
 
 @JsonSerializable()
-class MatchingCancelModel extends MatchingBaseDataModel {
-  MatchingCancelModel({
-    required String matchingId,
-  }) : super(
-          matchingId: matchingId,
-        );
+class MatchingCancelModel extends FcmDataModelBase {
+  MatchingCancelModel() : super();
 
   factory MatchingCancelModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingCancelModelFromJson(json);
@@ -137,12 +113,8 @@ class MatchingCancelModel extends MatchingBaseDataModel {
 }
 
 @JsonSerializable()
-class MatchingUrgentModel extends MatchingBaseDataModel {
-  MatchingUrgentModel({
-    required String matchingId,
-  }) : super(
-          matchingId: matchingId,
-        );
+class MatchingUrgentModel extends FcmDataModelBase {
+  MatchingUrgentModel() : super();
 
   factory MatchingUrgentModel.fromJson(Map<String, dynamic> json) =>
       _$MatchingUrgentModelFromJson(json);

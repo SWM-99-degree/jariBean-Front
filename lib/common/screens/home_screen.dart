@@ -93,9 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               body: '메뚜기 월드에 오신걸 환영합니다~',
               type: PushMessageType.matchingFail,
               receivedAt: DateTime.now().subtract(Duration(days: 1)),
-              data: MatchingFailModel(
-                matchingId: '123',
-              ),
+              data: MatchingFailModel(),
             );
             await alert.insertAlert(alertModel);
           } else {
