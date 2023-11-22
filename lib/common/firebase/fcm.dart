@@ -4,12 +4,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
+import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
 
 final fcmTokenProvider =
     StateNotifierProvider<FcmTokenStateNotifier, String>((ref) {
@@ -109,6 +112,27 @@ fcmActionHandler({
   container.read(alertProvider.notifier).addAlertFromFcmMessage(
         message,
       );
+  switch (message.type) {
+    case PushMessageType.matchingSuccess:
+      final pData = message.data as MatchingSuccessModel;
+      container.read(matchingInfoProvider.notifier).applyMatchingInfo(
+            matchingId: pData.matchingId,
+            cafeId: pData.cafeId,
+            startTime: DateTime.now(),
+          );
+      container
+          .read(matchingTimerProvider.notifier)
+          .initTimer(initTimeLeft: 600);
+      context.push('/home?selection=matching');
+      break;
+    case PushMessageType.matchingFail:
+      if (GoRouter.of(context).location == '/matching/proceeding') {
+        context.pop();
+      }
+      throw MatchingFailedException();
+    default:
+      break;
+  }
 }
 
 final launchedByFCMProvider = StateProvider<RemoteMessage?>((ref) => null);

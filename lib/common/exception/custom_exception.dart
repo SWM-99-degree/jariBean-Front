@@ -150,3 +150,17 @@ class DuplicatedMatchingException extends CustomException {
           ),
         );
 }
+
+class MatchingFailedException extends CustomException {
+  MatchingFailedException()
+      : super(
+          message: '주변 카페가 수락하지 않아 매칭에 실패했습니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 실패',
+            description: '매칭에 실패했습니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
