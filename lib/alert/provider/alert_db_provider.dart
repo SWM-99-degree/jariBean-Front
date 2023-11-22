@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 final alertDBProvider = Provider<Future<Database>>((ref) async {
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'alert_db.db');
-  if (kDebugMode) deleteDatabase(path); // Todo: remove this line in production
+  if (kDebugMode) deleteDatabase(path); // remove db when debug
   final db = await openDatabase(
     path,
     version: 1,
