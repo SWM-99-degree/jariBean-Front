@@ -21,9 +21,23 @@ final matchingRepositoryProvider = Provider<MatchingRepository>(
 abstract class MatchingRepository {
   factory MatchingRepository(Dio dio, {String baseUrl}) = _MatchingRepository;
 
-  @POST('/match')
+  @POST('/matching')
   @Headers({
     'accessToken': 'true',
   })
   Future<void> matching({@Body() required MatchingBodyModel body});
+
+  @DELETE('/matching/before')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> cancelMatchingInEnqueued();
+
+  @PUT('/matching/after')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<void> cancelMatchingInMatched({
+    @Body() required String matchingId,
+  });
 }
