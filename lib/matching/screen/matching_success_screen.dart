@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jari_bean/cafe/model/cafe_description_model.dart';
+import 'package:jari_bean/cafe/provider/cafe_provider.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
@@ -15,6 +16,12 @@ class MatchingSuccessScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final matchingInfo = ref.watch(matchingInfoProvider);
+    if (matchingInfo == null) {
+      return const Text('잘못된 접근입니다.');
+    }
+    final cafe =
+        ref.watch(simplifiedCafeInformationProvider(matchingInfo.cafeId));
     final timeLeftInSeconds = ref.watch(matchingTimerProvider);
     return ListView(
       children: [
@@ -29,14 +36,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
           padding: EdgeInsets.all(20.w),
           child: Column(
             children: [
-              DefaultCardLayout.fromModel(
-                model: CafeDescriptionModel.fromJson({
-                  'cafeId': '1',
-                  'cafeName': '스타벅스 고대점',
-                  'cafeAddress': '서울특별시 성북구 고려대로 24실 51',
-                  'cafeImageUrl': 'https://picsum.photos/250?image=9',
-                }),
-              ),
+              DefaultCardLayout.fromModel(model: cafe),
               SizedBox(
                 height: 24.h,
               ),
@@ -73,9 +73,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
                       model: CustomButtonModel(
                         title: '길찾기',
                         onPressed: () {
-                          ref
-                              .read(matchingTimerProvider.notifier)
-                              .initTimer(initTimeLeft: 600);
+                          throw UnimplementedException();
                         },
                       ),
                     ),
