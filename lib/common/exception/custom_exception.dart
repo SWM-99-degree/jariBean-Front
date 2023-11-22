@@ -1,5 +1,7 @@
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/models/custom_dialog_model.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 
 class CustomException implements Exception {
   final String message;
@@ -123,6 +125,27 @@ class MatchingException extends CustomException {
             description: '매칭 중 오류가 발생했습니다.',
             customButtonModel: CustomButtonModel(
               title: '확인',
+            ),
+          ),
+        );
+}
+
+class DuplicatedMatchingException extends CustomException {
+  DuplicatedMatchingException()
+      : super(
+          message: '이미 매칭 중입니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 오류',
+            description: '이미 매칭 중입니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+              onPressed: () {
+                final context = rootNavigatorKey.currentContext!;
+                context.pop();
+                if (GoRouter.of(context).location == '/matching/proceeding') {
+                  context.pop();
+                }
+              },
             ),
           ),
         );

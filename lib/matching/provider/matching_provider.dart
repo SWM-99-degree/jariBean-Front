@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/models/location_model.dart';
@@ -63,9 +64,12 @@ class MatchingStateNotifier extends StateNotifier<MatchingBodyModel> {
   Future<void> matching() async {
     try {
       await repository.matching(body: state);
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.badResponse) {
+        throw DuplicatedMatchingException();
+      }
     } catch (e) {
-      print(e);
-      throw MatchingException();
+      throw MatchingFailedException();
     }
   }
 }
