@@ -9,7 +9,7 @@ import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
-import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
+import 'package:jari_bean/matching/provider/matching_info_provider.dart';
 
 class MatchingSuccessScreen extends ConsumerWidget {
   const MatchingSuccessScreen({super.key});

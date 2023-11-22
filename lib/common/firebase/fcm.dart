@@ -12,7 +12,7 @@ import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
-import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
+import 'package:jari_bean/matching/provider/matching_info_provider.dart';
 
 final fcmTokenProvider =
     StateNotifierProvider<FcmTokenStateNotifier, String>((ref) {

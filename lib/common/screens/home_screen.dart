@@ -12,7 +12,7 @@ import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
-import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
+import 'package:jari_bean/matching/provider/matching_info_provider.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';

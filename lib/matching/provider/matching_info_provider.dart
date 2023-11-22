@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/matching/repository/matching_repository.dart';
 import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
 
 final matchingTimerProvider = StateNotifierProvider<TimerStateNotifier, int>(
@@ -10,10 +11,12 @@ final matchingTimerProvider = StateNotifierProvider<TimerStateNotifier, int>(
 final matchingInfoProvider =
     StateNotifierProvider<MatchingInfoStateNotifier, MatchingInfoModel?>(
   (ref) {
+    final repository = ref.read(matchingRepositoryProvider);
     return MatchingInfoStateNotifier(
       matchingId: '',
       cafeId: '',
       startTime: DateTime.now(),
+      repository: repository,
     );
   },
 );
@@ -22,10 +25,12 @@ class MatchingInfoStateNotifier extends StateNotifier<MatchingInfoModel?> {
   final String matchingId;
   final String cafeId;
   final DateTime startTime;
+  final MatchingRepository repository;
   MatchingInfoStateNotifier({
     required this.matchingId,
     required this.cafeId,
     required this.startTime,
+    required this.repository,
   }) : super(null) {
     if (matchingId == '') {
       state = null;
