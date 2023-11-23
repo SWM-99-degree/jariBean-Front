@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +10,7 @@ import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/models/offset_pagination_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/history/provider/history_provider.dart';
 import 'package:jari_bean/reservation/component/circled_location_button.dart';
 import 'package:jari_bean/reservation/component/search_box_button.dart';
 import 'package:jari_bean/reservation/component/sqaured_cafe_card.dart';
@@ -18,10 +21,44 @@ import 'package:jari_bean/user/models/user_model.dart';
 import 'package:jari_bean/user/provider/user_provider.dart';
 import 'package:skeletons/skeletons.dart';
 
-class ReservationHomeScreen extends ConsumerWidget {
+class ReservationHomeScreen extends ConsumerStatefulWidget {
   static const routerName = '/home/reservation';
   const ReservationHomeScreen({super.key});
 
+  @override
+  ConsumerState<ReservationHomeScreen> createState() =>
+      _ReservationHomeScreenState();
+}
+
+class _ReservationHomeScreenState extends ConsumerState<ReservationHomeScreen> {
+  late final ScrollController _scrollController;
+  Timer? debounce;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.offset + 150 <=
+          _scrollController.position.minScrollExtent) {
+        if (debounce?.isActive ?? false) debounce?.cancel();
+        debounce = Timer(const Duration(milliseconds: 100), () {
+          ref.read(todayReservationProvider.notifier).getTodayReservation();
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      child: ReservationHomeScreenContents(),
+    );
+  }
+}
+
+class ReservationHomeScreenContents extends ConsumerWidget {
+  const ReservationHomeScreenContents({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userProvider);
@@ -36,7 +73,8 @@ class ReservationHomeScreen extends ConsumerWidget {
     final urgentReservation = ref.watch(urgentReservationProvider);
     final hotplaceCafes = ref.watch(hotplaceCafesPreviewProvider);
 
-    return ListView(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
           height: 20.h,

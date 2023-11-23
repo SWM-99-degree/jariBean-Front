@@ -125,6 +125,9 @@ class CustomInterceptor extends Interceptor {
 
         return handler.resolve(response);
       } on DioException catch (e) {
+        if (e.response?.statusCode == 401) {
+          return;
+        }
         return handler.reject(e);
       }
     }

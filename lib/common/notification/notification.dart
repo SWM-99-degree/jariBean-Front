@@ -6,7 +6,7 @@ import 'package:jari_bean/common/provider/go_router_provider.dart';
 
 AndroidNotificationChannel channel = const AndroidNotificationChannel(
   'jari_bean_alert', // id
-  '자리:빈 알림', // title
+  '자리:Bean 알림', // title
   description: '자리:빈의 알림을 전해드리는 채널이에요.', // description
   importance: Importance.max,
 );
@@ -33,11 +33,7 @@ NotificationDetails notificationDetails = NotificationDetails(
     channelDescription: channel.description,
     icon: '@mipmap/ic_launcher',
   ),
-  iOS: const DarwinNotificationDetails(
-    badgeNumber: 1,
-    subtitle: '자리:빈',
-    sound: 'slow_spring_board.aiff',
-  ),
+  iOS: const DarwinNotificationDetails(),
 );
 
 final notificationProvider = StateNotifierProvider<NotificationStateNotifier,
@@ -69,6 +65,7 @@ class NotificationStateNotifier
     await state.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
+        if (details.payload == null) return;
         goRouter.go('/alert/${details.payload}');
       },
     );
@@ -98,16 +95,8 @@ class NotificationStateNotifier
       title,
       body,
       notificationDetails,
-      payload: alertId ?? 'test-id',
+      payload: alertId,
     );
     id++;
   }
 }
-
-final launchedByFLNProvider =
-    StateProvider<Future<NotificationAppLaunchDetails?>>((ref) async {
-  final notificationProviderLocal = ref.read(notificationProvider.notifier);
-  await notificationProviderLocal.init(); // vouch init
-
-  return notificationProviderLocal.getAlert();
-});

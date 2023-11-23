@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jari_bean/cafe/model/cafe_description_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jari_bean/cafe/provider/cafe_provider.dart';
 import 'package:jari_bean/common/component/custom_button.dart';
+import 'package:jari_bean/common/component/custom_dialog.dart';
 import 'package:jari_bean/common/const/color.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/common/layout/default_card_layout.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
+import 'package:jari_bean/common/models/custom_dialog_model.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/common/utils/utils.dart';
-import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
+import 'package:jari_bean/matching/provider/matching_info_provider.dart';
 
 class MatchingSuccessScreen extends ConsumerWidget {
   const MatchingSuccessScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final matchingInfo = ref.watch(matchingInfoProvider);
+    if (matchingInfo == null) {
+      return const Text('잘못된 접근입니다.');
+    }
+    final cafe =
+        ref.watch(simplifiedCafeInformationProvider(matchingInfo.cafeId));
     final timeLeftInSeconds = ref.watch(matchingTimerProvider);
     return ListView(
       children: [
@@ -29,14 +40,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
           padding: EdgeInsets.all(20.w),
           child: Column(
             children: [
-              DefaultCardLayout.fromModel(
-                model: CafeDescriptionModel.fromJson({
-                  'cafeId': '1',
-                  'cafeName': '스타벅스 고대점',
-                  'cafeAddress': '서울특별시 성북구 고려대로 24실 51',
-                  'cafeImageUrl': 'https://picsum.photos/250?image=9',
-                }),
-              ),
+              DefaultCardLayout.fromModel(model: cafe),
               SizedBox(
                 height: 24.h,
               ),
@@ -60,8 +64,56 @@ class MatchingSuccessScreen extends ConsumerWidget {
                     child: CustomButton.fromModel(
                       model: CustomButtonModel(
                         title: '매칭취소',
-                        onPressed: () {},
-                        isDisabled: true,
+                        onPressed: () {
+                          showCustomDialog(
+                            context: context,
+                            model: CustomDialogWithTwoButtonsModel(
+                              title: "매칭 취소",
+                              description: "매칭을 취소하시겠어요?",
+                              customButtonModelSecond: CustomButtonModel(
+                                title: "확인",
+                                onPressed: () {
+                                  context.pop();
+                                  ref
+                                      .read(matchingInfoProvider.notifier)
+                                      .cancelMatched(
+                                        () => {
+                                          showCustomDialog(
+                                            context: context,
+                                            model: CustomDialogModel(
+                                              title: "취소 완료",
+                                              description: "매칭 취소가 완료되었어요",
+                                              customButtonModel:
+                                                  CustomButtonModel(
+                                                title: "확인",
+                                                onPressed: () {
+                                                  rootNavigatorKey
+                                                      .currentContext!
+                                                      .pop();
+                                                },
+                                              ),
+                                            ),
+                                          )(),
+                                          ref
+                                              .read(
+                                                matchingTimerProvider.notifier,
+                                              )
+                                              .resetTimer(),
+                                        },
+                                      );
+                                },
+                              ),
+                              customButtonModel: CustomButtonModel(
+                                title: "취소",
+                                onPressed: () {
+                                  context.pop();
+                                },
+                                isDismiss: true,
+                              ),
+                            ),
+                          )();
+                        },
+                        isDismiss: true,
                       ),
                     ),
                   ),
@@ -73,9 +125,7 @@ class MatchingSuccessScreen extends ConsumerWidget {
                       model: CustomButtonModel(
                         title: '길찾기',
                         onPressed: () {
-                          ref
-                              .read(matchingTimerProvider.notifier)
-                              .initTimer(initTimeLeft: 600);
+                          throw UnimplementedException();
                         },
                       ),
                     ),

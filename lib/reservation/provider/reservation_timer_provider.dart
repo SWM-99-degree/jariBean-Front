@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final reservationTimerProvider = StateNotifierProvider<TimerStateNotifier, int>(
   (ref) {
+    ref.onDispose(() {
+      print('timer Disposed');
+    });
     return TimerStateNotifier();
   },
 );
@@ -14,6 +17,7 @@ class TimerStateNotifier extends StateNotifier<int> {
 
   Future<void> initTimer({
     required int initTimeLeft,
+    Function? callback,
   }) async {
     if (flag) return;
     flag = true;
@@ -26,6 +30,9 @@ class TimerStateNotifier extends StateNotifier<int> {
           timer.cancel();
           state = 0;
           flag = false;
+          if (callback != null) {
+            callback();
+          }
           return;
         }
         state = currentTimeLeft - 1;
@@ -35,5 +42,9 @@ class TimerStateNotifier extends StateNotifier<int> {
 
   get timeLeftInSeconds {
     return state;
+  }
+
+  void resetTimer() {
+    state = 0;
   }
 }

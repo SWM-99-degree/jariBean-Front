@@ -5,16 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jari_bean/alert/model/alert_model.dart';
-import 'package:jari_bean/alert/provider/alert_provider.dart';
 import 'package:jari_bean/alert/repository/alert_repository.dart';
 import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
+import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
-import 'package:jari_bean/matching/provider/matching_timer_provider.dart';
+import 'package:jari_bean/matching/model/matching_status_model.dart';
+import 'package:jari_bean/matching/provider/matching_info_provider.dart';
+import 'package:jari_bean/matching/repository/matching_repository.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
@@ -36,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   );
   final ScrollController _scrollController =
       ScrollController(initialScrollOffset: 50.h);
-  bool flag = false;
+  bool matchingFlag = false;
 
   final List<String> _tabs = ['자리 예약하기', '실시간 매칭하기'];
   @override
@@ -45,8 +47,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         _scrollController.animateTo(
-          ((flag && _tabController.index == 0) ? 176.h : 0) + 50.h,
-          duration: Duration(milliseconds: flag ? 250 : 150),
+          ((matchingFlag && _tabController.index == 0) ? 176.h : 0) + 50.h,
+          duration: Duration(milliseconds: matchingFlag ? 250 : 150),
           curve: Curves.easeInOut,
         );
         if (_tabController.index == 1) {
@@ -65,11 +67,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         if (message != null) {
           fcmOnOpenedAppHandler(
             message: message,
-            goRouter: ref.read(goRouterProvider),
-            alertProvider: ref.read(alertProvider.notifier),
+            container: ProviderScope.containerOf(context),
           );
         }
       });
+
+      final matchingStatus =
+          await ref.read(matchingRepositoryProvider).getMatchingStatus();
+      switch (matchingStatus.status) {
+        case MatchingStatus.NORMAL:
+          break;
+        case MatchingStatus.ENQUEUED:
+          ref
+              .read(notificationProvider.notifier)
+              .show(title: '매칭 안내', body: '현재 매칭이 진행중이에요');
+          break;
+        case MatchingStatus.PROCESSING:
+          ref.read(matchingInfoProvider.notifier).applyMatchingInfo(
+                matchingId: matchingStatus.matchingId!,
+                cafeId: matchingStatus.cafeId!,
+                startTime: matchingStatus.startTime!,
+              );
+          ref.read(matchingTimerProvider.notifier).initTimer(
+                initTimeLeft: 600 -
+                    (DateTime.now().difference(matchingStatus.startTime!))
+                        .inSeconds,
+                callback: () {
+                  ref.read(matchingInfoProvider.notifier).resetMatchingInfo();
+                  ref.read(matchingTimerProvider.notifier).resetTimer();
+                  ref.read(goRouterProvider).push('/home?selection=matching');
+                },
+              );
+          ref.read(homeSelectionProvider.notifier).update(
+                HomeSelection.matching,
+              );
+          break;
+      }
 
       if (kDebugMode) {
         final alert = await ref.read(alertRepositoryProvider);
@@ -96,9 +129,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               body: '메뚜기 월드에 오신걸 환영합니다~',
               type: PushMessageType.matchingFail,
               receivedAt: DateTime.now().subtract(Duration(days: 1)),
-              data: MatchingFailModel(
-                matchingId: '123',
-              ),
+              data: MatchingFailModel(),
             );
             await alert.insertAlert(alertModel);
           } else {
@@ -167,7 +198,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    flag = ref.watch(matchingInfoProvider);
+    final matchingInfo = ref.watch(matchingInfoProvider);
+    matchingFlag = matchingInfo != null;
     final index = ref.watch(homeSelectionProvider);
     _tabController.index = index.index;
 
@@ -186,7 +218,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             controller: _scrollController,
             headerSliverBuilder: (context, _) => [
               SliverAppBar(
-                toolbarHeight: (flag) ? 176.h : 0,
+                toolbarHeight: (matchingFlag) ? 176.h : 0,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
                     decoration: BoxDecoration(
@@ -273,7 +305,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 padding: EdgeInsets.only(top: 30.h),
                 child: index == HomeSelection.reservation
                     ? ReservationHomeScreen()
-                    : ref.watch(matchingInfoProvider)
+                    : matchingFlag
                         ? MatchingSuccessScreen()
                         : MatchingHomeScreen(),
               ),

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: discord_notifier" time="0.694648">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: Switch to android build lane" time="0.000431">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: flutter clean" time="4.903151">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: flutter pub get" time="3.025322">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: flutter build appbundle" time="56.668188">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: upload_to_play_store" time="64.890197">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: discord_notifier" time="0.51933">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>
