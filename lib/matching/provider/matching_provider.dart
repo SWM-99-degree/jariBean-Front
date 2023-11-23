@@ -72,4 +72,13 @@ class MatchingStateNotifier extends StateNotifier<MatchingBodyModel> {
       throw MatchingFailedException();
     }
   }
+
+  Future<void> cancelMatchingInEnqueued(Function callback) async {
+    try {
+      await repository.cancelMatchingInEnqueued();
+      callback();
+    } catch (e) {
+      throw MatchingFailedException();
+    }
+  }
 }

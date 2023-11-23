@@ -9,6 +9,7 @@ import 'package:jari_bean/common/layout/default_screen_layout.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/models/custom_dialog_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/matching/provider/matching_provider.dart';
 import 'package:jari_bean/matching/screen/kakao_map_view.dart';
 
 class MatchingProceedingScreen extends ConsumerStatefulWidget {
@@ -110,27 +111,31 @@ class _MatchingProceedingScreenState
                     padding: EdgeInsets.only(top: 16.h),
                     child: CustomButton(
                       text: '매칭취소',
-                      onPressed: () {
-                        showCustomDialog(
-                          context: context,
-                          model: CustomDialogWithTwoButtonsModel(
-                            title: '매칭 실패',
-                            description: '같은조건으로 매칭을 다시 시도해 볼까요?.',
-                            customButtonModel: CustomButtonModel(
-                              title: '다시 시도',
-                              onPressed: () {
-                                context.go('/matching/home');
-                              },
-                            ),
-                            customButtonModelSecond: CustomButtonModel(
-                              title: '취소',
-                              onPressed: () {
-                                context.go('/matching/home');
-                              },
-                            ),
+                      onPressed: () => showCustomDialog(
+                        context: context,
+                        model: CustomDialogWithTwoButtonsModel(
+                          title: '매칭 취소',
+                          description: '매칭을 취소할까요?',
+                          customButtonModel: CustomButtonModel(
+                            title: '아니요',
+                            onPressed: () {
+                              context.pop();
+                            },
+                            isDismiss: true,
                           ),
-                        );
-                      },
+                          customButtonModelSecond: CustomButtonModel(
+                            title: '네',
+                            onPressed: () {
+                              context.pop();
+                              ref
+                                  .read(matchingProvider.notifier)
+                                  .cancelMatchingInEnqueued(
+                                    () => context.pop(),
+                                  );
+                            },
+                          ),
+                        ),
+                      )(),
                     ),
                   ),
                 ],
