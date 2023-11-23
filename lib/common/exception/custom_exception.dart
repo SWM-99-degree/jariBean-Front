@@ -1,5 +1,7 @@
+import 'package:go_router/go_router.dart';
 import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/models/custom_dialog_model.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 
 class CustomException implements Exception {
   final String message;
@@ -93,6 +95,83 @@ class UnknownCafeException extends CustomException {
           dialogModel: CustomDialogModel(
             title: '알림',
             description: '알 수 없는 카페입니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
+
+class GPSException extends CustomException {
+  GPSException()
+      : super(
+          message: 'GPS를 켜주세요.',
+          dialogModel: CustomDialogModel(
+            title: 'GPS 오류',
+            description: 'GPS를 켜주세요.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
+
+class MatchingException extends CustomException {
+  MatchingException()
+      : super(
+          message: '매칭 중 오류가 발생했습니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 오류',
+            description: '매칭 중 오류가 발생했습니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
+
+class DuplicatedMatchingException extends CustomException {
+  DuplicatedMatchingException()
+      : super(
+          message: '이미 매칭 중입니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 오류',
+            description: '이미 매칭 중입니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+              onPressed: () {
+                final context = rootNavigatorKey.currentContext!;
+                context.pop();
+                if (GoRouter.of(context).location == '/matching/proceeding') {
+                  context.pop();
+                }
+              },
+            ),
+          ),
+        );
+}
+
+class MatchingFailedException extends CustomException {
+  MatchingFailedException()
+      : super(
+          message: '주변 카페가 수락하지 않아 매칭에 실패했습니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 실패',
+            description: '매칭에 실패했습니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}
+
+class NotMatchedException extends CustomException {
+  NotMatchedException()
+      : super(
+          message: '완료된 매칭이 없습니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 오류',
+            description: '완료된 매칭이 없습니다.',
             customButtonModel: CustomButtonModel(
               title: '확인',
             ),
