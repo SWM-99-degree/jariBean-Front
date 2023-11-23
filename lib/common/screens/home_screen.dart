@@ -10,9 +10,12 @@ import 'package:jari_bean/common/const/color.dart';
 import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
+import 'package:jari_bean/common/notification/notification.dart';
 import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
+import 'package:jari_bean/matching/model/matching_status_model.dart';
 import 'package:jari_bean/matching/provider/matching_info_provider.dart';
+import 'package:jari_bean/matching/repository/matching_repository.dart';
 import 'package:jari_bean/matching/screen/matching_home_screen.dart';
 import 'package:jari_bean/matching/screen/matching_success_screen.dart';
 import 'package:jari_bean/reservation/screen/reservation_home_screen.dart';
@@ -67,6 +70,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           );
         }
       });
+
+      final matchingStatus =
+          await ref.read(matchingRepositoryProvider).getMatchingStatus();
+      switch (matchingStatus.status) {
+        case MatchingStatus.NORMAL:
+          break;
+        case MatchingStatus.ENQUEUED:
+          ref
+              .read(notificationProvider.notifier)
+              .show(title: '매칭 안내', body: '현재 매칭이 진행중이에요');
+          break;
+        case MatchingStatus.PROCESSING:
+          ref.read(matchingInfoProvider.notifier).applyMatchingInfo(
+                matchingId: matchingStatus.matchingId!,
+                cafeId: matchingStatus.cafeId!,
+                startTime: matchingStatus.startTime!,
+              );
+          ref.read(matchingTimerProvider.notifier).initTimer(
+                initTimeLeft: 600 -
+                    (DateTime.now().difference(matchingStatus.startTime!))
+                        .inSeconds,
+              );
+          ref.read(homeSelectionProvider.notifier).update(
+                HomeSelection.matching,
+              );
+          break;
+      }
 
       if (kDebugMode) {
         final alert = await ref.read(alertRepositoryProvider);

@@ -41,4 +41,10 @@ abstract class MatchingRepository {
   Future<void> cancelMatchingInMatched({
     @Body() required Map<String, dynamic> matchingId,
   });
+
+  @GET('/matching/status')
+  @Headers({
+    'accessToken': 'true',
+  })
+  Future<MatchingStatusModel> getMatchingStatus();
 }
