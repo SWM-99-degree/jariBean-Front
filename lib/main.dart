@@ -118,22 +118,23 @@ void main() async {
   )..enableHttpTracking();
 
   WidgetsFlutterBinding.ensureInitialized();
-  final originalOnError = FlutterError.onError;
+  // final originalOnError = FlutterError.onError;
   FlutterError.onError = (details) {
     FlutterError.presentError(details);
     if (!kDebugMode) DatadogSdk.instance.rum?.handleFlutterError(details);
-    originalOnError?.call(details);
+    // originalOnError?.call(details);
     CustomExceptionHandler.hanldeException(details.exception);
   };
   await DatadogSdk.instance.initialize(configuration);
 
   PlatformDispatcher.instance.onError = (error, stack) {
-    if (kDebugMode) return false;
-    DatadogSdk.instance.rum?.addErrorInfo(
-      error.toString(),
-      RumErrorSource.source,
-      stackTrace: stack,
-    );
+    if (!kDebugMode) {
+      DatadogSdk.instance.rum?.addErrorInfo(
+        error.toString(),
+        RumErrorSource.source,
+        stackTrace: stack,
+      );
+    }
     CustomExceptionHandler.hanldeException(error);
     return true;
   };
