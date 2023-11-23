@@ -10,7 +10,6 @@ import 'package:jari_bean/common/models/custom_button_model.dart';
 import 'package:jari_bean/common/models/custom_dialog_model.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/provider/matching_provider.dart';
-import 'package:jari_bean/matching/screen/kakao_map_view.dart';
 
 class MatchingProceedingScreen extends ConsumerStatefulWidget {
   const MatchingProceedingScreen({super.key});
@@ -21,10 +20,47 @@ class MatchingProceedingScreen extends ConsumerStatefulWidget {
 }
 
 class _MatchingProceedingScreenState
-    extends ConsumerState<MatchingProceedingScreen> {
+    extends ConsumerState<MatchingProceedingScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 300),
+    )..repeat();
+  }
+
+  Widget _buildBody() {
+    return AnimatedBuilder(
+      animation:
+          CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn),
+      builder: (context, child) {
+        return Center(
+          child: Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              _buildContainer(100 * _controller.value),
+              _buildContainer(250 * _controller.value),
+              _buildContainer(450 * _controller.value),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildContainer(double radius) {
+    return Container(
+      width: radius,
+      height: radius,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: PRIMARY_ORANGE.withOpacity(1 - _controller.value),
+      ),
+    );
   }
 
   @override
@@ -32,8 +68,12 @@ class _MatchingProceedingScreenState
     return DefaultLayout(
       title: '매칭중',
       child: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
-          KakaoMapView(),
+          Positioned(
+            bottom: 40,
+            child: _buildBody(),
+          ),
           Positioned(
             bottom: 0,
             child: Container(
