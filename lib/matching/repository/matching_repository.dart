@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jari_bean/common/const/data.dart';
 import 'package:jari_bean/common/dio/dio.dart';
 import 'package:jari_bean/matching/model/matching_body_model.dart';
+import 'package:jari_bean/matching/model/matching_status_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'matching_repository.g.dart';
@@ -38,6 +39,6 @@ abstract class MatchingRepository {
     'accessToken': 'true',
   })
   Future<void> cancelMatchingInMatched({
-    @Body() required String matchingId,
+    @Body() required Map<String, dynamic> matchingId,
   });
 }

@@ -39,4 +39,8 @@ class TimerStateNotifier extends StateNotifier<int> {
   get timeLeftInSeconds {
     return state;
   }
+
+  void resetTimer() {
+    state = 0;
+  }
 }

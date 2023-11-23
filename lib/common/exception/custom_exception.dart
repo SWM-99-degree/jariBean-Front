@@ -164,3 +164,17 @@ class MatchingFailedException extends CustomException {
           ),
         );
 }
+
+class NotMatchedException extends CustomException {
+  NotMatchedException()
+      : super(
+          message: '완료된 매칭이 없습니다.',
+          dialogModel: CustomDialogModel(
+            title: '매칭 오류',
+            description: '완료된 매칭이 없습니다.',
+            customButtonModel: CustomButtonModel(
+              title: '확인',
+            ),
+          ),
+        );
+}

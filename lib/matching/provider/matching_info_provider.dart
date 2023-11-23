@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jari_bean/common/exception/custom_exception.dart';
 import 'package:jari_bean/matching/repository/matching_repository.dart';
 import 'package:jari_bean/reservation/provider/reservation_timer_provider.dart';
 
@@ -53,6 +54,25 @@ class MatchingInfoStateNotifier extends StateNotifier<MatchingInfoModel?> {
       cafeId: cafeId,
       startTime: startTime,
     );
+  }
+
+  void resetMatchingInfo() {
+    state = null;
+  }
+
+  Future<void> cancelMatched(Function callback) async {
+    try {
+      if (state == null) throw NotMatchedException();
+      await repository.cancelMatchingInMatched(
+        matchingId: {
+          'matchingId': state!.matchingId,
+        },
+      );
+      resetMatchingInfo();
+      callback();
+    } catch (e) {
+      throw NotMatchedException();
+    }
   }
 }
 
