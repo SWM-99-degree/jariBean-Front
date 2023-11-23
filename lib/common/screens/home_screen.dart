@@ -11,6 +11,7 @@ import 'package:jari_bean/common/firebase/fcm.dart';
 import 'package:jari_bean/common/icons/jari_bean_icon_pack_icons.dart';
 import 'package:jari_bean/common/models/fcm_message_model.dart';
 import 'package:jari_bean/common/notification/notification.dart';
+import 'package:jari_bean/common/provider/go_router_provider.dart';
 import 'package:jari_bean/common/provider/home_selection_provider.dart';
 import 'package:jari_bean/common/style/default_font_style.dart';
 import 'package:jari_bean/matching/model/matching_status_model.dart';
@@ -91,6 +92,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 initTimeLeft: 600 -
                     (DateTime.now().difference(matchingStatus.startTime!))
                         .inSeconds,
+                callback: () {
+                  ref.read(matchingInfoProvider.notifier).resetMatchingInfo();
+                  ref.read(matchingTimerProvider.notifier).resetTimer();
+                  ref.read(goRouterProvider).push('/home?selection=matching');
+                },
               );
           ref.read(homeSelectionProvider.notifier).update(
                 HomeSelection.matching,

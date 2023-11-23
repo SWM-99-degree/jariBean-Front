@@ -120,9 +120,14 @@ fcmActionHandler({
             cafeId: pData.cafeId,
             startTime: DateTime.now(),
           );
-      container
-          .read(matchingTimerProvider.notifier)
-          .initTimer(initTimeLeft: 600);
+      container.read(matchingTimerProvider.notifier).initTimer(
+            initTimeLeft: 600,
+            callback: () {
+              container.read(matchingInfoProvider.notifier).resetMatchingInfo();
+              container.read(matchingTimerProvider.notifier).resetTimer();
+              container.read(goRouterProvider).push('/home?selection=matching');
+            },
+          );
       context.push('/home?selection=matching');
       break;
     case PushMessageType.matchingFail:
